@@ -7,6 +7,7 @@ import {
   ThemeProvider,
   DefaultTheme,
 } from "styled-components";
+import NavBar from "../components/common/NavBar";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -34,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <GlobalStyle />
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <NavBar />
         <button onClick={onToggleDarkMode}>
           {darkMode ? "dark" : "light"}
         </button>
