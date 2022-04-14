@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.0",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "axios": "^0.26.1",
     "next": "12.1.5",
     "next-redux-wrapper": "^7.0.5",
@@ -19,7 +20,8 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "sass": "^1.49.10",
-    "scss": "^0.2.4"
+    "scss": "^0.2.4",
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
     "@types/node": "17.0.23",
@@ -27,6 +29,7 @@
     "@types/react-dom": "18.0.0",
     "@types/react-redux": "^7.1.23",
     "@types/redux-logger": "^3.0.9",
+    "@types/styled-components": "^5.1.25",
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
     "redux-logger": "^3.0.6",
