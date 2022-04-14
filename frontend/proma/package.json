@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
     "@reduxjs/toolkit": "^1.8.0",
     "@types/react-beautiful-dnd": "^13.1.2",
     "react-beautiful-dnd": "^13.1.0",
