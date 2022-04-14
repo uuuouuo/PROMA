@@ -1,29 +1,42 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import wrapper from "../store/configureStore";
-
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import {
+  createGlobalStyle,
+  ThemeProvider,
+  DefaultTheme,
+} from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-`;
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+    `;
 
-const theme = {
-  colors: {
-    primary: "#0070f3",
-  },
+const darkTheme: DefaultTheme = {
+  bgColor: "black",
+  textColor: "white",
+};
+
+const lightTheme: DefaultTheme = {
+  bgColor: "white",
+  textColor: "black",
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [darkMode, setDarkMode] = useState(true);
+  const onToggleDarkMode = () => setDarkMode((cur) => !cur);
+
   return (
     <>
       <GlobalStyle />
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <button onClick={onToggleDarkMode}>
+          {darkMode ? "dark" : "light"}
+        </button>
         <Component {...pageProps} />
       </ThemeProvider>
     </>
