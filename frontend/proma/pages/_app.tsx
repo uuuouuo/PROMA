@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <NavBar />
         <div id='container'>
-          <div id="aside" style={{width: "20%", float: "left"}}>
+          <div id="aside" style={{width: "20%", height: "100%", float: "left"}}>
             <SideBar />
           </div>
           <div id="section" style={{width: "80%", float: "left"}}>
