@@ -1,21 +1,53 @@
 import * as React from 'react';
-import styles from "../common/NavBar.module.scss";
+import styled from "styled-components";
+
+const Nav_bar = styled.div`
+  margin: 30px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 180px auto 100px 200px;
+  background-color: grey;
+`;
+
+const Logo = styled.div`
+  font-size: 50px;
+  font-weight: bold;
+  text-align: -webkit-center;
+`;
+
+const Profileimg = styled.div`
+  height: 50px;
+  text-align: -webkit-center;
+`;
+
+const Profile = styled.div`
+  height: 50px;
+  align-self: center;
+`;
+
+const Memberfunc = styled.div`
+  font-size: 20px;
+  font-weight: bold;
+  align-self: center;
+`;
 
 const NavBar = () => {
   return (
     <>
-      <div className={styles.nav_bar}>
-        <div className={styles.logo}>
-          <a>Proma</a>
-        </div>
+      <Nav_bar>
+        <Logo>
+          <a>PROMA</a>
+        </Logo>
         <div></div>
-        <div className={styles.profile}>
-          <img className={styles.profileimg} src="/profileimg.png"/>
-        </div>
-        <div className={styles.memberfunc}>
+        <Profile>
+          <Profileimg>
+            <img style={{width: "50%"}} src="/profileimg.png"/>
+          </Profileimg>
+        </Profile>
+        <Memberfunc>
           <a>로그인 / 회원가입</a>
-        </div>
-      </div>
+        </Memberfunc>
+      </Nav_bar>
     </>
   );
 };
