@@ -1,14 +1,17 @@
 package com.ssafy.proma.service.team;
 
 import com.ssafy.proma.model.Dto.Team.TeamDto;
+import com.ssafy.proma.model.Dto.Team.TeamDto.TeamUpdateDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
 import com.ssafy.proma.model.entity.team.UserTeam;
 import com.ssafy.proma.model.entity.user.User;
+import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ public class TeamService {
   private final UserRepository userRepository;
   private final ProjectRepository projectRepository;
   private final UserTeamRepository userTeamRepository;
+  private final IssueRepository issueRepository;
+
 
   @Transactional
   public void createTeam(TeamDto teamDto){
@@ -59,10 +64,64 @@ public class TeamService {
     Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
     Team team = teamOp.isPresent() ? teamOp.get() : null;
 
-    System.out.println(team);
-
     UserTeam userTeam = teamDto.toEntity(team, user);
     userTeamRepository.save(userTeam);
+
+  }
+
+  @Transactional
+  public void exitTeam(TeamDto teamDto) {
+
+    String name = teamDto.getName();
+    String projectNo = teamDto.getProjectNo();
+    String NickName = teamDto.getNickname();
+
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = projectOp.isPresent() ? projectOp.get() : null;
+
+    Optional<User> userOp = userRepository.getUserByNickname(NickName);
+    User user = userOp.isPresent() ? userOp.get() : null;
+
+    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
+    Team team = teamOp.isPresent() ? teamOp.get() : null;
+
+    userTeamRepository.deleteUserTeamByUserAndTeam(user,team);
+
+  }
+
+  @Transactional
+  public void deleteTeam(TeamDto teamDto) {
+
+    String name = teamDto.getName();
+    String projectNo = teamDto.getProjectNo();
+
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = projectOp.isPresent() ? projectOp.get() : null;
+
+    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
+    Team team = teamOp.isPresent() ? teamOp.get() : null;
+
+    issueRepository.deleteAllByTeam(team);
+    userTeamRepository.deleteAllByTeam(team);
+    teamRepository.deleteTeamByNameAndProject(name,project);
+
+  }
+
+  @Transactional
+  public void updateTeam(TeamUpdateDto teamDto) {
+
+    String name = teamDto.getName();
+    String projectNo = teamDto.getProjectNo();
+    String newName = teamDto.getNewName();
+
+
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = projectOp.isPresent() ? projectOp.get() : null;
+
+    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
+    Team team = teamOp.isPresent() ? teamOp.get() : null;
+
+    team.update(newName);
 
   }
 }

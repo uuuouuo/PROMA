@@ -30,5 +30,20 @@ public class TeamDto {
   public UserTeam toEntity(Team team, User user) {
     return UserTeam.builder().team(team).user(user).build();
   }
+
+  @Getter
+  @NoArgsConstructor
+  public static class TeamUpdateDto {
+    String name;
+    String projectNo;
+    String newName;
+
+    public TeamUpdateDto(String name,String projectNo, String newName){
+      this.name = name;
+      this.projectNo = projectNo;
+      this.newName = newName;
+    }
+
+  }
 }
 

@@ -3,6 +3,7 @@ package com.ssafy.proma.service.team;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.ssafy.proma.model.Dto.Team.TeamDto;
+import com.ssafy.proma.model.Dto.Team.TeamDto.TeamUpdateDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
@@ -61,4 +62,42 @@ class TeamServiceTest {
     teamService.joinTeam(teamDto);
 
   }
+  @Test
+  void exitTeam() {
+
+    //given
+    TeamDto teamDto = new TeamDto("FE","kih","1");
+    //when
+
+    teamService.exitTeam(teamDto);
+
+  }
+
+  @Test
+  void deleteTeam() {
+
+    //given
+    TeamDto teamDto = new TeamDto("FE","kih","1");
+
+    //when
+
+    teamService.deleteTeam(teamDto);
+
+
+  }
+
+  @Test
+  void updateTeam() {
+
+    //given
+    TeamUpdateDto teamDto = new TeamUpdateDto("FE","1","BE");
+
+    //when
+
+    teamService.updateTeam(teamDto);
+
+
+  }
+
+
 }

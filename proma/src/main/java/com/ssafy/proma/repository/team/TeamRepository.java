@@ -10,5 +10,5 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
   Optional<Team> getTeamByNo(Integer teamNo);
 
   Optional<Team> getTeamByNameAndProject(String name, Project project);
-
+  void deleteTeamByNameAndProject(String name, Project project);
 }

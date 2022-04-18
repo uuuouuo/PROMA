@@ -37,5 +37,9 @@ public class Team {
 
     }
 
+    public void update(String name){
+        this.name = name;
+    }
+
 }
 
