@@ -30,6 +30,10 @@ public class Issue {
     @ApiModelProperty(value = "이슈 설명")
     private String description;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "진행 상태")
+    private String status;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ASSIGNEE", nullable = false)
     @ApiModelProperty(value = "이슈를 담당하는 유저")
@@ -46,7 +50,7 @@ public class Issue {
     private Topic topic;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "SPRINT_NO", nullable = false)
+    @JoinColumn(name = "SPRINT_NO")
     @ApiModelProperty(value = "이슈를 포함하고 있는 스프린트")
     private Sprint sprint;
 
