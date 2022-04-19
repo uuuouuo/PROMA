@@ -4,10 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 
 const Side_bar = styled.div`
-    margin-left: 30px; 
-    margin-right: 30px; 
-    margin-bottom: 30px;
-    height: 70vh;
+    height: 79vh;
     padding: 30px;
     background-color: #C4C4C4;
 `;
@@ -67,7 +64,7 @@ const MemberName = styled.a`
     margin-left: 30px;
 `
 
-{/* 팀 생성 모달 */}
+// 팀 생성 모달 
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -89,6 +86,14 @@ const TeamAdd = styled.div`
     display: flex;
     align-items: center;
 `;
+
+// 더미파일
+const member = [
+    {
+        name: "김일환",
+        
+    }
+]
 
 const NavBar = () => {
     const [open, setOpen] = React.useState(false);

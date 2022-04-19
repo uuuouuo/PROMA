@@ -5,7 +5,6 @@ import Modal from '@mui/material/Modal';
 
 const Nav_bar = styled.div`
   height: 15vh;
-  margin: 30px;
   padding-left: 30px;
   display: grid;
   grid-template-columns: 180px auto 100px 200px;
