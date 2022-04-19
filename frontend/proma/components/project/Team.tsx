@@ -82,7 +82,7 @@ const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
                 </TeamName>
               </Link>
               {issueData.map((issue, index) => (
-                <Issue issue={issue} key={index} droppableId={droppableId}/>
+                <Issue issue={issue} key={index} droppableId={droppableId} />
               ))}
               {provided.placeholder}
               <AddButton onClick={addNewIssue}>+ Add Issue</AddButton>

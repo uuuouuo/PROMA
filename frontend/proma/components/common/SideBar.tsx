@@ -13,7 +13,7 @@ const SideBarContainer = styled.div`
   z-index: -1;
 `;
 
-const Title = styled.div`
+const Title = styled.a`
     font-size: 25px;
     font-weight:
     width: 90%;
@@ -141,7 +141,8 @@ const SideBar = () => {
           <Link href="/project/0">
             <a>Proma</a>
           </Link>
-          <ChatButton>chat</ChatButton> <a onClick={handleOpen}>+</a>
+          <ChatButton>chat</ChatButton> 
+          <a onClick={handleOpen}>+</a>
         </Title>
 
         {/* 팀 생성 모달 */}
