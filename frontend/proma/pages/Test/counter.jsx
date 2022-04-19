@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { increment, decrement, fetchUser } from "../store/modules/counter";
+import { increment, decrement, fetchUser } from "../../store/modules/counter";
 
 const mapStateToProps = (state) => {
   return {

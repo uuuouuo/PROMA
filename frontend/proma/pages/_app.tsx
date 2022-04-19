@@ -2,7 +2,7 @@
 import type { AppProps } from "next/app";
 import React, { useState } from "react";
 import wrapper from "../store/configureStore";
-import {
+import styled, {
   createGlobalStyle,
   ThemeProvider,
   DefaultTheme,
@@ -28,6 +28,14 @@ const lightTheme: DefaultTheme = {
   textColor: "black",
 };
 
+const MainComponent = styled.div`
+  display: flex;
+  width: 100%;
+  height: inherit;
+`;
+
+const Button = styled.button``;
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useState(true);
   const onToggleDarkMode = () => setDarkMode((cur) => !cur);
@@ -36,18 +44,14 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <GlobalStyle />
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <Button onClick={onToggleDarkMode}>
+          {darkMode ? "dark" : "light"}
+        </Button>
         <NavBar />
-        <div id='container'>
-          <div id="aside" style={{width: "20%", height: "100%", float: "left"}}>
-            <SideBar />
-          </div>
-          <div id="section" style={{width: "80%", float: "left"}}>
-            <button onClick={onToggleDarkMode}>
-              {darkMode ? "dark" : "light"}
-            </button>
-          </div>
-        </div>
-        <Component {...pageProps} />
+        <MainComponent>
+          <SideBar />
+          <Component {...pageProps} />
+        </MainComponent>
       </ThemeProvider>
     </>
   );
