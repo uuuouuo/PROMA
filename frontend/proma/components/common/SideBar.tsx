@@ -6,9 +6,11 @@ import Link from "next/link";
 
 const SideBarContainer = styled.div`
   width: 200px;
-  height: 79vh;
+  height: 90vh;
   padding: 30px;
   background-color: #c4c4c4;
+  position: relative;
+  z-index: -1;
 `;
 
 const Title = styled.div`
@@ -48,9 +50,10 @@ const AddTeam = styled.div`
   font-size: 20px;
   margin-left: 30px;
   margin-right: 30px;
-  position: fixed;
   bottom: 60px;
   width: 100%;
+  position: absolute;
+  margin-bottom: 10px;
 `;
 
 const Member = styled.div`
@@ -135,8 +138,10 @@ const SideBar = () => {
     <>
       <SideBarContainer>
         <Title>
-          <a>Proma</a> <ChatButton>chat</ChatButton>{" "}
-          <a onClick={handleOpen}>+</a>
+          <Link href="/project/0">
+            <a>Proma</a>
+          </Link>
+          <ChatButton>chat</ChatButton> <a onClick={handleOpen}>+</a>
         </Title>
 
         {/* 팀 생성 모달 */}
@@ -177,7 +182,7 @@ const SideBar = () => {
         </Team>
         <AddTeam style={{ marginLeft: "auto" }}>
           <Link href="/">
-            <a>+ create new Team</a>
+            <a>+ Create New Team</a>
           </Link>
         </AddTeam>
       </SideBarContainer>

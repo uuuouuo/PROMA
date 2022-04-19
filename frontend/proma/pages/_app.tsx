@@ -9,6 +9,7 @@ import styled, {
 } from "styled-components";
 import NavBar from "../components/common/NavBar";
 import SideBar from "../components/common/SideBar";
+import Footer from "../components/common/Footer";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -28,10 +29,14 @@ const lightTheme: DefaultTheme = {
   textColor: "black",
 };
 
+const Container = styled.div`
+  height: 100vh;
+`;
+
 const MainComponent = styled.div`
   display: flex;
   width: 100%;
-  height: inherit;
+  height: 90%;
 `;
 
 const Button = styled.button``;
@@ -44,14 +49,17 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <GlobalStyle />
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <Button onClick={onToggleDarkMode}>
+        <Container>
+          {/* <Button onClick={onToggleDarkMode}>
           {darkMode ? "dark" : "light"}
-        </Button>
-        <NavBar />
-        <MainComponent>
-          <SideBar />
-          <Component {...pageProps} />
-        </MainComponent>
+        </Button> */}
+          <NavBar />
+          <MainComponent>
+            <SideBar />
+            <Component {...pageProps} />
+          </MainComponent>
+          <Footer />
+        </Container>
       </ThemeProvider>
     </>
   );

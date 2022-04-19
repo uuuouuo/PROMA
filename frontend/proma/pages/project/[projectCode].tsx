@@ -32,9 +32,16 @@ const Button = styled.button`
   }
 `;
 const TextButton = styled(Button)`
-  background-color: white;
+  background-color: inherit;
   border: none;
   text-decoration: underline;
+`;
+const WarnButton = styled(Button)`
+  background-color: inherit;
+  border: none;
+  color: red;
+  align-self: flex-end;
+  margin-top: 20px;
 `;
 
 const Box = styled.div`
@@ -42,7 +49,9 @@ const Box = styled.div`
 `;
 const WorkSpace = styled(Box)`
   background-color: white;
-  padding: 30px;
+  padding: 10px 30px;
+  display: flex;
+  flex-direction: column;
 `;
 const TopBar = styled(Box)``;
 const FlexBox = styled(Box)`
@@ -69,6 +78,14 @@ const ButtonBox = styled.div`
   ${TextButton} {
     margin-left: 10px;
   }
+`;
+const SprintsBox = styled.div`
+  height: 100%;
+  overflow-y: scroll;
+  margin-top: 20px;
+  background-color: beige;
+  padding: 10px 30px 30px 30px;
+  border-radius: 10px;
 `;
 
 const ProjectSpace = () => {
@@ -105,15 +122,18 @@ const ProjectSpace = () => {
                 </ButtonBox>
               </FlexBox>
             </TopBar>
-            {sprints.length > 0 ? (
-              sprints.map((sprint, index) => (
-                <Sprint sprint={sprint} key={index} />
-              ))
-            ) : (
-              <InitialBox>
-                <Button onClick={onStartProject}>프로젝트 시작하기</Button>
-              </InitialBox>
-            )}
+            <SprintsBox>
+              {sprints.length > 0 ? (
+                sprints.map((sprint, index) => (
+                  <Sprint sprint={sprint} key={index} />
+                ))
+              ) : (
+                <InitialBox>
+                  <Button onClick={onStartProject}>프로젝트 시작하기</Button>
+                </InitialBox>
+              )}
+            </SprintsBox>
+            <WarnButton>프로젝트 종료</WarnButton>
           </WorkSpace>
         </DragDropContext>
       ) : null}
