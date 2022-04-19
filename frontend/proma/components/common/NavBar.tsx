@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled from "styled-components";
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
 const Nav_bar = styled.div`
