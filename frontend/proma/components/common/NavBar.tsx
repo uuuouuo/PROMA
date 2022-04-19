@@ -9,7 +9,7 @@ const Nav_bar = styled.div`
   padding-left: 30px;
   display: grid;
   grid-template-columns: 180px auto 100px 200px;
-  background-color: grey;
+  background-color: #C4C4C4;
 `;
 
 const Logo = styled.div`

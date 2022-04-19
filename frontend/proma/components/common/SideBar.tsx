@@ -9,7 +9,7 @@ const Side_bar = styled.div`
     margin-bottom: 30px;
     height: 70vh;
     padding: 30px;
-    background-color: grey;
+    background-color: #C4C4C4;
 `;
 
 const Title = styled.div`
