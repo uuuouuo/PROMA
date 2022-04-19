@@ -3,14 +3,15 @@ import styled from "styled-components";
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 
-const Side_bar = styled.div`
+const SideBarContainer = styled.div`
+    width: 200px;
     height: 79vh;
     padding: 30px;
     background-color: #C4C4C4;
 `;
 
 const Title = styled.div`
-    font-size: 30px;
+    font-size: 25px;
     font-weight:
     width: 90%;
     background: white;
@@ -22,7 +23,7 @@ const Title = styled.div`
 `;
 
 const Team = styled.div`
-    font-size: 30px;
+    font-size: 20px;
     margin-left: 30px; 
     margin-right: 30px; 
 `
@@ -34,7 +35,7 @@ const TeamDetail = styled.div`
 
 const TeamName = styled.a`
     text-decoration: underline;
-    font-size: 25px;
+    font-size: 20px;
 `
 
 const ChatButton = styled.button`
@@ -43,7 +44,7 @@ const ChatButton = styled.button`
 `
 
 const AddTeam = styled.div`
-    font-size: 30px;
+    font-size: 20px;
     margin-left: 30px; 
     margin-right: 30px; 
     position: fixed; 
@@ -52,7 +53,7 @@ const AddTeam = styled.div`
 `
 
 const Member = styled.div`
-    font-size: 30px;
+    font-size: 20px;
     margin-top: 5px;
     margin-left: 20px;
     display: flex;
@@ -60,7 +61,7 @@ const Member = styled.div`
 `
 
 const MemberName = styled.a`
-    font-size: 20px;
+    font-size: 15px;
     margin-left: 30px;
 `
 
@@ -91,18 +92,30 @@ const TeamAdd = styled.div`
 const member = [
     {
         name: "김일환",
-        
-    }
+        image: "https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_960_720.png",
+    },
+    {
+        name: "장소명",
+        image: "https://cdn.pixabay.com/photo/2014/03/24/17/19/teacher-295387_960_720.png",
+    },
+    {
+        name: "장다빈",
+        image: "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png",
+    },
+    {
+        name: "서은민",
+        image: "https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397_960_720.png",
+    },
 ]
 
-const NavBar = () => {
+const SideBar = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     
     return (
         <>
-            <Side_bar>
+            <SideBarContainer>
                 <Title>
                     <a>Proma</a> <ChatButton>chat</ChatButton> <a onClick={handleOpen}>+</a>
                 </Title>
@@ -151,9 +164,9 @@ const NavBar = () => {
                 <AddTeam>
                     <a style={{textDecoration: "underline", fontSize: "20px"}}>+ create new Team</a>
                 </AddTeam>
-            </Side_bar>
+            </SideBarContainer>
         </>
     );
 };
 
-export default NavBar;
+export default SideBar;
