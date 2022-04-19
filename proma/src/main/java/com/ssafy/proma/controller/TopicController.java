@@ -69,4 +69,14 @@ public class TopicController {
 
   }
 
+  // 프로젝트에 포한된 모든 토픽
+  @ApiOperation(value = "프로젝트의 모든 토픽 조회", notes = "해당 프로젝트의 모든 토픽을 조회한다. 토픽 번호와 이름, 설명을 반환한다.")
+  @GetMapping("/list/{projectNo}")
+  public ResponseEntity<List<String>> getTopicList(@PathVariable String projectNo){
+
+    List<String> topicNameList = topicService.getTopicList(projectNo);
+
+    return new ResponseEntity<>(topicNameList, HttpStatus.OK);
+
+  }
 }

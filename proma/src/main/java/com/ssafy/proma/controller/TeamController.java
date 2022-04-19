@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/team")
 @RequiredArgsConstructor
+@RequestMapping("/team")
 public class TeamController {
 
-  private static TeamService teamService;
-  private static TeamRepository teamRepository;
+  private final TeamService teamService;
+  private final TeamRepository teamRepository;
 
   // 팀생성
   @ApiOperation(value = "팀 생성", notes = "팀을 생성한다.")
@@ -96,9 +96,10 @@ public class TeamController {
 
   // 팀에 속해있는 유저 조회
   @ApiOperation(value = "팀원 조회", notes = "팀에 속해있는 모든 유저를 조회한다.")
-  @GetMapping("/{teamNo}")
+  @GetMapping("/user/{teamNo}")
   public ResponseEntity<List<String>> getUserTeamList(@PathVariable Integer teamNo){
 
+    System.out.println("ASFAWDFWESDFWAEFSAFWEFSD");
     List<String> userTeamList = teamService.getUserTeamList(teamNo);
 
     return new ResponseEntity<>(userTeamList, HttpStatus.OK);

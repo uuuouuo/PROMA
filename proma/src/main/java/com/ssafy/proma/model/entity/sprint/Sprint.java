@@ -3,6 +3,8 @@ package com.ssafy.proma.model.entity.sprint;
 import com.ssafy.proma.model.entity.project.Project;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,11 +35,11 @@ public class Sprint {
 
     @Column
     @ApiModelProperty(value = "스프린트 시작 날짜")
-    private Timestamp startDate;
+    private LocalDate startDate;
 
     @Column
     @ApiModelProperty(value = "스프린트 종료 날짜")
-    private Timestamp endDate;
+    private LocalDate endDate;
 
     @Column
     @ApiModelProperty(value = "스프린트 시작, 종료 여부")
@@ -47,5 +49,19 @@ public class Sprint {
     @JoinColumn(name = "PROJECT_NO", nullable = false)
     @ApiModelProperty(value = "스프린트를 포함하고 있는 프로젝트")
     private Project project;
+
+    public void toggleStatus(){
+        this.status = this.status^true;
+    }
+    public void update(String name,String startDate,String endDate){
+
+        DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDateTime = LocalDate.parse(startDate, DATEFORMATTER);
+        LocalDate endDateTime = LocalDate.parse(endDate, DATEFORMATTER);
+
+        this.name = name;
+        this.startDate = startDateTime;
+        this.endDate = endDateTime;
+    }
 
 }

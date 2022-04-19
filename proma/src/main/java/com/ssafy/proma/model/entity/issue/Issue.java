@@ -50,7 +50,7 @@ public class Issue {
     private Topic topic;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "SPRINT_NO", nullable = false)
+    @JoinColumn(name = "SPRINT_NO")
     @ApiModelProperty(value = "이슈를 포함하고 있는 스프린트")
     private Sprint sprint;
 

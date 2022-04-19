@@ -5,11 +5,14 @@ import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
 import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.entity.project.Project;
+import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,11 +34,11 @@ class TeamServiceTest {
   @Test
   void createTeam() {
 
-    //given
-//    User user = User.builder().no("1").nickname("jdb").profileImage("asfsadfsdf").isDeleted(false).build();
+//    given
+    User user = User.builder().no("4").nickname("pjh").profileImage("asfsadfsdf").isDeleted(false).build();
 //    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
-    TeamCreateDto teamDto = new TeamCreateDto("FE","jdb","1");
-//    userRepository.save(user);
+    TeamCreateDto teamDto = new TeamCreateDto("FE","pjh","1");
+    userRepository.save(user);
 //    projectRepository.save(project);
 
 
@@ -53,10 +56,12 @@ class TeamServiceTest {
   void joinTeam() {
 
     //given
-//    User user = User.builder().no("3").nickname("jsm").profileImage("asfsadfsdf").isDeleted(false).build();
+    User user = User.builder().no("3").nickname("jsm").profileImage("asfsadfsdf").isDeleted(false).build();
 //    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
-    TeamJoinDto teamDto = new TeamJoinDto(2,"kih");
-//    userRepository.save(user);
+//    Optional<Project> projectByNo = projectRepository.getProjectByNo("1");
+//    Project project = projectByNo.get();
+    TeamJoinDto teamDto = new TeamJoinDto(1,"jsm");
+    userRepository.save(user);
     //when
 
     teamService.joinTeam(teamDto);

@@ -11,6 +11,7 @@ import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.service.AbstractService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class TopicService extends AbstractService {
 
   }
 
+  @Transactional
   public void updateTopic(Integer topicNo, TopicUpdateDto topicDto) {
 
     String title = topicDto.getTitle();
@@ -75,4 +77,18 @@ public class TopicService extends AbstractService {
     return topicDetailDto;
   }
 
+  public List<String> getTopicList(String projectNo) {
+
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    Optional<List<Topic>> topicListOp = topicRepository.getAllByProject(project);
+    List<Topic> topics = takeOp(topicListOp);
+
+    List<String> topicNameList = new ArrayList<>();
+
+    topics.forEach(topic -> topicNameList.add(topic.getTitle()));
+
+    return topicNameList;
+  }
 }

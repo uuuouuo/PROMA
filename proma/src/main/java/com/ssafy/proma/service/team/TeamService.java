@@ -128,8 +128,16 @@ public class TeamService extends AbstractService {
 
   public List<String> getUserTeamList(int teamNo) {
 
+    System.out.println("ASfasfasdfwefsadfwef");
     Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
     Team team = takeOp(teamOp);
+    if (team == null) {
+      System.out.println("is nul!@#!@#!@#!@!@@!#");
+    }
+    else{
+      System.out.println("team " + team.getName());
+    }
+//    System.out.println("team " + team.getNo());
 
     Optional<List<UserTeam>> userTeamOp = userTeamRepository.getUserTeamsByTeam(team);
     List<UserTeam> userTeamList = takeOp(userTeamOp);
