@@ -1,13 +1,12 @@
 package com.ssafy.proma.controller;
 
-import com.ssafy.proma.model.Dto.issue.ResIssueDto.TopicIssueDto;
-import com.ssafy.proma.model.Dto.topic.ReqTopicDto.TopicCreateDto;
-import com.ssafy.proma.model.Dto.topic.ReqTopicDto.TopicUpdateDto;
-import com.ssafy.proma.model.Dto.topic.ResTopicDto.TopicDetailDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.TopicIssueDto;
+import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
+import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicUpdateDto;
+import com.ssafy.proma.model.dto.topic.ResTopicDto.TopicDetailDto;
 import com.ssafy.proma.service.topic.TopicService;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

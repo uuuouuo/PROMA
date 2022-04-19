@@ -1,4 +1,4 @@
-package com.ssafy.proma.model.Dto.User;
+package com.ssafy.proma.model.dto.user;
 
 public class ResUserDto {
 

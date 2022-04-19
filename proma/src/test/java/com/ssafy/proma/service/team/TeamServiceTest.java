@@ -1,13 +1,10 @@
 package com.ssafy.proma.service.team;
 
-import com.ssafy.proma.model.Dto.team.ReqTeamDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamCreateDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamExitDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamJoinDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamUpdateDto;
-import com.ssafy.proma.model.Dto.team.ResTeamDto.TeamDto;
-import com.ssafy.proma.model.entity.project.Project;
-import com.ssafy.proma.model.entity.user.User;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;

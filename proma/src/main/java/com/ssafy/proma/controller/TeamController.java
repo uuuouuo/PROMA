@@ -1,16 +1,15 @@
 package com.ssafy.proma.controller;
 
 
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamCreateDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamExitDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamJoinDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamUpdateDto;
-import com.ssafy.proma.model.Dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.service.team.TeamService;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

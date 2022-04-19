@@ -1,10 +1,10 @@
 package com.ssafy.proma.service.team;
 
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamCreateDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamExitDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamJoinDto;
-import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamUpdateDto;
-import com.ssafy.proma.model.Dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
+import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
 import com.ssafy.proma.model.entity.team.UserTeam;
@@ -14,6 +14,7 @@ import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
+import com.ssafy.proma.service.AbstractService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class TeamService {
+public class TeamService extends AbstractService {
 
   private final TeamRepository teamRepository;
   private final UserRepository userRepository;
@@ -44,6 +45,7 @@ public class TeamService {
     Project project = takeOp(projectOp);
     Optional<User> userOp = userRepository.getUserByNickname(NickName);
     User user = takeOp(userOp);
+
 
     Team team = teamDto.toEntity(project);
     UserTeam userTeam = teamDto.toEntity(team, user);
@@ -140,9 +142,4 @@ public class TeamService {
 
     return userNicknameList;
   }
-
-  public <T> T takeOp(Optional<T> op){
-    return op.isPresent() ? op.get() : null;
-  }
-
 }

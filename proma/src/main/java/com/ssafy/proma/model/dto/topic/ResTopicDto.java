@@ -1,4 +1,4 @@
-package com.ssafy.proma.model.Dto.topic;
+package com.ssafy.proma.model.dto.topic;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

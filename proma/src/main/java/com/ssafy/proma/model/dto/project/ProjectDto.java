@@ -1,4 +1,4 @@
-package com.ssafy.proma.model.Dto.project;
+package com.ssafy.proma.model.dto.project;
 
 import lombok.Data;
 

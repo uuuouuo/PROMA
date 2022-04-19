@@ -1,4 +1,4 @@
-package com.ssafy.proma.model.Dto.topic;
+package com.ssafy.proma.model.dto.topic;
 
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.topic.Topic;

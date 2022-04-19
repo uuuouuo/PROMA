@@ -1,4 +1,4 @@
-package com.ssafy.proma.model.Dto.team;
+package com.ssafy.proma.model.dto.team;
 
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
