@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled from "styled-components";
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
 const Nav_bar = styled.div`
@@ -34,6 +33,7 @@ const Memberfunc = styled.div`
   align-self: center;
 `;
 
+{/* 로그인 모달 */}
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -46,6 +46,24 @@ const style = {
   p: 4,
 };
 
+{/* 마이페이지 모달 */}
+const style2 = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  alignContent: 'center',
+  paddingTop: '80px',
+  paddingBottom: '80px'
+};
+
 const Login = styled.div`
   height: 50px;
   justify-content: center;
@@ -56,10 +74,26 @@ const Login = styled.div`
   align-items: center;
 `;
 
+const Username = styled.div`
+  width: 40%;
+  height: 40px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+`;
+
 const NavBar = () => {
   const [open, setOpen] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
 
   return (
     <>
@@ -70,13 +104,14 @@ const NavBar = () => {
         <div></div>
         <Profile>
           <Profileimg>
-            <img style={{width: "50%"}} src="/profileimg.png"/>
+            <img style={{width: "50%"}} onClick={handleOpen2} src="/profileimg.png"/>
           </Profileimg>
         </Profile>
         <Memberfunc>
           <a onClick={handleOpen}>로그인 / 회원가입</a>
         </Memberfunc>
 
+        {/* 로그인 모달 */}
         <Modal
           open={open}
           onClose={handleClose}
@@ -87,6 +122,26 @@ const NavBar = () => {
             <Login>
               Github
             </Login>
+          </Box>
+        </Modal>
+
+        {/* 마이페이지 모달 */}
+        <Modal
+          open={open2}
+          onClose={handleClose2}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style2}>
+            <Profile>
+              <Profileimg>
+                <img style={{width: "50%"}} onClick={handleOpen2} src="/profileimg.png"/>
+              </Profileimg>
+            </Profile>
+
+            <Username>
+              유저명
+            </Username>
           </Box>
         </Modal>
       </Nav_bar>
