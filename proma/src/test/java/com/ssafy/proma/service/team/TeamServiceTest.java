@@ -1,15 +1,18 @@
 package com.ssafy.proma.service.team;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.ssafy.proma.model.Dto.Team.TeamDto;
-import com.ssafy.proma.model.Dto.Team.TeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamCreateDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamExitDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamJoinDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.Dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,11 +35,11 @@ class TeamServiceTest {
   void createTeam() {
 
     //given
-    User user = User.builder().no("1").nickname("jdb").profileImage("asfsadfsdf").isDeleted(false).build();
-    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
-    TeamDto teamDto = new TeamDto("FE","jdb","1");
-    userRepository.save(user);
-    projectRepository.save(project);
+//    User user = User.builder().no("1").nickname("jdb").profileImage("asfsadfsdf").isDeleted(false).build();
+//    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
+    TeamCreateDto teamDto = new TeamCreateDto("FE","jdb","1");
+//    userRepository.save(user);
+//    projectRepository.save(project);
 
 
     //when
@@ -53,10 +56,10 @@ class TeamServiceTest {
   void joinTeam() {
 
     //given
-    User user = User.builder().no("2").nickname("kih").profileImage("asfsadfsdf").isDeleted(false).build();
+//    User user = User.builder().no("3").nickname("jsm").profileImage("asfsadfsdf").isDeleted(false).build();
 //    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
-    TeamDto teamDto = new TeamDto("FE","kih","1");
-    userRepository.save(user);
+    TeamJoinDto teamDto = new TeamJoinDto(2,"kih");
+//    userRepository.save(user);
     //when
 
     teamService.joinTeam(teamDto);
@@ -66,7 +69,7 @@ class TeamServiceTest {
   void exitTeam() {
 
     //given
-    TeamDto teamDto = new TeamDto("FE","kih","1");
+    TeamExitDto teamDto = new TeamExitDto(1,"kih");
     //when
 
     teamService.exitTeam(teamDto);
@@ -77,11 +80,10 @@ class TeamServiceTest {
   void deleteTeam() {
 
     //given
-    TeamDto teamDto = new TeamDto("FE","kih","1");
 
     //when
 
-    teamService.deleteTeam(teamDto);
+    teamService.deleteTeam(1);
 
 
   }
@@ -90,14 +92,36 @@ class TeamServiceTest {
   void updateTeam() {
 
     //given
-    TeamUpdateDto teamDto = new TeamUpdateDto("FE","1","BE");
+    TeamUpdateDto teamDto = new TeamUpdateDto("BE");
 
     //when
 
-    teamService.updateTeam(teamDto);
+    teamService.updateTeam(1,teamDto);
 
 
   }
 
+  @Test
+  void getTeamList() {
+
+    //given
+    //when
+
+    List<TeamDto> teamList = teamService.getTeamList("1");
+
+    System.out.println(teamList.size());
+
+  }
+
+  @Test
+  void getUserTeamList() {
+
+    //given
+    //when
+
+    List<String> userTeamList = teamService.getUserTeamList(2);
+
+    userTeamList.forEach(nickname -> System.out.println(nickname));
+  }
 
 }

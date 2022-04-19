@@ -1,7 +1,10 @@
 package com.ssafy.proma.service.team;
 
-import com.ssafy.proma.model.Dto.Team.TeamDto;
-import com.ssafy.proma.model.Dto.Team.TeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamCreateDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamExitDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamJoinDto;
+import com.ssafy.proma.model.Dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.Dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
 import com.ssafy.proma.model.entity.team.UserTeam;
@@ -11,8 +14,10 @@ import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +35,15 @@ public class TeamService {
 
 
   @Transactional
-  public void createTeam(TeamDto teamDto){
+  public void createTeam(TeamCreateDto teamDto){
 
     String projectNo = teamDto.getProjectNo();
     String NickName = teamDto.getNickname();
 
     Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
-    Project project = projectOp.isPresent() ? projectOp.get() : null;
-
+    Project project = takeOp(projectOp);
     Optional<User> userOp = userRepository.getUserByNickname(NickName);
-    User user = userOp.isPresent() ? userOp.get() : null;
+    User user = takeOp(userOp);
 
     Team team = teamDto.toEntity(project);
     UserTeam userTeam = teamDto.toEntity(team, user);
@@ -49,20 +53,16 @@ public class TeamService {
   }
 
   @Transactional
-  public void joinTeam(TeamDto teamDto) {
+  public void joinTeam(TeamJoinDto teamDto) {
 
-    String name = teamDto.getName();
-    String projectNo = teamDto.getProjectNo();
+    int teamNo = teamDto.getTeamNo();
     String NickName = teamDto.getNickname();
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
-    Project project = projectOp.isPresent() ? projectOp.get() : null;
-
     Optional<User> userOp = userRepository.getUserByNickname(NickName);
-    User user = userOp.isPresent() ? userOp.get() : null;
+    User user = takeOp(userOp);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
-    Team team = teamOp.isPresent() ? teamOp.get() : null;
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
 
     UserTeam userTeam = teamDto.toEntity(team, user);
     userTeamRepository.save(userTeam);
@@ -70,58 +70,79 @@ public class TeamService {
   }
 
   @Transactional
-  public void exitTeam(TeamDto teamDto) {
+  public void exitTeam(TeamExitDto teamDto) {
 
-    String name = teamDto.getName();
-    String projectNo = teamDto.getProjectNo();
+    int teamNo = teamDto.getTeamNo();
     String NickName = teamDto.getNickname();
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
-    Project project = projectOp.isPresent() ? projectOp.get() : null;
-
     Optional<User> userOp = userRepository.getUserByNickname(NickName);
-    User user = userOp.isPresent() ? userOp.get() : null;
+    User user = takeOp(userOp);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
-    Team team = teamOp.isPresent() ? teamOp.get() : null;
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
 
     userTeamRepository.deleteUserTeamByUserAndTeam(user,team);
 
   }
 
   @Transactional
-  public void deleteTeam(TeamDto teamDto) {
+  public void deleteTeam(Integer teamNo) {
 
-    String name = teamDto.getName();
-    String projectNo = teamDto.getProjectNo();
-
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
-    Project project = projectOp.isPresent() ? projectOp.get() : null;
-
-    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
-    Team team = teamOp.isPresent() ? teamOp.get() : null;
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
 
     issueRepository.deleteAllByTeam(team);
     userTeamRepository.deleteAllByTeam(team);
-    teamRepository.deleteTeamByNameAndProject(name,project);
+    teamRepository.deleteTeamByNo(teamNo);
 
   }
 
   @Transactional
-  public void updateTeam(TeamUpdateDto teamDto) {
+  public void updateTeam(Integer teamNo, TeamUpdateDto teamDto) {
 
     String name = teamDto.getName();
-    String projectNo = teamDto.getProjectNo();
-    String newName = teamDto.getNewName();
 
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
-    Project project = projectOp.isPresent() ? projectOp.get() : null;
-
-    Optional<Team> teamOp = teamRepository.getTeamByNameAndProject(name, project);
-    Team team = teamOp.isPresent() ? teamOp.get() : null;
-
-    team.update(newName);
+    team.update(name);
 
   }
+
+  public List<TeamDto> getTeamList(String projectNo) {
+
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    Optional<List<Team>> teamListOp = teamRepository.getTeamsByProject(project);
+    List<Team> teams = takeOp(teamListOp);
+
+    List<TeamDto> teamDtoList = teams.stream().map(team -> new TeamDto(team))
+        .collect(Collectors.toList());
+
+    return teamDtoList;
+
+  }
+
+  public List<String> getUserTeamList(int teamNo) {
+
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<List<UserTeam>> userTeamOp = userTeamRepository.getUserTeamsByTeam(team);
+    List<UserTeam> userTeamList = takeOp(userTeamOp);
+
+    List<String> userNicknameList = new ArrayList<>();
+
+    userTeamList.forEach(userTeam->{
+      userNicknameList.add(userTeam.getUser().getNickname());
+    });
+
+    return userNicknameList;
+  }
+
+  public <T> T takeOp(Optional<T> op){
+    return op.isPresent() ? op.get() : null;
+  }
+
 }
