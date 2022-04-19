@@ -3,9 +3,8 @@ import styled from "styled-components";
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 
-const Nav_bar = styled.div`
-  height: 15vh;
-  margin: 30px;
+const NavBarContainer = styled.div`
+  height: 100px;
   padding-left: 30px;
   display: grid;
   grid-template-columns: 180px auto 100px 200px;
@@ -97,7 +96,7 @@ const NavBar = () => {
 
   return (
     <>
-      <Nav_bar>
+      <NavBarContainer>
         <Logo>
           <a>PROMA</a>
         </Logo>
@@ -144,7 +143,7 @@ const NavBar = () => {
             </Username>
           </Box>
         </Modal>
-      </Nav_bar>
+      </NavBarContainer>
     </>
   );
 };
