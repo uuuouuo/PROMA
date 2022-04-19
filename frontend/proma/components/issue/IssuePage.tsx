@@ -5,9 +5,16 @@ const IssuePageContainer = styled.div`
     background-color: #C4C4C4;
     padding: 2%;
     width: 100%;
-    height: 82.5vh;
+    height: 81.5vh;
     display: flex;
     flex-direction : column;
+`;
+
+const FuncButton = styled.div`
+    display: flex;
+    justify-content: right;
+    margin-top: 1%;
+    margin-bottom: 1%;
 `;
 
 const IssueBox = styled.div`
@@ -70,7 +77,13 @@ const IssuePage = () => {
     return (
         <>
             <IssuePageContainer>
-                <a>이슈 번호</a>
+                <a style={{fontSize: "30px", fontWeight: "bold", textDecoration: "underline"}}>이슈 번호</a>
+                <FuncButton>
+                    <a style={{marginRight: "1%", fontWeight: "bold"}}>Sprint 설정</a>
+                    <a style={{fontWeight: "bold"}}>Progress 설정</a>
+                </FuncButton>
+                
+                
                 <IssueBox>
                     {/* 제목 */}
                     <IssueRow>

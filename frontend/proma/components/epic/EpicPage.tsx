@@ -53,7 +53,7 @@ const EpicPage = () => {
     return (
         <>
             <EpicPageContainer>
-                <a>예약번호</a>
+                <a style={{fontSize: "30px", fontWeight: "bold", textDecoration: "underline"}}>예약번호</a>
                 <EpicBox>
                     <EpicRow>
                         <a style={{fontSize: "20px", fontWeight: "bold", marginRight: "2%"}}>제목</a>
