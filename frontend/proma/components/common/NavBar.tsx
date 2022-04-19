@@ -86,6 +86,9 @@ const Username = styled.div`
   font-weight: bold;
 `;
 
+// const name = "박주한";
+// const image = "https://cdn.pixabay.com/photo/2021/10/24/21/34/profile-pic-6739366_960_720.png";
+
 const NavBar = () => {
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -93,6 +96,8 @@ const NavBar = () => {
   const handleClose = () => setOpen(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
+  const [name, setName] = React.useState("");
+  const [image, setImage] = React.useState("");
 
   return (
     <>
@@ -103,11 +108,16 @@ const NavBar = () => {
         <div></div>
         <Profile>
           <Profileimg>
-            <img style={{width: "50%"}} onClick={handleOpen2} src="/profileimg.png"/>
+            {
+              image == "" ? <img style={{ width: "50px", height: "50px", borderRadius: "50%" }} src="/profileimg.png" /> 
+                : <img style={{width: "50px", height: "50px", borderRadius: "50%"}} onClick={handleOpen2} src={ image }/>
+            }
           </Profileimg>
         </Profile>
         <Memberfunc>
-          <a onClick={handleOpen}>로그인 / 회원가입</a>
+          {
+            name == "" ? <a onClick={handleOpen}>로그인 / 회원가입</a> : <div><a>{name}</a> <a onClick={() => location.reload()}>로그아웃</a></div>
+          }
         </Memberfunc>
 
         {/* 로그인 모달 */}
@@ -118,7 +128,11 @@ const NavBar = () => {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <Login>
+            <Login onClick={() => {
+              setName('박주한');
+              setImage('https://cdn.pixabay.com/photo/2021/10/24/21/34/profile-pic-6739366_960_720.png');
+              handleClose();
+            }}>
               Github
             </Login>
           </Box>
@@ -134,12 +148,14 @@ const NavBar = () => {
           <Box sx={style2}>
             <Profile>
               <Profileimg>
-                <img style={{width: "50%"}} onClick={handleOpen2} src="/profileimg.png"/>
+              {
+                image == "" ? <img style={{width: "150px", height: "150px", borderRadius: "50%"}} src="/profileimg.png" /> 
+                  : <img style={{width: "150px", height: "150px", borderRadius: "50%"}} onClick={handleOpen2} src={ image }/>
+              }
               </Profileimg>
             </Profile>
-
             <Username>
-              유저명
+              {name}
             </Username>
           </Box>
         </Modal>
