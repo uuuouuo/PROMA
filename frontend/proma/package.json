@@ -14,6 +14,8 @@
     "@mui/material": "^5.6.2",
     "@reduxjs/toolkit": "^1.8.0",
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/sockjs-client": "^1.5.1",
+    "@types/stompjs": "^2.3.5",
     "axios": "^0.26.1",
     "next": "latest",
     "next-redux-wrapper": "^7.0.5",
@@ -24,7 +26,10 @@
     "react-redux": "^7.2.6",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "styled-components": "^5.3.5"
+    "sockjs-client": "^1.6.0",
+    "stompjs": "^2.3.3",
+    "styled-components": "^5.3.5",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "17.0.23",
