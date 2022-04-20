@@ -13,6 +13,7 @@ import Footer from "../components/common/Footer";
 import Head from "next/head";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import { ToastProvider } from "react-toast-notifications";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -23,13 +24,13 @@ const GlobalStyle = createGlobalStyle`
     `;
 
 const darkTheme: DefaultTheme = {
-  bgColor: "black",
+  bgColor: "#1b2134",
   textColor: "white",
 };
 
 const lightTheme: DefaultTheme = {
   bgColor: "white",
-  textColor: "black",
+  textColor: "#1b2134",
 };
 
 const Container = styled.div`
@@ -66,6 +67,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     // return () => client.disconnect();
   }, []);
 
+  const timeOut = 2000;
+
   return (
     <>
       <Head>
@@ -74,19 +77,21 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <GlobalStyle />
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <Container>
-          {/* <Button onClick={onToggleDarkMode}>
-          {darkMode ? "dark" : "light"}
-        </Button> */}
-          <NavBar />
-          <MainComponent>
-            <SideBar />
-            <Component {...pageProps} />
-          </MainComponent>
-          <Footer />
-        </Container>
-      </ThemeProvider>
+      <ToastProvider autoDismiss={true} autoDismissTimeout={timeOut}>
+        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+          <Container>
+            <Button onClick={onToggleDarkMode}>
+              {darkMode ? "dark" : "light"}
+            </Button>
+            <NavBar />
+            <MainComponent>
+              <SideBar />
+              <Component {...pageProps} />
+            </MainComponent>
+            <Footer />
+          </Container>
+        </ThemeProvider>
+      </ToastProvider>
     </>
   );
 }

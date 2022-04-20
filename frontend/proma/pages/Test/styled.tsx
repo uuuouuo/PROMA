@@ -11,6 +11,21 @@ const Box = styled.div`
   font-size: 20px;
   text-align: center;
 `;
+const ExBox = styled.div`
+  width: 300px;
+  height: 300px;
+  background-color: #6667AB;
+  /* background-color: #79607d; */
+  margin: 30px;
+`;
+const Ex = styled.div`
+  width: 100px;
+  height: 100px;
+  /* background-color: #c1c6db; */
+  background-color: #f1f0ec;
+  margin: 30px;
+`;
+
 const RoundedBox = styled(Box)`
   border-radius: 50px;
 `;
@@ -61,11 +76,15 @@ interface DarkModeType {
 const DarkModeBox = styled.div`
   background-color: ${(props: DarkModeType) => props.theme.bgColor};
   color: ${(props: DarkModeType) => props.theme.textColor};
+  width: 100%;
 `;
 
 const Styled = () => {
   return (
-    <>
+    <DarkModeBox>
+      <ExBox>
+          <Ex>sd</Ex>
+      </ExBox>
       <h1>extending & prop</h1>
       <FlexBox>
         <Box bgColor="brown">Box</Box>
@@ -82,8 +101,7 @@ const Styled = () => {
         <P>p</P>
       </AnimationBox>
       <h1>theme</h1>
-      <DarkModeBox>DarkMode</DarkModeBox>
-    </>
+    </DarkModeBox>
   );
 };
 
