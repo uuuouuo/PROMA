@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Link from "next/link";
+import SlidingPane from "react-sliding-pane";
+import "react-sliding-pane/dist/react-sliding-pane.css";
 
 const SideBarContainer = styled.div`
   width: 200px;
@@ -133,6 +135,9 @@ const SideBar = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [state, setState] = React.useState({
+    isPaneOpen: false
+  });
 
   return (
     <>
@@ -163,7 +168,7 @@ const SideBar = () => {
             return (
               <TeamDetail key={idx}>
                 <TeamName>{element.team}</TeamName>{" "}
-                <ChatButton>chat</ChatButton>
+                <ChatButton onClick={() => setState({ isPaneOpen: true })}>chat</ChatButton>
               </TeamDetail>
             );
           })}
@@ -178,6 +183,8 @@ const SideBar = () => {
                 />{" "}
                 <MemberName>{element.name}</MemberName>
               </Member>
+
+              
             );
           })}
         </Team>
@@ -186,7 +193,27 @@ const SideBar = () => {
             <a>+ Create New Team</a>
           </Link>
         </AddTeam>
-      </SideBarContainer>
+
+      <button onClick={() => setState({ isPaneOpen: true })}>
+        Click me to open right pane!
+      </button>
+      <SlidingPane
+          className="some-custom-class"
+          overlayClassName="some-custom-overlay-class"
+          isOpen={state.isPaneOpen}
+          title="Hey, it is optional pane title.  I can be React component too."
+          subtitle="Optional subtitle."
+          width="800px"
+          onRequestClose={() => {
+            // triggered on "<" on left top click or on outside click
+            setState({ isPaneOpen: false });
+          }}
+        >
+          <div>And I am pane content. BTW, what rocks?</div>
+          <br />
+          <img src="img.png" />
+        </SlidingPane>
+        </SideBarContainer>
     </>
   );
 };
