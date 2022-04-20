@@ -22,5 +22,11 @@ spring:
     hibernate:
       format_sql: true
 
+  freemarker:
+    cache: false
+    suffix: .ftl
+    template-loader-path: classpath:/templates
+
 logging.level:
   org.hibernate.SQL: debug
+  com.ssafy.proma : debug

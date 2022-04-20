@@ -1,0 +1,8 @@
+package com.ssafy.proma.service.notification;
+
+import java.util.Map;
+
+public interface NotificationService {
+
+    Map<String, Object> getNotificationList(String userNo) throws Exception;
+}
