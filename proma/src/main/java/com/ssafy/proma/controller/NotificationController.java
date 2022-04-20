@@ -46,6 +46,28 @@ public class NotificationController {
         return new ResponseEntity(resultMap, status);
     }
 
+    @ApiOperation(value = "알림 확인 체크", notes = "알림의 checked를 true로 변경")
+    @GetMapping("/check/{notificationNo}")
+    public ResponseEntity checkNotification(@PathVariable Integer notificationNo){
+        log.debug(notificationNo + " 알림 확인");
+
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            resultMap = notificationService.checkNotification(notificationNo);
+
+            if(resultMap.get("message").equals("알림 확인 성공")) {
+                status = HttpStatus.OK;
+            }
+        } catch (Exception e) {
+            log.error("알림 확인 실패 : {}", e.getMessage());
+
+            resultMap.put("message", "알림 확인 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity(resultMap, status);
+    }
+
     // 임시 알림 화면
     @GetMapping("/{userNo}")
     public String notificationMain(Model model, @PathVariable String userNo) {

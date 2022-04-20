@@ -5,10 +5,12 @@ import com.ssafy.proma.model.entity.notification.Notification;
 import com.ssafy.proma.repository.Notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,22 @@ public class NotificationServiceImpl implements NotificationService{
 
         resultMap.put("notificationList", notificationList);
         resultMap.put("message", "알림 조회 성공");
+
+        return resultMap;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> checkNotification(Integer notificationNo) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<Notification> notification = notificationRepository.findById(notificationNo);
+        if(notification.isEmpty())
+            throw new NullPointerException("해당 알림이 존재하지 않습니다");
+
+        notification.get().toggleStatus();
+        resultMap.put("message", "알림 확인 성공");
 
         return resultMap;
     }

@@ -42,4 +42,8 @@ public class Notification {
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     @ApiModelProperty(value = "알림 시간")
     private LocalDateTime notificationTime;
+
+    public void toggleStatus(){
+        this.checked = !this.checked;
+    }
 }
