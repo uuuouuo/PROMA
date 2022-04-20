@@ -54,9 +54,10 @@ const AddButton = styled.button`
 interface TeamType {
   teamNo: number;
   teamName: string;
+  projectNo: number;
 }
 
-const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
+const Team = ({ team, sprintName }: { team: TeamType; sprintName: string; }) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
@@ -76,7 +77,7 @@ const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
         <Droppable droppableId={droppableId}>
           {(provided) => (
             <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
-              <Link href={`/project/team/${team.teamNo}`}>
+              <Link href={`/project/${team.projectNo}/team/${team.teamNo}`}>
                 <TeamName>
                   <h2>{team.teamName}</h2>
                 </TeamName>

@@ -13,7 +13,7 @@ const SideBarContainer = styled.div`
   z-index: -1;
 `;
 
-const Title = styled.a`
+const Title = styled.div`
     font-size: 25px;
     font-weight:
     width: 90%;

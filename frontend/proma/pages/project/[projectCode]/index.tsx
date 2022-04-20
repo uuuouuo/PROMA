@@ -1,6 +1,6 @@
 //프로젝트 워크스페이스
 import styled from "styled-components";
-import Sprint from "../../components/project/Sprint";
+import Sprint from "../../../components/project/Sprint";
 import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 

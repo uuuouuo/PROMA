@@ -8,18 +8,22 @@ const teamData = [
   {
     teamNo: 0,
     teamName: "frontend",
+    projectNo: 10,
   },
   {
     teamNo: 1,
     teamName: "backend",
+    projectNo: 10,
   },
   {
     teamNo: 2,
     teamName: "db",
+    projectNo: 10,
   },
   {
     teamNo: 3,
     teamName: "deploy",
+    projectNo: 10,
   },
 ];
 
