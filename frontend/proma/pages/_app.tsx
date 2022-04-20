@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import wrapper from "../store/configureStore";
 import styled, {
   createGlobalStyle,
@@ -11,6 +11,8 @@ import NavBar from "../components/common/NavBar";
 import SideBar from "../components/common/SideBar";
 import Footer from "../components/common/Footer";
 import Head from "next/head";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -42,9 +44,27 @@ const MainComponent = styled.div`
 
 const Button = styled.button``;
 
+let sock = new SockJS("http://j6c103.p.ssafy.io:8081/ws-stomp");
+let client = Stomp.over(sock);
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useState(true);
   const onToggleDarkMode = () => setDarkMode((cur) => !cur);
+
+  useEffect(() => {
+    client.connect({}, () => {
+      //   client.send(
+      //     "http://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+      //   );
+      // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
+      client.subscribe("/queue/notification/U001", (res) => {
+        const messagedto = JSON.parse(res.body);
+        console.log(messagedto);
+        alert(messagedto.message);
+      });
+    });
+    // return () => client.disconnect();
+  }, []);
 
   return (
     <>
