@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User,String> {
 
   Optional<User> getUserByNickname(String nickname);
+  Optional<User> findByNo(String userNo);
 
 }
