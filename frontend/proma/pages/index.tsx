@@ -1,5 +1,5 @@
-import EpicPage from "../components/epic/EpicPage";
-import IssuePage from "../components/issue/IssuePage";
+import EpicPage from "./epic/EpicPage";
+import IssuePage from "./issue/IssuePage";
 
 const Home = () => {
   return (
