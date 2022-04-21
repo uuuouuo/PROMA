@@ -1,9 +1,10 @@
 package com.ssafy.proma.controller;
 
 
-import com.ssafy.proma.model.dto.chat.GroupChatRoomDto.GroupChatRoomRes;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomReq;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomRes;
+import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto.ProjectChatRoomRes;
+import com.ssafy.proma.model.dto.chat.TeamChatRoomDto.TeamChatRoomRes;
 import com.ssafy.proma.service.chat.ChatService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,17 @@ public class ChatRoomController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @ApiOperation(value = "그룹 채팅 생성 및 조회", notes = "해당 팀과 그룹 채팅방 생성 및 조회")
-  @GetMapping("/room/group/{teamNo}")
-  public ResponseEntity<GroupChatRoomRes> getGroupChatRoom(@PathVariable("teamNo") Integer teamNo) {
-    GroupChatRoomRes response = chatService.getGroupChatRoom(teamNo);
+  @ApiOperation(value = "팀 단위 그룹 채팅 생성 및 조회", notes = "해당 팀 그룹 채팅방 생성 및 조회")
+  @GetMapping("/room/team/{teamNo}")
+  public ResponseEntity<TeamChatRoomRes> getTeamChatRoom(@PathVariable Integer teamNo) {
+    TeamChatRoomRes response = chatService.getTeamChatRoom(teamNo);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "프로젝트 단위 그룹 채팅 생성 및 조회", notes = "해당 프로젝트 그룹 채팅방 생성 및 조회")
+  @GetMapping("/room/project/{projectNo}")
+  public ResponseEntity<ProjectChatRoomRes> getProjectChatRoom(@PathVariable String projectNo) {
+    ProjectChatRoomRes response = chatService.getProjectChatRoom(projectNo);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

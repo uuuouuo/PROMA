@@ -23,19 +23,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "GroupChatMessage : 그룹 채팅 메세지 정보", description = "채팅 메세지 정보를 나타낸다.")
-public class GroupChatMessage {
+@ApiModel(value = "ProjectChatMessage : 프로젝트 단위 그룹 채팅 메세지 정보", description = "채팅 메세지 정보를 나타낸다.")
+public class ProjectChatMessage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "GROUP_CHAT_MESSAGE_NO")
-  @ApiModelProperty(value = "그룹 채팅 메세지 번호")
+  @Column(name = "PROJECT_CHAT_MESSAGE_NO")
+  @ApiModelProperty(value = "프로젝트 단위 그룹 채팅 메세지 번호")
   private Integer no;
 
   @ManyToOne(fetch = LAZY)
-  @JoinColumn(name="GROUP_ROOM_NO")
-  @ApiModelProperty(value = "그룹 채팅방 번호")
-  private GroupChatRoom chatRoom;
+  @JoinColumn(name="PROJECT_ROOM_NO")
+  @ApiModelProperty(value = "프로젝트 단위 그룹 채팅방 번호")
+  private ProjectChatRoom chatRoom;
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name="USER_NO")
@@ -45,7 +45,7 @@ public class GroupChatMessage {
   @ApiModelProperty(value = "채팅 내용")
   private String content;
 
-  @ApiModelProperty(value = "팀 번호")
+  @ApiModelProperty(value = "전송 시간")
   private LocalDateTime time;
 
 }

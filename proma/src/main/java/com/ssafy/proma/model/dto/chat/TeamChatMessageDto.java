@@ -1,17 +1,17 @@
 package com.ssafy.proma.model.dto.chat;
 
-import com.ssafy.proma.model.entity.chat.GroupChatMessage;
-import com.ssafy.proma.model.entity.chat.GroupChatRoom;
+import com.ssafy.proma.model.entity.chat.TeamChatMessage;
+import com.ssafy.proma.model.entity.chat.TeamChatRoom;
 import com.ssafy.proma.model.entity.user.User;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class GroupChatMessageDto {
+public class TeamChatMessageDto {
 
-  public static GroupChatMessage toEntity(GroupChatRoom chatRoom, User user, String content,
+  public static TeamChatMessage toEntity(TeamChatRoom chatRoom, User user, String content,
       LocalDateTime time) {
-    return GroupChatMessage.builder()
+    return TeamChatMessage.builder()
         .chatRoom(chatRoom)
         .user(user)
         .content(content)
@@ -20,14 +20,14 @@ public class GroupChatMessageDto {
   }
   @Getter
   @NoArgsConstructor
-  public static class GroupChatMessageReq {
+  public static class TeamChatMessageReq {
 
     private Integer roomNo;
     private String pubNo;
     private String content;
     private LocalDateTime time;
 
-    public GroupChatMessageReq(Integer roomNo, String pubNo, String content, LocalDateTime time) {
+    public TeamChatMessageReq(Integer roomNo, String pubNo, String content, LocalDateTime time) {
       this.roomNo = roomNo;
       this.pubNo = pubNo;
       this.content = content;
@@ -36,14 +36,14 @@ public class GroupChatMessageDto {
   }
 
   @Getter
-  public static class GroupChatMessageRes {
+  public static class TeamChatMessageRes {
 
     private String pubNo;
     private String nickname;
     private String content;
     private LocalDateTime time;
 
-    public GroupChatMessageRes(GroupChatMessage chatMessage) {
+    public TeamChatMessageRes(TeamChatMessage chatMessage) {
       this.pubNo = chatMessage.getUser().getNo();
       this.nickname = chatMessage.getUser().getNickname();
       this.content = chatMessage.getContent();
