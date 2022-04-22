@@ -1,13 +1,18 @@
 package com.ssafy.proma.service.notification;
 
+import com.ssafy.proma.model.dto.issue.ResIssueDto.TopicIssueDto;
 import com.ssafy.proma.model.dto.notification.NotificationDto;
+import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.notification.Notification;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.sprint.Sprint;
+import com.ssafy.proma.model.entity.topic.Topic;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.Notification.NotificationRepository;
+import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
+import com.ssafy.proma.service.topic.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -28,6 +33,8 @@ public class NotificationServiceImpl implements NotificationService{
     private final SimpMessageSendingOperations messagingTemplate;
     private final NotificationRepository notificationRepository;
     private final UserProjectRepository userProjectRepository;
+    private final IssueRepository issueRepository;
+    private final TopicService topicService;
 
     @Override
     public Map<String, Object> getNotificationList(String userNo) throws Exception {
@@ -67,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService{
 
         //SprintService에서 notificationService.sendSprintNotification(sprint);
 
-        String message = " 스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.isStatus() ? "시작" : "종료") + "되었습니다.";
+        String message = "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.isStatus() ? "시작" : "종료") + "되었습니다.";
         log.debug(message);
 
         List<UserProject> userProjectList = userProjectRepository.findByProject(sprint.getProject());
@@ -82,6 +89,25 @@ public class NotificationServiceImpl implements NotificationService{
             messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notification);
 
             log.debug(user.getNickname() + " 알림 전송 완료");
+        }
+    }
+
+    public void sendTopicNotification(Issue issue) {
+
+        Topic topic = issueRepository.findById(issue.getNo()).get().getTopic();
+
+        String message = "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
+        log.debug(message);
+
+        List<Issue> issueList = issueRepository.getAllByTopic(topic).get();
+        for(Issue relatedIssue : issueList){
+
+            notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());
+            NotificationDto notification = new NotificationDto();
+            notification.setMessage(message);
+            messagingTemplate.convertAndSend("/queue/notification/" + relatedIssue.getUser().getNo(), notification);
+
+            log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
         }
     }
 }
