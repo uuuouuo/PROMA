@@ -8,23 +8,20 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 
 const SideBarContainer = styled.div`
   width: 200px;
-  height: 90vh;
+  height: 85vh;
   padding: 30px;
   background-color: #c4c4c4;
   position: relative;
-  z-index: -1;
 `;
 
 const Title = styled.div`
-    font-size: 25px;
-    font-weight:
-    width: 90%;
-    background: white;
-    padding-left: 5%;
-    padding-right: 5%;
-    border-bottom: 3px solid black;
-    display: flex;
-    place-items: center;
+  font-size: 25px;
+  width: 90%;
+  background: white;
+  padding-left: 5%;
+  padding-right: 5%;
+  border-bottom: 3px solid black;
+  display: flex;
 `;
 
 const Team = styled.div`
@@ -136,7 +133,7 @@ const SideBar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [state, setState] = React.useState({
-    isPaneOpen: false
+    isPaneOpen: false,
   });
 
   return (
@@ -146,7 +143,7 @@ const SideBar = () => {
           <Link href="/project/0">
             <a>Proma</a>
           </Link>
-          <ChatButton>chat</ChatButton> 
+          <ChatButton>chat</ChatButton>
           <a onClick={handleOpen}>+</a>
         </Title>
 
@@ -168,7 +165,9 @@ const SideBar = () => {
             return (
               <TeamDetail key={idx}>
                 <TeamName>{element.team}</TeamName>{" "}
-                <ChatButton onClick={() => setState({ isPaneOpen: true })}>chat</ChatButton>
+                <ChatButton onClick={() => setState({ isPaneOpen: true })}>
+                  chat
+                </ChatButton>
               </TeamDetail>
             );
           })}
@@ -183,8 +182,6 @@ const SideBar = () => {
                 />{" "}
                 <MemberName>{element.name}</MemberName>
               </Member>
-
-              
             );
           })}
         </Team>
@@ -194,26 +191,48 @@ const SideBar = () => {
           </Link>
         </AddTeam>
 
-      <button onClick={() => setState({ isPaneOpen: true })}>
-        Click me to open right pane!
-      </button>
-      <SlidingPane
+        <button onClick={() => setState({ isPaneOpen: true })}>
+          Click me to open right pane!
+        </button>
+        <SlidingPane
           className="some-custom-class"
           overlayClassName="some-custom-overlay-class"
           isOpen={state.isPaneOpen}
-          title="Hey, it is optional pane title.  I can be React component too."
-          subtitle="Optional subtitle."
+          title="DB"
+          subtitle="DB 단체회의방입니다."
           width="800px"
           onRequestClose={() => {
             // triggered on "<" on left top click or on outside click
             setState({ isPaneOpen: false });
           }}
         >
-          <div>And I am pane content. BTW, what rocks?</div>
+          <div>
+            {dummy2.map((element, idx) => {
+              if (element.name !== "박주한")
+                return (
+                  <div style={{ display: "flex", marginBottom: "4%" }} key={idx}>
+                    <img style={{ width: "8%", height: "60px", borderRadius: "50%", marginRight: "2%" }} src={`${element.image}`} />
+                    <div style={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
+                      <a style={{ fontWeight: "bold" }}>{element.name}</a>{" "}
+                      <a onClick={() => setState({ isPaneOpen: true })}>내용 작성했습니다.</a>
+                    </div>
+                  </div>
+                );
+              else
+                return (
+                  <div style={{ display: "flex", marginBottom: "4%", justifyContent: "right" }} key={idx}>
+                    <img style={{ width: "8%", height: "60px", borderRadius: "50%", marginRight: "2%" }} src={`${element.image}`} />
+                    <div style={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
+                      <a style={{ fontWeight: "bold" }}>{element.name}</a>{" "}
+                      <a onClick={() => setState({ isPaneOpen: true })}>내용 작성했습니다.</a>
+                    </div>
+                  </div>
+                );
+            })}
+          </div>
           <br />
-          <img src="img.png" />
         </SlidingPane>
-        </SideBarContainer>
+      </SideBarContainer>
     </>
   );
 };

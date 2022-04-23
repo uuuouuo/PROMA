@@ -22,7 +22,7 @@ const Ex = styled.div`
   width: 100px;
   height: 100px;
   /* background-color: #c1c6db; */
-  background-color: #f1f0ec;
+  background-color: #C1C6DB;
   margin: 30px;
 `;
 

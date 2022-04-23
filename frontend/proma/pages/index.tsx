@@ -1,9 +1,14 @@
 import { useToasts } from "react-toast-notifications";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const FlexBox = styled.div`
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Box = styled.div`
+  color: white;
+  background-color: #6667AB;
 `;
 
 const Home = () => {
@@ -15,14 +20,16 @@ const Home = () => {
       <button
         onClick={() =>
           addToast(
-            <div>
+            <Box>
               <p>Epic 'design'</p>
               <p>Issue 'style' 종료</p>
-            </div>,
-            { appearance: "info" }
+            </Box>
+            // { appearance: "info" }
           )
         }
-      >알림 보기</button>
+      >
+        알림 보기
+      </button>
     </FlexBox>
   );
 };
