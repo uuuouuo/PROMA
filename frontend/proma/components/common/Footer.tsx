@@ -1,15 +1,5 @@
 import styled from "styled-components";
-
-interface ThemeType {
-  theme: {
-    bgColor: string;
-    textColor: string;
-    mainColor: string;
-    subPurpleColor: string;
-    sunBeigeColor: string;
-    warnColor: string;
-  };
-}
+import { ThemeType } from "../../interfaces/style";
 
 //styled-components
 const FooterBox = styled.div`

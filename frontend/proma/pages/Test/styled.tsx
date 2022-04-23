@@ -14,7 +14,7 @@ const Box = styled.div`
 const ExBox = styled.div`
   width: 300px;
   height: 300px;
-  background-color: #6667AB;
+  background-color: #6667ab;
   /* background-color: #79607d; */
   margin: 30px;
 `;
@@ -22,7 +22,7 @@ const Ex = styled.div`
   width: 100px;
   height: 100px;
   /* background-color: #c1c6db; */
-  background-color: #C1C6DB;
+  background-color: #c1c6db;
   margin: 30px;
 `;
 
@@ -83,7 +83,7 @@ const Styled = () => {
   return (
     <DarkModeBox>
       <ExBox>
-          <Ex>sd</Ex>
+        <Ex>sd</Ex>
       </ExBox>
       <h1>extending & prop</h1>
       <FlexBox>

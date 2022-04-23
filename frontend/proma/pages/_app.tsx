@@ -8,7 +8,7 @@ import styled, {
   DefaultTheme,
 } from "styled-components";
 import NavBar from "../components/common/NavBar";
-import SideBar from "../components/common/SideBar";
+import SideBar from "../components/common/SideBar/SideBar";
 import Footer from "../components/common/Footer";
 import Head from "next/head";
 import SockJS from "sockjs-client";
@@ -31,6 +31,8 @@ const darkTheme: DefaultTheme = {
   subPurpleColor: "#c1c6db",
   sunBeigeColor: "#F1F0EC",
   warnColor: "#D0B9C7",
+  elementBgColor: "#6667AB",
+  elementTextColor: "#ffffff",
 };
 
 const lightTheme: DefaultTheme = {
@@ -40,6 +42,8 @@ const lightTheme: DefaultTheme = {
   subPurpleColor: "#c1c6db",
   sunBeigeColor: "#F1F0EC",
   warnColor: "#D0B9C7",
+  elementBgColor: "#ffffff",
+  elementTextColor: "#6667AB",
 };
 
 const Container = styled.div`

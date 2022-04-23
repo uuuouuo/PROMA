@@ -6,17 +6,7 @@ import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import Image from "next/image";
-
-interface ThemeType {
-  theme: {
-    bgColor: string;
-    textColor: string;
-    mainColor: string;
-    subPurpleColor: string;
-    sunBeigeColor: string;
-    warnColor: string;
-  };
-}
+import { ThemeType } from "../../interfaces/style";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
