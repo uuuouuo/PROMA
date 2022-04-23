@@ -32,7 +32,7 @@ const TeamBox = styled.div`
 
 const TeamName = styled.a`
   color: white;
-  &: hover {
+  &:hover {
     cursor: pointer;
     color: black;
   }
