@@ -25,13 +25,21 @@ const GlobalStyle = createGlobalStyle`
     `;
 
 const darkTheme: DefaultTheme = {
-  bgColor: "#1b2134",
-  textColor: "white",
+  bgColor: "#3e3f42",
+  textColor: "#ffffff",
+  mainColor: "#6667AB",
+  subPurpleColor: "#c1c6db",
+  sunBeigeColor: "#F1F0EC",
+  warnColor: "#D0B9C7",
 };
 
 const lightTheme: DefaultTheme = {
-  bgColor: "white",
-  textColor: "#1b2134",
+  bgColor: "#ffffff",
+  textColor: "#3e3f42",
+  mainColor: "#6667AB",
+  subPurpleColor: "#c1c6db",
+  sunBeigeColor: "#F1F0EC",
+  warnColor: "#D0B9C7",
 };
 
 const Container = styled.div`
@@ -53,6 +61,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const onToggleDarkMode = () => setDarkMode((cur) => !cur);
 
   useEffect(() => {
+    //알림 연결 로직
     client.connect({}, () => {
       //   client.send(
       //     "http://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"

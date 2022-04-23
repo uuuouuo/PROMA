@@ -7,13 +7,24 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import Image from "next/image";
 
+interface ThemeType {
+  theme: {
+    bgColor: string;
+    textColor: string;
+    mainColor: string;
+    subPurpleColor: string;
+    sunBeigeColor: string;
+    warnColor: string;
+  };
+}
+
 const NavBarContainer = styled.div`
+  background-color: ${(props: ThemeType) => props.theme.mainColor};
   height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
-  background-color: #6667ab;
   color: white;
 `;
 
