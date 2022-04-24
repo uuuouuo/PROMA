@@ -1,9 +1,10 @@
 package com.ssafy.proma.controller;
 
-import com.ssafy.proma.model.dto.issue.ResIssueDto.TopicIssueDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicUpdateDto;
 import com.ssafy.proma.model.dto.topic.ResTopicDto.TopicDetailDto;
+import com.ssafy.proma.model.dto.topic.ResTopicDto.TopicNoNameDto;
 import com.ssafy.proma.service.topic.TopicService;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -50,9 +51,9 @@ public class TopicController {
   // 토픽에 포함된 모든 스토리 조회
   @ApiOperation(value = "토픽에 포함된 스토리 조회", notes = "토픽에 포함된 스토리를 조회한다.")
   @GetMapping("/{topicNo}")
-  public ResponseEntity<List<TopicIssueDto>> getTopicIssue(@PathVariable Integer topicNo){
+  public ResponseEntity<List<IssueNoTitleDto>> getTopicIssue(@PathVariable Integer topicNo){
 
-    List<TopicIssueDto> issueList = topicService.getIssueList(topicNo);
+    List<IssueNoTitleDto> issueList = topicService.getIssueList(topicNo);
 
     return new ResponseEntity<>(issueList, HttpStatus.OK);
 
@@ -70,11 +71,11 @@ public class TopicController {
   }
 
   // 프로젝트에 포한된 모든 토픽
-  @ApiOperation(value = "프로젝트의 모든 토픽 조회", notes = "해당 프로젝트의 모든 토픽을 조회한다. 토픽 번호와 이름, 설명을 반환한다.")
+  @ApiOperation(value = "프로젝트의 모든 토픽 조회", notes = "해당 프로젝트의 모든 토픽을 조회한다. 토픽 번호와 이름을 반환한다.")
   @GetMapping("/list/{projectNo}")
-  public ResponseEntity<List<String>> getTopicList(@PathVariable String projectNo){
+  public ResponseEntity<List<TopicNoNameDto>> getTopicList(@PathVariable String projectNo){
 
-    List<String> topicNameList = topicService.getTopicList(projectNo);
+    List<TopicNoNameDto> topicNameList = topicService.getTopicList(projectNo);
 
     return new ResponseEntity<>(topicNameList, HttpStatus.OK);
 
