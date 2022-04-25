@@ -2,7 +2,6 @@ import * as React from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import Image from "next/image";
@@ -92,15 +91,7 @@ const style2 = {
   paddingBottom: "80px",
 };
 
-const Login = styled.div`
-  height: 50px;
-  justify-content: center;
-  background: lightgrey;
-  font-weight: bold;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-`;
+
 
 const Username = styled.div`
   width: 40%;
@@ -113,6 +104,35 @@ const Username = styled.div`
   align-items: center;
   justify-content: center;
   font-weight: bold;
+`;
+
+const ModalBox = styled(Modal)`
+  .MuiBox-root {
+    padding: 0px;
+  }
+
+`;
+
+const Header = styled.div`
+  height: 50px;
+  padding: 0px 0px 0px 10px;
+  background: #6667AB;
+  color: white;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  text-decoration: underline;
+`;
+
+const Login = styled.div`
+  height: 50px;
+  justify-content: center;
+  background: lightgrey;
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  margin: 32px 32px 32px 32px;
+  align-items: center;
 `;
 
 const NavBar = ({
@@ -128,6 +148,7 @@ const NavBar = ({
   const handleClose = () => setOpen(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
+
   const [name, setName] = React.useState("");
   const [image, setImage] = React.useState("");
 
@@ -144,7 +165,7 @@ const NavBar = ({
           {name == "" ? (
             <MenuToggleBox>
               <MenuButton onClick={handleOpen}>Login</MenuButton>
-              <MenuButton onClick={handleOpen}>Join</MenuButton>
+              <MenuButton >Join</MenuButton>
             </MenuToggleBox>
           ) : (
             <MenuToggleBox>
@@ -160,13 +181,14 @@ const NavBar = ({
         </MenuBox>
 
         {/* 로그인 모달 */}
-        <Modal
+        <ModalBox
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
+            <Header>Login</Header>
             <Login
               onClick={() => {
                 setName("박주한");
@@ -179,7 +201,7 @@ const NavBar = ({
               Github
             </Login>
           </Box>
-        </Modal>
+        </ModalBox>
 
         {/* 마이페이지 모달 */}
         <Modal
