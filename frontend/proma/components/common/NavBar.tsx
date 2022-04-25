@@ -2,7 +2,6 @@ import * as React from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import Image from "next/image";
@@ -49,13 +48,6 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const Profileimg = styled.div`
-  text-align: -webkit-center;
-`;
-
-const Profile = styled.div`
-  align-self: center;
-`;
 
 {
   /* 로그인 모달 */
@@ -92,6 +84,24 @@ const style2 = {
   paddingBottom: "80px",
 };
 
+const ModalBox = styled(Modal)`
+  .MuiBox-root {
+    padding: 0px;
+    border: 0px;
+  }
+`;
+
+const Header = styled.div`
+  height: 50px;
+  padding: 0px 0px 0px 10px;
+  background: #6667AB;
+  color: white;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  text-decoration: underline;
+`;
+
 const Login = styled.div`
   height: 50px;
   justify-content: center;
@@ -99,7 +109,17 @@ const Login = styled.div`
   font-weight: bold;
   font-size: 20px;
   display: flex;
+  margin: 32px 32px 32px 32px;
   align-items: center;
+`;
+
+const Profile = styled.div`
+  align-self: center;
+  margin: 32px 32px 0px 32px;
+`;
+
+const Profileimg = styled.div`
+  text-align: -webkit-center;
 `;
 
 const Username = styled.div`
@@ -113,6 +133,7 @@ const Username = styled.div`
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  margin-bottom: 32px;
 `;
 
 const NavBar = ({
@@ -121,13 +142,15 @@ const NavBar = ({
 }: {
   toggleDarkMode: any;
   darkMode: boolean;
-}) => {
+  }) => {
+  // 1은 로그인 관련, 2는 개인 프로필 관련 선언들
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
+
   const [name, setName] = React.useState("");
   const [image, setImage] = React.useState("");
 
@@ -144,7 +167,7 @@ const NavBar = ({
           {name == "" ? (
             <MenuToggleBox>
               <MenuButton onClick={handleOpen}>Login</MenuButton>
-              <MenuButton onClick={handleOpen}>Join</MenuButton>
+              <MenuButton onClick={handleOpen2}>Join</MenuButton>
             </MenuToggleBox>
           ) : (
             <MenuToggleBox>
@@ -160,13 +183,14 @@ const NavBar = ({
         </MenuBox>
 
         {/* 로그인 모달 */}
-        <Modal
+        <ModalBox
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
+            <Header>Login</Header>
             <Login
               onClick={() => {
                 setName("박주한");
@@ -179,16 +203,17 @@ const NavBar = ({
               Github
             </Login>
           </Box>
-        </Modal>
+        </ModalBox>
 
         {/* 마이페이지 모달 */}
-        <Modal
+        <ModalBox
           open={open2}
           onClose={handleClose2}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style2}>
+          <Header>Profile</Header>
             <Profile>
               <Profileimg>
                 {image == "" ? (
@@ -215,7 +240,7 @@ const NavBar = ({
             </Profile>
             <Username>{name}</Username>
           </Box>
-        </Modal>
+        </ModalBox>
       </NavBarContainer>
     </>
   );
