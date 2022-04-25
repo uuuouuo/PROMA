@@ -53,7 +53,7 @@ const WarnButton = styled(Button)`
 `;
 const WorkSpace = styled.div`
   width: inherit;
-  padding: 10px 30px;
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   background-color: ${(props: ThemeType) => props.theme.bgColor};

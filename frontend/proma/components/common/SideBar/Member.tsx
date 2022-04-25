@@ -33,7 +33,7 @@ const ChatButton = styled.button`
   font-size: 10px;
   padding: 2px 5px;
   margin-right: 5px;
-  width: 38px;
+  width: 35px;
   &:hover {
     cursor: pointer;
   }

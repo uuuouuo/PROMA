@@ -12,7 +12,7 @@ const ProjectContainer = styled.div`
 `;
 
 const Header = styled.div`
-  height: 50px;
+  height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,7 +21,7 @@ const Header = styled.div`
   border-radius: 3px;
   padding: 0 10px 0 15px;
   a {
-    font-size: 30px;
+    font-size: 25px;
     font-weight: 600;
     text-decoration: none;
     color: ${(props: ThemeType) => props.theme.elementTextColor};
@@ -37,9 +37,10 @@ const ChatButton = styled.button`
   border-radius: 3px;
   background-color: white;
   color: ${(props: ThemeType) => props.theme.mainColor};
-  font-size: 15px;
+  font-size: 13px;
   padding: 2px 5px;
   margin-right: 5px;
+  width: 43px;
   &:hover {
     cursor: pointer;
   }

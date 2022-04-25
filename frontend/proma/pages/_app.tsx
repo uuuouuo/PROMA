@@ -57,7 +57,8 @@ const MainComponent = styled.div`
   height: 92%;
 `;
 
-let sock = new SockJS("http://j6c103.p.ssafy.io:8081/ws-stomp");
+// let sock = new SockJS("http://k6c107.p.ssafy.io:8080/ws-stomp");
+let sock = new SockJS("http://k6c107.p.ssafy.io:8081/ws-stomp");
 let client = Stomp.over(sock);
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -30,7 +30,7 @@ const teamData = [
 
 //styled-components
 const Title = styled.h2`
-  color: ${(props: ThemeType) => props.theme.textColor};
+  color: black;
   font-weight: 600;
 `;
 
@@ -39,7 +39,6 @@ const SprintBox = styled.div`
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 10px 30px 20px 30px;
-  color: ${(props: ThemeType) => props.theme.textColor};
 `;
 const TeamBox = styled.div`
   display: grid;

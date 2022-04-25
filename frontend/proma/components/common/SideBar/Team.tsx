@@ -23,7 +23,7 @@ const Header = styled.div`
   padding: 0 10px;
   margin-bottom: 10px;
   a {
-    font-size: 24px;
+    font-size: 20px;
     text-decoration: none;
     color: black;
   }
@@ -38,10 +38,10 @@ const ChatJoinButton = styled.button`
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.elementBgColor};
   color: ${(props: ThemeType) => props.theme.elementTextColor};
-  font-size: 15px;
+  font-size: 12px;
   padding: 2px 5px;
   margin-right: 5px;
-  width: 45px;
+  width: 40px;
   &:hover {
     cursor: pointer;
   }

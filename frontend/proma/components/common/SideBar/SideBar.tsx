@@ -19,7 +19,7 @@ const SideBarContainer = styled.div`
   overflow-y: scroll;
 `;
 
-const H3 = styled.h3`
+const H4 = styled.h4`
   color: ${(props: ThemeType) => props.theme.mainColor};
   margin-left: 20px;
 `;
@@ -61,7 +61,7 @@ const projects = ["one", "two", "three"];
 const SideBar = () => {
   return (
     <SideBarContainer>
-      <H3>My Projects</H3>
+      <H4>My Projects</H4>
       <ProjectsContainer>
         {projects.map((project) => (
           <Project projectName={project}></Project>

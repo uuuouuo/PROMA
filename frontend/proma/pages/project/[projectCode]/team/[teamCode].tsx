@@ -2,13 +2,19 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { FaPen, FaCheck } from "react-icons/fa";
+import { ThemeType } from "../../../../interfaces/style";
+import Image from "next/image";
 
 //team info get api 필요
 
 //styled-components
 const TeamSpaceContainer = styled.div`
   width: 100%;
-  padding: 30px;
+  padding: 10px 20px;
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
+  color: ${(props: ThemeType) => props.theme.textColor};
+  position: relative;
 `;
 
 const FlexBox = styled.div`
@@ -26,10 +32,72 @@ const FlexBox = styled.div`
     font-size: 20px;
   }
 `;
-const TopBar = styled.div`
-  display: flex;
+const TopBar = styled(FlexBox)`
+  justify-content: flex-start;
+  height: 70px;
+  * {
+    font-size: 25px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  h1 {
+    margin-right: 15px;
+    font-size: 30px;
+    &:hover {
+      cursor: text;
+    }
+  }
+  input {
+    width: auto;
+    margin: 25px 15px 25px 0;
+    font-size: 20px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    opacity: 0.7;
+    &:focus {
+      opacity: 1;
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+    &:hover {
+      cursor: text;
+    }
+  }
+`;
+const SubTopBar = styled(FlexBox)`
   justify-content: space-between;
-  align-items: center;
+  * {
+    font-size: 15px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  h2 {
+    margin-left: 3px;
+    margin-right: 20px;
+    font-size: 20px;
+    font-weight: 500;
+    &:hover {
+      cursor: text;
+    }
+  }
+  input {
+    width: auto;
+    margin: 25px 15px 25px 0;
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    opacity: 0.7;
+    &:focus {
+      opacity: 1;
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+    &:hover {
+      cursor: text;
+    }
+  }
 `;
 const ButtonBox = styled(FlexBox)`
   justify-content: space-between;
@@ -38,51 +106,67 @@ const ButtonBox = styled(FlexBox)`
     text-decoration: underline;
     border: none;
     font-size: 15px;
+    color: ${(props: ThemeType) => props.theme.textColor};
   }
 `;
 const WorkSpace = styled.div`
-  height: 70vh;
-  background-color: white;
+  height: 73vh;
+  background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
+  color: ${(props: ThemeType) => props.theme.textColor};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  padding: 10px;
+  border-radius: 3px;
 `;
 const StatusBox = styled.div`
   border-radius: 3px;
-  background-color: #bfb9c7;
-  padding: 10px 30px;
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
+  color: ${(props: ThemeType) => props.theme.textColor};
+  padding: 0px 20px;
   display: flex;
   flex-direction: column;
-  height: inherit;
+  height: 73vh;
+  h2 {
+    font-weight: 500;
+  }
 `;
 const IssueContainer = styled(StatusBox)`
   padding: 0;
   height: inherit;
   overflow-y: scroll;
 `;
-const IssueBox = styled.div`
-  border-radius: 3px;
-  background-color: white;
-  padding: 0px 15px;
-  margin-bottom: 7px;
+const IssueSubBox = styled.div`
   display: flex;
   align-items: center;
-  position: relative;
-  font-weight: 600;
-  p {
-    margin-right: 10px;
+`;
+const IssueBox = styled.div`
+  border-radius: 3px;
+  background-color: ${(props: ThemeType) => props.theme.subBeigeColor};
+  color: black;
+  padding: 0px 15px;
+  margin-bottom: 7px;
+  font-weight: 400;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  ${IssueSubBox} {
+    &:first-child {
+      display: grid;
+      grid-template-columns: 1fr 5fr;
+    }
     &:last-child {
-      position: absolute;
-      right: 10px;
+      justify-content: flex-end;
     }
   }
 `;
 const WarnButtonBox = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 30px;
+  position: absolute;
+  bottom: 10px;
+  right: 25px;
   button {
-    color: red;
+    color: ${(props: ThemeType) => props.theme.warnColor};
     background-color: inherit;
     border: none;
     &:hover {
@@ -90,15 +174,15 @@ const WarnButtonBox = styled.div`
     }
   }
 `;
+const ImageBox = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 5px;
+`;
 
 //더미 데이터
-const teamname = "Team Name";
-
-const teamData = {
-  teamNo: 0,
-  teamName: "frontend",
-  projectNo: 10,
-};
 const issueData = [
   {
     issueNo: 0,
@@ -123,24 +207,16 @@ const TeamSpace = () => {
 
   const router = useRouter();
 
-  const [isUpdated, setIsUpdated] = useState(false);
-  const [teamName, setTeamName] = useState(teamname);
-  const [projectCode, setProjectCode] = useState<string>("");
-  const [teamCode, setTeamCode] = useState<string>("");
-
-  const toggleUpdateStatus = () => setIsUpdated((cur) => !cur);
-  const onChangeTeamName = (e: any) => {
-    setTeamName(e.target.value);
-  };
+  const [updateTeamName, setUpdateTeamName] = useState<boolean>(false);
+  const [teamName, setTeamName] = useState<string>("Team Name");
+  const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
+  const [sprintName, setSprintName] = useState<string>("Sprint Name");
 
   useEffect(() => {
     if (!router.isReady) return;
 
     const project_code = router.query.projectCode;
     const team_code = router.query.teamCode;
-
-    setProjectCode(project_code as string);
-    setTeamCode(team_code as string);
   }, [router.isReady]);
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
@@ -155,24 +231,50 @@ const TeamSpace = () => {
 
   return (
     <TeamSpaceContainer>
-      {isUpdated ? (
-        <FlexBox>
-          <input type="text" value={teamName} onChange={onChangeTeamName} />
-          <button onClick={toggleUpdateStatus}>완료</button>
-        </FlexBox>
-      ) : (
-        <FlexBox>
-          <h1>{teamName}</h1>
-          <button onClick={toggleUpdateStatus}>수정</button>
-        </FlexBox>
-      )}
       <TopBar>
-        <h2>현재 스프린트</h2>
+        {updateTeamName ? (
+          <FlexBox>
+            <input
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              placeholder="Type Team Name"
+              required
+              autoFocus
+            />
+            <FaCheck onClick={() => setUpdateTeamName((cur) => !cur)} />
+          </FlexBox>
+        ) : (
+          <FlexBox>
+            <h1>{teamName}</h1>
+            <FaPen onClick={() => setUpdateTeamName((cur) => !cur)} />
+          </FlexBox>
+        )}
+      </TopBar>
+
+      <SubTopBar>
+        {updateSprintName ? (
+          <FlexBox>
+            <input
+              value={sprintName}
+              onChange={(e) => setSprintName(e.target.value)}
+              placeholder="Type Sprint Name"
+              required
+              autoFocus
+            />
+            <FaCheck onClick={() => setUpdateSprintName((cur) => !cur)} />
+          </FlexBox>
+        ) : (
+          <FlexBox>
+            <h2>{sprintName}</h2>
+            <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
+          </FlexBox>
+        )}
         <ButtonBox>
           <button>Only My Issue</button>
           <button onClick={addNewIssue}>+ Add Issue</button>
         </ButtonBox>
-      </TopBar>
+      </SubTopBar>
+
       {isReady ? (
         <DragDropContext onDragEnd={onDragEnd}>
           <WorkSpace>
@@ -193,9 +295,22 @@ const TeamSpace = () => {
                             {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
                             {...provided.draggableProps} //드래그 되는 영역
                           >
-                            <p>이슈번호: {issue.issueNo}</p>
-                            <p>제목: {issue.issueTitle}</p>
-                            <p>담당자: {issue.assignee}</p>
+                            <IssueSubBox>
+                              <p className="issue_number">
+                                No. {issue.issueNo}
+                              </p>
+                              <p>{issue.issueTitle}</p>
+                            </IssueSubBox>
+                            <IssueSubBox>
+                              <ImageBox>
+                                <Image
+                                  src="/profileimg.png"
+                                  width={20}
+                                  height={20}
+                                />
+                              </ImageBox>
+                              <p>{issue.assignee}</p>
+                            </IssueSubBox>
                           </IssueBox>
                         )}
                       </Draggable>
@@ -222,9 +337,22 @@ const TeamSpace = () => {
                             {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
                             {...provided.draggableProps} //드래그 되는 영역
                           >
-                            <p>이슈번호: {issue.issueNo}</p>
-                            <p>제목: {issue.issueTitle}</p>
-                            <p>담당자: {issue.assignee}</p>
+                            <IssueSubBox>
+                              <p className="issue_number">
+                                No. {issue.issueNo}
+                              </p>
+                              <p>{issue.issueTitle}</p>
+                            </IssueSubBox>
+                            <IssueSubBox>
+                              <ImageBox>
+                                <Image
+                                  src="/profileimg.png"
+                                  width={20}
+                                  height={20}
+                                />
+                              </ImageBox>
+                              <p>{issue.assignee}</p>
+                            </IssueSubBox>
                           </IssueBox>
                         )}
                       </Draggable>
@@ -251,9 +379,22 @@ const TeamSpace = () => {
                             {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
                             {...provided.draggableProps} //드래그 되는 영역
                           >
-                            <p>이슈번호: {issue.issueNo}</p>
-                            <p>제목: {issue.issueTitle}</p>
-                            <p>담당자: {issue.assignee}</p>
+                            <IssueSubBox>
+                              <p className="issue_number">
+                                No. {issue.issueNo}
+                              </p>
+                              <p>{issue.issueTitle}</p>
+                            </IssueSubBox>
+                            <IssueSubBox>
+                              <ImageBox>
+                                <Image
+                                  src="/profileimg.png"
+                                  width={20}
+                                  height={20}
+                                />
+                              </ImageBox>
+                              <p>{issue.assignee}</p>
+                            </IssueSubBox>
                           </IssueBox>
                         )}
                       </Draggable>
