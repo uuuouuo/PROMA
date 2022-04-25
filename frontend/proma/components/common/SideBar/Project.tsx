@@ -85,6 +85,7 @@ const TeamBox = styled.div`
 const ModalBox = styled(Modal)`
   .MuiBox-root {
     padding: 0px;
+    border: 0px;
   }
 `;
 
@@ -169,7 +170,7 @@ const Project = ({ projectName }: { projectName: string }) => {
         </TeamBox>
       ) : null}
 
-      {/* 로그인 모달 */}
+      {/* 팀 생성 모달 */}
       <ModalBox
           open={open}
           onClose={handleClose}

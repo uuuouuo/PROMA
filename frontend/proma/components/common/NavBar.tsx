@@ -84,12 +84,11 @@ const style2 = {
   paddingBottom: "80px",
 };
 
-
 const ModalBox = styled(Modal)`
   .MuiBox-root {
     padding: 0px;
+    border: 0px;
   }
-
 `;
 
 const Header = styled.div`
