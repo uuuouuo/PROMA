@@ -116,8 +116,9 @@ const Login = styled.div`
 
 const Profile = styled.div`
   align-self: center;
-  margin: 32px 32px 32px 32px;
+  margin: 32px 32px 0px 32px;
 `;
+
 const Profileimg = styled.div`
   text-align: -webkit-center;
 `;
