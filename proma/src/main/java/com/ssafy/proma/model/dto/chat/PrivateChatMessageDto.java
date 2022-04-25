@@ -11,11 +11,12 @@ public class PrivateChatMessageDto {
 
   public static PrivateChatMessage toEntity(PrivateChatRoom chatRoom, User user, String content,
       LocalDateTime time) {
+
     return PrivateChatMessage.builder()
         .chatRoom(chatRoom)
         .user(user)
         .content(content)
-        .time(time)
+        .time(LocalDateTime.now())
         .build();
   }
 

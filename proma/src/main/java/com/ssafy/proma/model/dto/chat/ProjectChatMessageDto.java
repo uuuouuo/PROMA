@@ -15,7 +15,7 @@ public class ProjectChatMessageDto {
         .chatRoom(chatRoom)
         .user(user)
         .content(content)
-        .time(time)
+        .time(LocalDateTime.now())
         .build();
   }
   @Getter
