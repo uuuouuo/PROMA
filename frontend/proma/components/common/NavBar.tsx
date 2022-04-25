@@ -143,7 +143,8 @@ const NavBar = ({
 }: {
   toggleDarkMode: any;
   darkMode: boolean;
-}) => {
+  }) => {
+  // 1은 로그인 관련, 2는 개인 프로필 관련 선언들
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const handleOpen = () => setOpen(true);
