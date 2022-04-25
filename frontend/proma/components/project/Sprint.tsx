@@ -29,22 +29,39 @@ const teamData = [
 ];
 
 //styled-components
-const Title = styled.h1`
-  color: white;
+const Title = styled.h2`
+  color: ${(props: ThemeType) => props.theme.textColor};
+  font-weight: 600;
 `;
 
 const SprintBox = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 10px 30px 20px 30px;
   color: ${(props: ThemeType) => props.theme.textColor};
 `;
-
 const TeamBox = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 10px;
+`;
+const FlexBox = styled.div`
+  width: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const FilledButton = styled.button`
+  font-size: 15px;
+  &:hover {
+    cursor: pointer;
+  }
+  padding: 5px 10px;
+  background-color: ${(props: ThemeType) => props.theme.mainColor};
+  color: white;
+  border: none;
+  border-radius: 3px;
 `;
 
 interface SprintType {
@@ -53,9 +70,16 @@ interface SprintType {
 }
 
 const Sprint = ({ sprint }: { sprint: SprintType }) => {
+  const [inProgress, setInProgress] = useState<boolean>(false);
+
   return (
     <SprintBox>
-      <Title>{sprint.sprintName}</Title>
+      <FlexBox>
+        <Title>{sprint.sprintName}</Title>
+        <FilledButton onClick={() => setInProgress((cur) => !cur)}>
+          {inProgress ? "Finish Sprint" : "Start Sprint"}
+        </FilledButton>
+      </FlexBox>
       <TeamBox>
         {teamData.map((team, index) => (
           <Team team={team} key={index} sprintName={sprint.sprintName} />

@@ -25,7 +25,7 @@ const issueData = [
 //styled-components
 const TeamBox = styled.div`
   border-radius: 3px;
-  background-color: #bfb9c7;
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
   padding: 10px 30px;
   display: flex;
   flex-direction: column;
@@ -53,13 +53,18 @@ const AddButton = styled.button`
   }
 `;
 
+const Title = styled.h3`
+  color: ${(props: ThemeType) => props.theme.textColor};
+  font-weight: 400;
+`;
+
 interface TeamType {
   teamNo: number;
   teamName: string;
   projectNo: number;
 }
 
-const Team = ({ team, sprintName }: { team: TeamType; sprintName: string; }) => {
+const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
@@ -81,7 +86,7 @@ const Team = ({ team, sprintName }: { team: TeamType; sprintName: string; }) => 
             <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
               <Link href={`/project/${team.projectNo}/team/${team.teamNo}`}>
                 <TeamName>
-                  <h2>{team.teamName}</h2>
+                  <Title>{team.teamName}</Title>
                 </TeamName>
               </Link>
               {issueData.map((issue, index) => (

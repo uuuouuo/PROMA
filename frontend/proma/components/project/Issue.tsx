@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
+import Image from "next/image";
 
 interface IssueType {
   issueNo: number;
@@ -16,11 +17,24 @@ const IssueBox = styled.div`
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.subBeigeColor};
   color: black;
-  padding: 3px 15px;
+  padding: 0 15px;
   margin-bottom: 7px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
   align-items: center;
+`;
+
+const FlexBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ImageBox = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 5px;
 `;
 
 const Issue = ({
@@ -51,11 +65,14 @@ const Issue = ({
               {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
               {...provided.draggableProps} //드래그 되는 영역
             >
-              <div>
-                <p>이슈번호: {issue.issueNo}</p>
-                <p>제목: {issue.issueTitle}</p>
-              </div>
-              <p>담당자: {issue.assignee}</p>
+              <p>No. {issue.issueNo}</p>
+              <p>{issue.issueTitle}</p>
+              <FlexBox>
+                <ImageBox>
+                  <Image src="/profileimg.png" width={20} height={20}></Image>
+                </ImageBox>
+                <p>{issue.assignee}</p>
+              </FlexBox>
             </IssueBox>
           )}
         </Draggable>

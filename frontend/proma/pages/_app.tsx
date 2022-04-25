@@ -54,7 +54,7 @@ const Container = styled.div`
 const MainComponent = styled.div`
   display: flex;
   width: 100%;
-  height: 90%;
+  height: 92%;
 `;
 
 let sock = new SockJS("http://j6c103.p.ssafy.io:8081/ws-stomp");

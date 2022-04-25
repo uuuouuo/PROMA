@@ -7,10 +7,11 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import Image from "next/image";
 import { ThemeType } from "../../interfaces/style";
+import Link from "next/link";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
-  height: 80px;
+  height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,7 +19,11 @@ const NavBarContainer = styled.div`
   color: white;
 `;
 
-const Logo = styled.div``;
+const Logo = styled.a`
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const MenuBox = styled.div`
   display: flex;
@@ -28,13 +33,13 @@ const MenuBox = styled.div`
 const MenuButton = styled.button`
   background-color: inherit;
   border: none;
-  font-size: 25px;
+  font-size: 20px;
   color: white;
   margin-right: 20px;
 `;
 
 const MenuIconButton = styled(MenuButton)`
-  font-size: 35px;
+  font-size: 30px;
   margin-top: 10px;
 `;
 
@@ -92,7 +97,7 @@ const Login = styled.div`
   justify-content: center;
   background: lightgrey;
   font-weight: bold;
-  font-size: 23px;
+  font-size: 20px;
   display: flex;
   align-items: center;
 `;
@@ -129,9 +134,12 @@ const NavBar = ({
   return (
     <>
       <NavBarContainer>
-        <Logo>
-          <Image src="/logo.png" width={170} height={70} />
-        </Logo>
+        <Link href="/">
+          <Logo>
+            <Image src="/logo.png" width={130} height={55} />
+          </Logo>
+        </Link>
+
         <MenuBox>
           {name == "" ? (
             <MenuToggleBox>

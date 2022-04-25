@@ -3,7 +3,7 @@ import { ThemeType } from "../../interfaces/style";
 
 //styled-components
 const FooterBox = styled.div`
-  height: 80px;
+  height: 60px;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   color: white;
   display: flex;

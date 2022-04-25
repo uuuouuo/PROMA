@@ -4,6 +4,7 @@ import Sprint from "../../../components/project/Sprint";
 import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
+import { FaPen, FaCheck } from "react-icons/fa";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
@@ -24,15 +25,20 @@ const sprints: any[] = [
 ];
 
 //styled-components
-const Title = styled.h1``;
-
 const Button = styled.button`
   font-size: 15px;
   &:hover {
     cursor: pointer;
   }
 `;
-const TextButton = styled(Button)`
+const FilledButton = styled(Button)`
+  padding: 5px 10px;
+  background-color: ${(props: ThemeType) => props.theme.mainColor};
+  color: white;
+  border: none;
+  border-radius: 3px;
+`;
+const UnfilledButton = styled(Button)`
   background-color: inherit;
   border: none;
   text-decoration: underline;
@@ -41,27 +47,56 @@ const TextButton = styled(Button)`
 const WarnButton = styled(Button)`
   background-color: inherit;
   border: none;
-  color: red;
+  color: ${(props: ThemeType) => props.theme.warnColor};
   align-self: flex-end;
   margin-top: 20px;
 `;
-
-const Box = styled.div`
+const WorkSpace = styled.div`
   width: inherit;
-`;
-const WorkSpace = styled(Box)`
   padding: 10px 30px;
   display: flex;
   flex-direction: column;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
   color: ${(props: ThemeType) => props.theme.textColor};
 `;
-const TopBar = styled(Box)``;
-const FlexBox = styled(Box)`
+const FlexBox = styled.div`
   width: inherit;
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+const TopBar = styled(FlexBox)`
+  justify-content: flex-start;
+  height: 80px;
+  * {
+    font-size: 25px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  h1 {
+    margin-right: 15px;
+    font-size: 35px;
+    &:hover {
+      cursor: text;
+    }
+  }
+  input {
+    width: auto;
+    margin: 25px 15px 25px 0;
+    font-size: 20px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    opacity: 0.7;
+    &:focus {
+      opacity: 1;
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+    &:hover {
+      cursor: text;
+    }
+  }
 `;
 const InitialBox = styled(FlexBox)`
   margin-top: 300px;
@@ -78,14 +113,13 @@ const InitialBox = styled(FlexBox)`
   }
 `;
 const ButtonBox = styled.div`
-  ${TextButton} {
+  ${UnfilledButton} {
     margin-left: 10px;
   }
 `;
 const SprintsBox = styled.div`
   height: 100%;
   overflow-y: scroll;
-  margin-top: 20px;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
 `;
 
@@ -95,6 +129,9 @@ const ProjectSpace = () => {
   useEffect(() => {
     setIsReady(true);
   }, []);
+
+  const [updateTitle, setUpdateTitle] = useState<boolean>(false);
+  const [projectName, setProjectName] = useState<string>("Project Name");
 
   //최초 프로젝트 시작 시 생성 => 백로그 생성됨
   const onStartProject = () => {
@@ -113,16 +150,30 @@ const ProjectSpace = () => {
       {isReady ? (
         <DragDropContext onDragEnd={onDragEnd}>
           <WorkSpace>
-            <TopBar>
-              <Title>Team Name</Title>
-              <FlexBox>
-                <TextButton>Only My Issues</TextButton>
-                <ButtonBox>
-                  <Button>Create Sprint</Button>
-                  <TextButton>Epic</TextButton>
-                </ButtonBox>
-              </FlexBox>
-            </TopBar>
+            {updateTitle ? (
+              <TopBar>
+                <input
+                  onChange={(e) => setProjectName(e.target.value)}
+                  value={projectName}
+                  placeholder="Type Project Name"
+                  required
+                  autoFocus
+                />
+                <FaCheck onClick={() => setUpdateTitle((cur) => !cur)} />
+              </TopBar>
+            ) : (
+              <TopBar>
+                <h1>{projectName}</h1>
+                <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+              </TopBar>
+            )}
+            <FlexBox>
+              <UnfilledButton>Only My Issues</UnfilledButton>
+              <ButtonBox>
+                <FilledButton>Create Sprint</FilledButton>
+                <UnfilledButton>Epic</UnfilledButton>
+              </ButtonBox>
+            </FlexBox>
             <SprintsBox>
               {sprints.length > 0 ? (
                 sprints.map((sprint, index) => (
