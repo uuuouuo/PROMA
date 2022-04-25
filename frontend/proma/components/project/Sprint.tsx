@@ -32,18 +32,22 @@ const teamData = [
 const Title = styled.h2`
   color: black;
   font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+  margin-bottom: 10px;
 `;
 
 const SprintBox = styled.div`
-  margin-top: 20px;
+  margin-top: 15px;
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
-  padding: 10px 30px 20px 30px;
+  padding: 15px;
 `;
 const TeamBox = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 10px;
+  margin-top: 5px;
 `;
 const FlexBox = styled.div`
   width: inherit;

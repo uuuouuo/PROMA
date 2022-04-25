@@ -67,16 +67,16 @@ const FlexBox = styled.div`
 `;
 const TopBar = styled(FlexBox)`
   justify-content: flex-start;
-  height: 80px;
+  height: 70px;
   * {
-    font-size: 25px;
+    font-size: 20px;
     &:hover {
       cursor: pointer;
     }
   }
   h1 {
     margin-right: 15px;
-    font-size: 35px;
+    font-size: 30px;
     &:hover {
       cursor: text;
     }
