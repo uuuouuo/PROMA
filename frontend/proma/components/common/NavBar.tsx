@@ -174,7 +174,7 @@ const NavBar = ({
   const onChangeName = (e: any) => {
     setName(e.target.value);
   }
-
+  
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter") {
       setName(e.target.value);
@@ -279,9 +279,15 @@ const NavBar = ({
               </Profileimg>
             </Profile>
             {
+              modify === false ? null
+                :
+                <form style={{textAlignLast: "center"}}>
+                  <input type="file" id="profile-upload" accept="image/*"/>
+                </form>
+            }
+            {
               modify === false ? <Username>{name}</Username> : <NameInput value={name} onKeyPress={handleKeyPress} onChange={onChangeName} /> 
             }
-            
           </Box>
         </ModalBox>
       </NavBarContainer>
