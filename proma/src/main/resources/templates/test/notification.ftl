@@ -45,7 +45,7 @@
             notifications: []
         },
         created() {
-            this.userNo = "U001"
+            this.userNo = "${userNo}"
             this.messages.unshift({"message":"알림 시작"})
             this.getNotifications();
         },
