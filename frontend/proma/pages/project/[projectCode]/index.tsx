@@ -6,7 +6,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
-//더미 데이터
+//dummy data
 const sprints: any[] = [
   {
     sprintNo: 0,
@@ -17,7 +17,7 @@ const sprints: any[] = [
     sprintName: "2주차",
   },
   {
-    sprintNo: 1,
+    sprintNo: 2,
     sprintName: "Backlog",
   },
 ];

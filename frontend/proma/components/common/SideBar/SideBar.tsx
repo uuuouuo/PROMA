@@ -56,54 +56,9 @@ const style = {
   p: 4,
 };
 
-// 더미파일
-const dummy = [
-  {
-    team: "FrontEnd",
-  },
-  {
-    team: "BackEnd",
-  },
-  {
-    team: "Deploy",
-  },
-  {
-    team: "DB",
-  },
-];
-const dummy2 = [
-  {
-    name: "김일환",
-    image:
-      "https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_960_720.png",
-  },
-  {
-    name: "장소명",
-    image:
-      "https://cdn.pixabay.com/photo/2014/03/24/17/19/teacher-295387_960_720.png",
-  },
-  {
-    name: "장다빈",
-    image:
-      "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png",
-  },
-  {
-    name: "서은민",
-    image:
-      "https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397_960_720.png",
-  },
-];
-
 const projects = ["one", "two", "three"];
 
 const SideBar = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [state, setState] = React.useState({
-    isPaneOpen: false,
-  });
-
   return (
     <SideBarContainer>
       <H3>My Projects</H3>
