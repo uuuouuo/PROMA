@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Sprint from "../../../components/project/Sprint";
 import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
+import { ThemeType } from "../../../interfaces/style";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
@@ -35,6 +36,7 @@ const TextButton = styled(Button)`
   background-color: inherit;
   border: none;
   text-decoration: underline;
+  color: ${(props: ThemeType) => props.theme.textColor};
 `;
 const WarnButton = styled(Button)`
   background-color: inherit;
@@ -48,10 +50,11 @@ const Box = styled.div`
   width: inherit;
 `;
 const WorkSpace = styled(Box)`
-  background-color: white;
   padding: 10px 30px;
   display: flex;
   flex-direction: column;
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
+  color: ${(props: ThemeType) => props.theme.textColor};
 `;
 const TopBar = styled(Box)``;
 const FlexBox = styled(Box)`
@@ -83,9 +86,7 @@ const SprintsBox = styled.div`
   height: 100%;
   overflow-y: scroll;
   margin-top: 20px;
-  background-color: beige;
-  padding: 10px 30px 30px 30px;
-  border-radius: 10px;
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
 `;
 
 const ProjectSpace = () => {

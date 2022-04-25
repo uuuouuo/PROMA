@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { useState } from "react";
+import { ThemeType } from "../interfaces/style";
 
 const FlexBox = styled.div`
   display: flex;
@@ -12,6 +13,21 @@ const FlexBox = styled.div`
 const Box = styled.div`
   color: white;
   background-color: #6667ab;
+`;
+
+const ChatContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
+  padding: 20px;
+`;
+
+const SlidingPaneBox = styled(SlidingPane)`
+  /* &:first-child{ */
+  .slide-pane__header {
+    background-color: green;
+    color: white;
+  }
 `;
 
 const Home = () => {
@@ -77,9 +93,9 @@ const Home = () => {
       <button onClick={() => setState({ isPaneOpen: true })}>
         Click me to open right pane!
       </button>
-      <SlidingPane
-        className="some-custom-class"
-        overlayClassName="some-custom-overlay-class"
+      <SlidingPaneBox
+        // className="some-custom-class"
+        // overlayClassName="some-custom-overlay-class"
         isOpen={state.isPaneOpen}
         title="DB"
         subtitle="DB 단체회의방입니다."
@@ -89,7 +105,7 @@ const Home = () => {
           setState({ isPaneOpen: false });
         }}
       >
-        <div>
+        <ChatContainer>
           {dummy2.map((element, idx) => {
             if (element.name !== "박주한")
               return (
@@ -151,9 +167,9 @@ const Home = () => {
                 </div>
               );
           })}
-        </div>
+        </ChatContainer>
         <br />
-      </SlidingPane>
+      </SlidingPaneBox>
     </FlexBox>
   );
 };

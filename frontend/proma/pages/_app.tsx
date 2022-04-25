@@ -29,7 +29,7 @@ const darkTheme: DefaultTheme = {
   textColor: "#ffffff",
   mainColor: "#6667AB",
   subPurpleColor: "#c1c6db",
-  sunBeigeColor: "#F1F0EC",
+  subBeigeColor: "#F1F0EC",
   warnColor: "#D0B9C7",
   elementBgColor: "#6667AB",
   elementTextColor: "#ffffff",
@@ -37,10 +37,10 @@ const darkTheme: DefaultTheme = {
 
 const lightTheme: DefaultTheme = {
   bgColor: "#ffffff",
-  textColor: "#3e3f42",
+  textColor: "black",
   mainColor: "#6667AB",
   subPurpleColor: "#c1c6db",
-  sunBeigeColor: "#F1F0EC",
+  subBeigeColor: "#F1F0EC",
   warnColor: "#D0B9C7",
   elementBgColor: "#ffffff",
   elementTextColor: "#6667AB",
@@ -61,7 +61,7 @@ let sock = new SockJS("http://j6c103.p.ssafy.io:8081/ws-stomp");
 let client = Stomp.over(sock);
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const onToggleDarkMode = () => setDarkMode((cur) => !cur);
 
   useEffect(() => {

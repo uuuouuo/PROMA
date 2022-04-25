@@ -2,6 +2,7 @@
 import Team from "./Team";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import { ThemeType } from "../../interfaces/style";
 
 //더미 데이터
 const teamData = [
@@ -34,9 +35,10 @@ const Title = styled.h1`
 
 const SprintBox = styled.div`
   margin-top: 30px;
-  border-radius: 10px;
-  background-color: #a589c7;
+  border-radius: 3px;
+  background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 10px 30px 20px 30px;
+  color: ${(props: ThemeType) => props.theme.textColor};
 `;
 
 const TeamBox = styled.div`

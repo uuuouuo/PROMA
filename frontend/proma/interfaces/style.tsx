@@ -4,7 +4,7 @@ export interface ThemeType {
     textColor: string;
     mainColor: string;
     subPurpleColor: string;
-    sunBeigeColor: string;
+    subBeigeColor: string;
     warnColor: string;
     elementBgColor: string;
     elementTextColor: string;

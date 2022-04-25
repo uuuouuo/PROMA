@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import { ThemeType } from "../../interfaces/style";
 
 interface IssueType {
   issueNo: number;
@@ -12,8 +13,9 @@ interface IssueType {
 
 //styled-components
 const IssueBox = styled.div`
-  border-radius: 10px;
-  background-color: white;
+  border-radius: 3px;
+  background-color: ${(props: ThemeType) => props.theme.subBeigeColor};
+  color: black;
   padding: 3px 15px;
   margin-bottom: 7px;
   display: flex;

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Droppable } from "react-beautiful-dnd";
+import { ThemeType } from "../../interfaces/style";
 
 //더미 데이터
 const issueData = [
@@ -23,7 +24,7 @@ const issueData = [
 
 //styled-components
 const TeamBox = styled.div`
-  border-radius: 10px;
+  border-radius: 3px;
   background-color: #bfb9c7;
   padding: 10px 30px;
   display: flex;
@@ -45,6 +46,7 @@ const AddButton = styled.button`
   font-size: 15px;
   align-self: end;
   padding: 10px;
+  color: ${(props: ThemeType) => props.theme.textColor};
   &:hover {
     cursor: pointer;
     color: white;
