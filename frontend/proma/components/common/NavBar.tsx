@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "react-sliding-pane/dist/react-sliding-pane.css";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegUserCircle, FaPencilAlt, FaCheck } from "react-icons/fa";
 import Image from "next/image";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
@@ -136,6 +136,21 @@ const Username = styled.div`
   margin-bottom: 32px;
 `;
 
+const NameInput = styled.input`
+  width: 36%;
+  height: 40px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0% 2% 0% 2%;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 32px;
+`;
+
 const NavBar = ({
   toggleDarkMode,
   darkMode,
@@ -153,6 +168,19 @@ const NavBar = ({
 
   const [name, setName] = React.useState("");
   const [image, setImage] = React.useState("");
+
+  const [modify, setModify] = React.useState(false);  
+
+  const onChangeName = (e: any) => {
+    setName(e.target.value);
+  }
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === "Enter") {
+      setName(e.target.value);
+      setModify(true);
+    }
+  }
 
   return (
     <>
@@ -213,7 +241,19 @@ const NavBar = ({
           aria-describedby="modal-modal-description"
         >
           <Box sx={style2}>
-          <Header>Profile</Header>
+            <Header>Profile</Header>
+            {
+              modify === false ?
+                <FaPencilAlt
+                  style={{ marginLeft: "auto", height: "6%", width: "6%", padding: "4% 4% 0% 0%" }}
+                  onClick={() => {setModify(true)}}
+                />
+                : <FaCheck
+                  style={{ marginLeft: "auto", height: "6%", width: "6%", padding: "4% 4% 0% 0%" }}
+                  onClick={() => {setModify(false)}}
+                />
+            }
+            
             <Profile>
               <Profileimg>
                 {image == "" ? (
@@ -238,7 +278,10 @@ const NavBar = ({
                 )}
               </Profileimg>
             </Profile>
-            <Username>{name}</Username>
+            {
+              modify === false ? <Username>{name}</Username> : <NameInput value={name} onKeyPress={handleKeyPress} onChange={onChangeName} /> 
+            }
+            
           </Box>
         </ModalBox>
       </NavBarContainer>
