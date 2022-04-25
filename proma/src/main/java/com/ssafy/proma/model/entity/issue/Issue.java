@@ -30,6 +30,10 @@ public class Issue {
     @ApiModelProperty(value = "이슈 설명")
     private String description;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "이슈 상태")
+    private String status;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ASSIGNEE", nullable = false)
     @ApiModelProperty(value = "이슈를 담당하는 유저")

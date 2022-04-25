@@ -22,5 +22,13 @@ spring:
     hibernate:
       format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: e9aef6fccada43586c11
+            clientSecret: 9ad91b0d27056363f971845f3bee0dc46f93d472
+
 logging.level:
   org.hibernate.SQL: debug
