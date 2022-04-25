@@ -48,13 +48,6 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const Profileimg = styled.div`
-  text-align: -webkit-center;
-`;
-
-const Profile = styled.div`
-  align-self: center;
-`;
 
 {
   /* 로그인 모달 */
@@ -92,20 +85,6 @@ const style2 = {
 };
 
 
-
-const Username = styled.div`
-  width: 40%;
-  height: 40px;
-  margin-top: 5%;
-  margin-left: auto;
-  margin-right: auto;
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-`;
-
 const ModalBox = styled(Modal)`
   .MuiBox-root {
     padding: 0px;
@@ -133,6 +112,28 @@ const Login = styled.div`
   display: flex;
   margin: 32px 32px 32px 32px;
   align-items: center;
+`;
+
+const Profile = styled.div`
+  align-self: center;
+  margin: 32px 32px 32px 32px;
+`;
+const Profileimg = styled.div`
+  text-align: -webkit-center;
+`;
+
+const Username = styled.div`
+  width: 40%;
+  height: 40px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 32px;
 `;
 
 const NavBar = ({
@@ -165,7 +166,7 @@ const NavBar = ({
           {name == "" ? (
             <MenuToggleBox>
               <MenuButton onClick={handleOpen}>Login</MenuButton>
-              <MenuButton >Join</MenuButton>
+              <MenuButton onClick={handleOpen2}>Join</MenuButton>
             </MenuToggleBox>
           ) : (
             <MenuToggleBox>
@@ -204,13 +205,14 @@ const NavBar = ({
         </ModalBox>
 
         {/* 마이페이지 모달 */}
-        <Modal
+        <ModalBox
           open={open2}
           onClose={handleClose2}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style2}>
+          <Header>Profile</Header>
             <Profile>
               <Profileimg>
                 {image == "" ? (
@@ -237,7 +239,7 @@ const NavBar = ({
             </Profile>
             <Username>{name}</Username>
           </Box>
-        </Modal>
+        </ModalBox>
       </NavBarContainer>
     </>
   );
