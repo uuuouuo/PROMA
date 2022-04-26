@@ -191,12 +191,15 @@ const NavBar = ({
     }
   }
 
+  // *********************************************************************************
+  // 토글 관련 선언 및 함수
   const [toggled, setToggled] = React.useState(true);
 
   const Changotogle = () => {
     // setToggled((toggled) => !toggled);
     darkMode ? "dark" : "light"
   };
+  // *********************************************************************************
 
   return (
     <>
@@ -221,10 +224,15 @@ const NavBar = ({
               <MenuButton onClick={() => location.reload()}>Logout</MenuButton>
             </MenuToggleBox>
           )}
+
+          {/* 여기 토글 버튼 코드!!!! */}
           {/* <Toggle onChange={(e) => Changotogle(e)} /> */}
           <Toggle onClick={toggleDarkMode}>
           {darkMode ? "dark" : "light"}
           </Toggle>
+
+
+
           <MenuButton onClick={toggleDarkMode}>
             {darkMode ? "dark" : "light"}
           </MenuButton>
