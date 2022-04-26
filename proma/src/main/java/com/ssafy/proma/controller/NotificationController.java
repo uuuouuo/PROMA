@@ -88,4 +88,13 @@ public class NotificationController {
 
         log.debug(userNo + " 알림 전송 완료");
     }
+
+
+    // 임시 채팅 화면
+    @GetMapping("/chatting/{roomNo}/{userNo}")
+    public String chattingMain(Model model, @PathVariable String roomNo, @PathVariable String userNo) {
+        model.addAttribute("roomNo", roomNo);
+        model.addAttribute("userNo", userNo);
+        return "/test/roomdetail";
+    }
 }
