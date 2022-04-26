@@ -23,7 +23,7 @@ public class ChatRoomController {
 
   private final ChatService chatService;
 
-  @ApiOperation(value = "1:1 채팅 생성 및 조회", notes = "해당 유저와 개인 채팅방 생성 및 조회")
+  @ApiOperation(value = "개인 채팅 생성 및 조회", notes = "해당 유저와 개인 채팅방 생성 및 조회")
   @GetMapping("/room/user")
   public ResponseEntity<PrivateChatRoomRes> getPrivateChatRoom(@RequestBody PrivateChatRoomReq request) {
     PrivateChatRoomRes response = chatService.getPrivateChatRoom(request);

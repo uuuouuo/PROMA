@@ -1,6 +1,6 @@
 package com.ssafy.proma.model.dto.chat;
 
-import com.ssafy.proma.model.dto.chat.ProjectChatMessageDto.ProjectChatMessageRes;
+import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;
 import com.ssafy.proma.model.entity.chat.ProjectChatRoom;
 import com.ssafy.proma.model.entity.project.Project;
 import java.util.List;
@@ -15,9 +15,9 @@ public class ProjectChatRoomDto {
   @Getter
   public static class ProjectChatRoomRes {
     Integer roomNo;
-    List<ProjectChatMessageRes> messageList;
+    List<ChatMessageListRes> messageList;
 
-    public ProjectChatRoomRes(Integer roomNo, List<ProjectChatMessageRes> messageList) {
+    public ProjectChatRoomRes(Integer roomNo, List<ChatMessageListRes> messageList) {
       this.roomNo = roomNo;
       this.messageList = messageList;
     }

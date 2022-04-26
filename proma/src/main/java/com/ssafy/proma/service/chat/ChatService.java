@@ -1,19 +1,14 @@
 package com.ssafy.proma.service.chat;
 
-import com.ssafy.proma.model.dto.chat.PrivateChatMessageDto;
-import com.ssafy.proma.model.dto.chat.PrivateChatMessageDto.PrivateChatMessageReq;
-import com.ssafy.proma.model.dto.chat.PrivateChatMessageDto.PrivateChatMessageRes;
+import com.ssafy.proma.model.dto.chat.ChatMessageDto;
+import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;
+import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageReq;
+import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageRes;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomReq;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomRes;
-import com.ssafy.proma.model.dto.chat.ProjectChatMessageDto;
-import com.ssafy.proma.model.dto.chat.ProjectChatMessageDto.ProjectChatMessageReq;
-import com.ssafy.proma.model.dto.chat.ProjectChatMessageDto.ProjectChatMessageRes;
 import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto;
 import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto.ProjectChatRoomRes;
-import com.ssafy.proma.model.dto.chat.TeamChatMessageDto;
-import com.ssafy.proma.model.dto.chat.TeamChatMessageDto.TeamChatMessageReq;
-import com.ssafy.proma.model.dto.chat.TeamChatMessageDto.TeamChatMessageRes;
 import com.ssafy.proma.model.dto.chat.TeamChatRoomDto;
 import com.ssafy.proma.model.dto.chat.TeamChatRoomDto.TeamChatRoomRes;
 import com.ssafy.proma.model.entity.chat.PrivateChatMessage;
@@ -71,9 +66,10 @@ public class ChatService {
     }
 
     // 해당 chatroom 의 messageList 가져오기
-    List<PrivateChatMessageRes> msgResList =
+    List<ChatMessageListRes> msgResList =
         privateChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(PrivateChatMessageRes::new)
+        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
+                , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
     return new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
@@ -90,9 +86,10 @@ public class ChatService {
         .orElseGet(() -> creatTeamChatRoom(team));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<TeamChatMessageRes> msgList =
+    List<ChatMessageListRes> msgList =
         teamChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(TeamChatMessageRes::new)
+        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
+            , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
     return new TeamChatRoomRes(chatRoom.getNo(), msgList);
@@ -109,54 +106,70 @@ public class ChatService {
         .orElseGet(() -> creatProjectChatRoom(project));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ProjectChatMessageRes> msgList
+    List<ChatMessageListRes> msgList
         = projectChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(ProjectChatMessageRes::new)
+        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
+            , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
     return new ProjectChatRoomRes(chatRoom.getNo(), msgList);
 
   }
 
-  public void savePrivateMessage(PrivateChatMessageReq request) {
+  public ChatMessageRes savePrivateMessage(ChatMessageReq request) {
 
     PrivateChatRoom chatRoom = findPrivateChatRoom(request.getRoomNo());
     User user = findUser(request.getPubNo());
     String content = request.getContent();
-    LocalDateTime time = request.getTime();
+    LocalDateTime time = LocalDateTime.now();
 
-    PrivateChatMessage chatMessage = PrivateChatMessageDto.toEntity(chatRoom, user, content, time);
+    ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
+        user.getNickname(), content, time);
+
+    PrivateChatMessage chatMessage = ChatMessageDto.toPrivateMsgEntity(chatRoom, user, content, time);
     privateChatMessageRepository.save(chatMessage);
 
     System.out.println("채팅저장완료.");
 
+    return response;
+
   }
 
-  public void saveTeamMessage(TeamChatMessageReq request) {
+  public ChatMessageRes saveTeamMessage(ChatMessageReq request) {
 
     TeamChatRoom chatRoom = findTeamChatRoom(request.getRoomNo());
     User user = findUser(request.getPubNo());
     String content = request.getContent();
-    LocalDateTime time = request.getTime();
+    LocalDateTime time = LocalDateTime.now();
 
-    TeamChatMessage chatMessage = TeamChatMessageDto.toEntity(chatRoom, user, content, time);
+    ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
+        user.getNickname(), content, time);
+
+    TeamChatMessage chatMessage = ChatMessageDto.toTeamMsgEntity(chatRoom, user, content, time);
     teamChatMessageRepository.save(chatMessage);
 
     System.out.println("채팅저장완료.");
 
+    return response;
+
   }
 
-  public void saveProjectMessage(ProjectChatMessageReq request) {
+  public ChatMessageRes saveProjectMessage(ChatMessageReq request) {
 
     ProjectChatRoom chatRoom = findProjectChatRoom(request.getRoomNo());
     User user = findUser(request.getPubNo());
     String content = request.getContent();
-    LocalDateTime time = request.getTime();
+    LocalDateTime time = LocalDateTime.now();
 
-    ProjectChatMessage chatMessage = ProjectChatMessageDto.toEntity(chatRoom, user, content, time);
+    ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
+        user.getNickname(), content, time);
+
+    ProjectChatMessage chatMessage = ChatMessageDto.toProjectMsgEntity(chatRoom, user, content, time);
     projectChatMessageRepository.save(chatMessage);
 
     System.out.println("채팅저장완료.");
+
+    return response;
 
   }
 
