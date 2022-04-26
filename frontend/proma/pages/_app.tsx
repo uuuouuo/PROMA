@@ -63,7 +63,9 @@ let client = Stomp.over(sock);
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [darkMode, setDarkMode] = useState(false);
-  const onToggleDarkMode = () => setDarkMode((cur) => !cur);
+  const onToggleDarkMode = (e: any) => {
+    setDarkMode((cur) => !cur);
+  };
 
   useEffect(() => {
     //알림 연결 로직

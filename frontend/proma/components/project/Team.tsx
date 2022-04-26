@@ -26,7 +26,7 @@ const issueData = [
 const TeamBox = styled.div`
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
-  padding: 10px 30px;
+  padding: 0px 15px 10px 15px;
   display: flex;
   flex-direction: column;
 `;

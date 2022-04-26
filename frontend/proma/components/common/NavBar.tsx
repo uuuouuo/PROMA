@@ -1,9 +1,14 @@
-import * as React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "react-sliding-pane/dist/react-sliding-pane.css";
-import { FaRegUserCircle, FaPencilAlt, FaCheck, FaGithub } from "react-icons/fa";
+import {
+  FaRegUserCircle,
+  FaPencilAlt,
+  FaCheck,
+  FaGithub,
+} from "react-icons/fa";
 import Image from "next/image";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
@@ -49,7 +54,6 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-
 {
   /* 로그인 모달 */
 }
@@ -83,7 +87,7 @@ const style2 = {
   alignContent: "center",
   paddingTop: "80px",
   paddingBottom: "80px",
-  height: "400px"
+  height: "400px",
 };
 
 const ModalBox = styled(Modal)`
@@ -99,7 +103,7 @@ const ModalBox = styled(Modal)`
 const Header = styled.div`
   height: 50px;
   padding: 3px 20px;
-  background: #6667AB;
+  background: #6667ab;
   color: white;
   font-size: 25px;
   display: flex;
@@ -113,7 +117,7 @@ const Login = styled.div`
   font-weight: 600;
   display: flex;
   justify-content: center;
-  background: #3E3F42;
+  background: #3e3f42;
   font-weight: bold;
   margin: 32px 32px 32px 32px;
   align-items: center;
@@ -157,7 +161,7 @@ const NameInput = styled.input`
   outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
   &:focus {
     outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-    }
+  }
 `;
 
 const NavBar = ({
@@ -166,40 +170,30 @@ const NavBar = ({
 }: {
   toggleDarkMode: any;
   darkMode: boolean;
-  }) => {
+}) => {
   // 1은 로그인 관련, 2는 개인 프로필 관련 선언들
-  const [open, setOpen] = React.useState(false);
-  const [open2, setOpen2] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
 
-  const [name, setName] = React.useState("");
-  const [image, setImage] = React.useState("");
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
 
-  const [modify, setModify] = React.useState(false);  
+  const [modify, setModify] = useState(false);
 
   const onChangeName = (e: any) => {
     setName(e.target.value);
-  }
-  
+  };
+
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter") {
       setName(e.target.value);
       setModify(true);
     }
-  }
-
-  // *********************************************************************************
-  // 토글 관련 선언 및 함수
-  const [toggled, setToggled] = React.useState(true);
-
-  const Changotogle = () => {
-    // setToggled((toggled) => !toggled);
-    darkMode ? "dark" : "light"
   };
-  // *********************************************************************************
 
   return (
     <>
@@ -225,17 +219,7 @@ const NavBar = ({
             </MenuToggleBox>
           )}
 
-          {/* 여기 토글 버튼 코드!!!! */}
-          {/* <Toggle onChange={(e) => Changotogle(e)} /> */}
-          <Toggle onClick={toggleDarkMode}>
-          {darkMode ? "dark" : "light"}
-          </Toggle>
-
-
-
-          <MenuButton onClick={toggleDarkMode}>
-            {darkMode ? "dark" : "light"}
-          </MenuButton>
+          <Toggle changeMode={toggleDarkMode} />
         </MenuBox>
 
         {/* 로그인 모달 */}
@@ -256,7 +240,8 @@ const NavBar = ({
                 handleClose();
               }}
             >
-              <FaGithub style={{marginRight: "2%"}} />Github
+              <FaGithub style={{ marginRight: "2%" }} />
+              Github
             </Login>
           </Box>
         </ModalBox>
@@ -270,18 +255,32 @@ const NavBar = ({
         >
           <Box sx={style2}>
             <Header>Profile</Header>
-            {
-              modify === false ?
-                <FaPencilAlt
-                  style={{ marginLeft: "auto", height: "6%", width: "6%", padding: "4% 4% 0% 0%" }}
-                  onClick={() => {setModify(true)}}
-                />
-                : <FaCheck
-                  style={{ marginLeft: "auto", height: "6%", width: "6%", padding: "4% 4% 0% 0%" }}
-                  onClick={() => {setModify(false)}}
-                />
-            }
-            
+            {modify === false ? (
+              <FaPencilAlt
+                style={{
+                  marginLeft: "auto",
+                  height: "6%",
+                  width: "6%",
+                  padding: "4% 4% 0% 0%",
+                }}
+                onClick={() => {
+                  setModify(true);
+                }}
+              />
+            ) : (
+              <FaCheck
+                style={{
+                  marginLeft: "auto",
+                  height: "6%",
+                  width: "6%",
+                  padding: "4% 4% 0% 0%",
+                }}
+                onClick={() => {
+                  setModify(false);
+                }}
+              />
+            )}
+
             <Profile>
               <Profileimg>
                 {image == "" ? (
@@ -306,16 +305,20 @@ const NavBar = ({
                 )}
               </Profileimg>
             </Profile>
-            {
-              modify === false ? null
-                :
-                <form style={{textAlignLast: "center"}}>
-                  <input type="file" id="profile-upload" accept="image/*"/>
-                </form>
-            }
-            {
-              modify === false ? <Username>{name}</Username> : <NameInput value={name} onKeyPress={handleKeyPress} onChange={onChangeName} /> 
-            }
+            {modify === false ? null : (
+              <form style={{ textAlignLast: "center" }}>
+                <input type="file" id="profile-upload" accept="image/*" />
+              </form>
+            )}
+            {modify === false ? (
+              <Username>{name}</Username>
+            ) : (
+              <NameInput
+                value={name}
+                onKeyPress={handleKeyPress}
+                onChange={onChangeName}
+              />
+            )}
           </Box>
         </ModalBox>
       </NavBarContainer>
