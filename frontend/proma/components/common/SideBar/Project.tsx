@@ -86,13 +86,16 @@ const ModalBox = styled(Modal)`
   .MuiBox-root {
     padding: 0px;
     border: 0px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
   }
 `;
 
 const ModalHeader = styled.div`
   height: 50px;
-  padding: 0px 0px 0px 10px;
-  background: #6667AB;
+  padding: 3px 20px;
+  background: #6667ab;
   color: white;
   font-size: 25px;
   display: flex;
@@ -103,10 +106,22 @@ const ModalHeader = styled.div`
 const ModalBody = styled.div`
   height: 50px;
   font-size: 25px;
+  font-weight: 600;
   display: flex;
   flex-direction: column;
   margin: 32px 32px 50px 32px;
   align-items: center;
+  color: ${(props: ThemeType) => props.theme.mainColor};
+  input {
+    border: none;
+    border-radius: 3px;
+    font-size: 20px;
+    padding: 5px 10px;
+    outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    &:focus {
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+  }
 `;
 
 const style = {
@@ -123,19 +138,17 @@ const style = {
 
 const ModalButton1 = styled.button`
   background: white;
-  height: 30px;
-  border: 2px solid #6667AB;
-  margin: 10px 5px 0px 0px;
-  border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
+  height: 25px;
+  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+  margin: 10px 0px 0px 10px;
+  border-radius: 3px;
+  color: ${(props: ThemeType) => props.theme.mainColor};
 `;
 
 const ModalButton2 = styled(ModalButton1)`
-  background: #6667AB;
+  background: ${(props: ThemeType) => props.theme.mainColor};
   color: white;
-  height: 30px;
-  border: 2px solid #6667AB;
-  margin: 10px 5px 0px 0px;
-  border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
+  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
 `;
 
 //dummy data
@@ -172,28 +185,27 @@ const Project = ({ projectName }: { projectName: string }) => {
 
       {/* 팀 생성 모달 */}
       <ModalBox
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <ModalHeader>Create Team</ModalHeader>
-            <ModalBody>
-              <>
-              <div style={{ display: "flex", width: "100%" }}>
-                  <a style={{marginRight: "5%"}}>Team</a>
-                  <input style={{width: "100%"}}></input>
-                </div>
-                <div style={{marginTop: "2%", marginLeft: "auto", display: "flex" }}>
-                  <ModalButton1>Cancel</ModalButton1>
-                  <ModalButton2>Create</ModalButton2>
-                </div>
-              </>
-            </ModalBody>
-          </Box>
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <ModalHeader>Create Team</ModalHeader>
+          <ModalBody>
+            <div style={{ display: "flex", width: "100%" }}>
+              <a style={{ marginRight: "5%" }}>Team</a>
+              <input style={{ width: "100%" }}></input>
+            </div>
+            <div
+              style={{ marginTop: "2%", marginLeft: "auto", display: "flex" }}
+            >
+              <ModalButton1>Cancel</ModalButton1>
+              <ModalButton2>Create</ModalButton2>
+            </div>
+          </ModalBody>
+        </Box>
       </ModalBox>
-      
     </ProjectContainer>
   );
 };
