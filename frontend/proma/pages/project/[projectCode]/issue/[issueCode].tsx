@@ -209,7 +209,7 @@ const IssueDetail = () => {
             {updateStatus ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
           </ToggleIconBox>
           {updateStatus ? (
-            <form action="">
+            <form>
               <input
                 type="text"
                 list="statusList"

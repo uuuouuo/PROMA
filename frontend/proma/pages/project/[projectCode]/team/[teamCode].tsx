@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
+import { IssueCreateModal } from "../../../../components/common/Modal";
 
 //team info get api 필요
 
@@ -226,8 +227,9 @@ const TeamSpace = () => {
 
   //팀 별 이슈 get api 로직 필요
 
-  //해당 스프린트 해당 팀의 새로운 이슈 생성 로직
-  const addNewIssue = () => {};
+  //issue create modal
+  const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
+  const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
 
   return (
     <TeamSpaceContainer>
@@ -271,7 +273,11 @@ const TeamSpace = () => {
         )}
         <ButtonBox>
           <button>Only My Issue</button>
-          <button onClick={addNewIssue}>+ Add Issue</button>
+          <button onClick={showIssueCreateModal}>+ Add Issue</button>
+          <IssueCreateModal
+            issueCreateModal={issueCreateModal}
+            showIssueCreateModal={showIssueCreateModal}
+          />
         </ButtonBox>
       </SubTopBar>
 
