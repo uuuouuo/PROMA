@@ -6,6 +6,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
 import {
+  SprintCreateModal,
   TopicListModal,
   TopicCreateModal,
 } from "../../../components/common/Modal";
@@ -140,8 +141,10 @@ const ProjectSpace = () => {
 
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
+  const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
+  const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
 
   //최초 프로젝트 시작 시 생성 => 백로그 생성됨
   const onStartProject = () => {
@@ -180,7 +183,13 @@ const ProjectSpace = () => {
             <FlexBox>
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
-                <FilledButton>Create Sprint</FilledButton>
+                <FilledButton onClick={showSprintCreateModal}>
+                  Create Sprint
+                </FilledButton>
+                <SprintCreateModal
+                  sprintCreateModal={sprintCreateModal}
+                  showSprintCreateModal={showSprintCreateModal}
+                />
                 <UnfilledButton onClick={showTopicListModal}>
                   Topic
                 </UnfilledButton>
