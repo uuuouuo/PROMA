@@ -3,10 +3,11 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "react-sliding-pane/dist/react-sliding-pane.css";
-import { FaRegUserCircle, FaPencilAlt, FaCheck } from "react-icons/fa";
+import { FaRegUserCircle, FaPencilAlt, FaCheck, FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
+import Toggle from "./Toggle";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -82,18 +83,22 @@ const style2 = {
   alignContent: "center",
   paddingTop: "80px",
   paddingBottom: "80px",
+  height: "400px"
 };
 
 const ModalBox = styled(Modal)`
   .MuiBox-root {
     padding: 0px;
     border: 0px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
   }
 `;
 
 const Header = styled.div`
   height: 50px;
-  padding: 0px 0px 0px 10px;
+  padding: 3px 20px;
   background: #6667AB;
   color: white;
   font-size: 25px;
@@ -104,13 +109,15 @@ const Header = styled.div`
 
 const Login = styled.div`
   height: 50px;
-  justify-content: center;
-  background: lightgrey;
-  font-weight: bold;
   font-size: 20px;
+  font-weight: 600;
   display: flex;
+  justify-content: center;
+  background: #3E3F42;
+  font-weight: bold;
   margin: 32px 32px 32px 32px;
   align-items: center;
+  color: white;
 `;
 
 const Profile = styled.div`
@@ -128,27 +135,29 @@ const Username = styled.div`
   margin-top: 5%;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
+  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  margin-bottom: 32px;
+  color: ${(props: ThemeType) => props.theme.mainColor};
+  font-size: 20px;
+  font-weight: 600;
 `;
 
 const NameInput = styled.input`
-  width: 36%;
-  height: 40px;
-  margin-top: 5%;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0% 2% 0% 2%;
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-bottom: 32px;
+  border: none;
+  width: 40%;
+  align-self: center;
+  border-radius: 3px;
+  font-size: 20px;
+  padding: 5px 10px;
+  margin: 3% 0% 0% 0%;
+  outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+  &:focus {
+    outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
 `;
 
 const NavBar = ({
@@ -182,6 +191,16 @@ const NavBar = ({
     }
   }
 
+  // *********************************************************************************
+  // 토글 관련 선언 및 함수
+  const [toggled, setToggled] = React.useState(true);
+
+  const Changotogle = () => {
+    // setToggled((toggled) => !toggled);
+    darkMode ? "dark" : "light"
+  };
+  // *********************************************************************************
+
   return (
     <>
       <NavBarContainer>
@@ -205,6 +224,15 @@ const NavBar = ({
               <MenuButton onClick={() => location.reload()}>Logout</MenuButton>
             </MenuToggleBox>
           )}
+
+          {/* 여기 토글 버튼 코드!!!! */}
+          {/* <Toggle onChange={(e) => Changotogle(e)} /> */}
+          <Toggle onClick={toggleDarkMode}>
+          {darkMode ? "dark" : "light"}
+          </Toggle>
+
+
+
           <MenuButton onClick={toggleDarkMode}>
             {darkMode ? "dark" : "light"}
           </MenuButton>
@@ -228,7 +256,7 @@ const NavBar = ({
                 handleClose();
               }}
             >
-              Github
+              <FaGithub style={{marginRight: "2%"}} />Github
             </Login>
           </Box>
         </ModalBox>

@@ -2,12 +2,10 @@ import { useState } from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import Link from "next/link";
-import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { ThemeType } from "../../../interfaces/style";
 import Project from "./Project";
-import { FaBlackberry, FaUserAlt, FaRegTimesCircle } from "react-icons/fa";
+import { FaUserAlt, FaRegTimesCircle } from "react-icons/fa";
 
 const SideBarContainer = styled.div`
   width: 20vw;
@@ -49,30 +47,53 @@ const ModalBox = styled(Modal)`
     padding: 0px;
     width: 600px;
     border: 0px;
-    border-radius: 10px 10px 10px 10px / 10px 10px 10px 10px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
   }
 `;
 
 const ModalHeader = styled.div`
   height: 50px;
-  padding: 0px 0px 0px 10px;
+  padding: 3px 20px;
   background: #6667ab;
   color: white;
   font-size: 25px;
   display: flex;
   align-items: center;
   text-decoration: underline;
-  border-radius: 5px 5px 0px 0px / 5px 5px 0px 0px;
 `;
 
 const ModalBody = styled.div`
   height: 500px;
   font-size: 25px;
+  font-weight: 600;
   color: #6667ab;
   display: flex;
   flex-direction: column;
   margin: 32px 32px 50px 32px;
   align-items: center;
+  color: ${(props: ThemeType) => props.theme.mainColor};
+  input {
+    border: none;
+    border-radius: 3px;
+    font-size: 20px;
+    padding: 5px 10px;
+    outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    &:focus {
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+  }
+  textarea {
+    border: none;
+    border-radius: 3px;
+    font-size: 20px;
+    padding: 5px 10px;
+    outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+    &:focus {
+      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+    }
+  }
 `;
 
 const style = {
@@ -89,19 +110,17 @@ const style = {
 
 const ModalButton1 = styled.button`
   background: white;
-  height: 30px;
-  border: 2px solid #6667ab;
-  margin: 10px 5px 0px 0px;
-  border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
+  height: 25px;
+  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+  margin: 10px 0px 0px 10px;
+  border-radius: 3px;
+  color: ${(props: ThemeType) => props.theme.mainColor};
 `;
 
 const ModalButton2 = styled(ModalButton1)`
-  background: #6667ab;
+  background: ${(props: ThemeType) => props.theme.mainColor};
   color: white;
-  height: 30px;
-  border: 2px solid #6667ab;
-  margin: 10px 5px 0px 0px;
-  border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
+  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
 `;
 
 const projects = ["one", "two", "three"];
@@ -113,26 +132,30 @@ const SideBar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // 추가할 회원 아이디 작성 
   const onChange = (e: any) => {
     setEmail(e.target.value);
   };
 
+  // 회원 추가 기능
   const handleKeyPress = (e: any) => {
     let value = e.target.value;
 
-    if (e.key === "Enter") {
+    if (todos.indexOf(value) == -1 && e.key === "Enter") {
       setTodos([...todos, value]);
+    }
+    else if(todos.indexOf(value) > -1 && e.key === "Enter"){
+      javascript:alert('중복된 맴버입니다.');
     }
   };
 
-  //**********************************************************
-  // API 연결 후 바로 바로 삭제 적용 되게 만들기!!!
-  //**********************************************************
+  // 회원 삭제 기능
   const deleteEmail = (e: any) => {
     for (let i = 0; i < todos.length; i++) {
       if (todos[i] === e) {
         todos.splice(i, 1);
         i--;
+        setTodos([...todos]);
       }
     }
   };
@@ -160,6 +183,7 @@ const SideBar = () => {
           <ModalHeader>Create Project</ModalHeader>
           <ModalBody>
             <>
+              {/* 프로젝트 이름 */}
               <div style={{ width: "100%", marginBottom: "3%" }}>
                 <a>Project</a>
                 <input
@@ -171,6 +195,7 @@ const SideBar = () => {
                 ></input>
               </div>
 
+              {/* 팀 소개 */}
               <div style={{ width: "100%", marginBottom: "3%" }}>
                 <a>Introduce</a>
                 <textarea
@@ -182,6 +207,7 @@ const SideBar = () => {
                 ></textarea>
               </div>
 
+              {/* 팀원 초대 */}
               <div style={{ width: "100%", marginBottom: "3%" }}>
                 <a>Write an email to invite members</a>
                 <input
@@ -198,24 +224,20 @@ const SideBar = () => {
 
               <div style={{ width: "100%" }}>
                 <a>Members</a>
-                <div
-                  style={{
-                    width: "96%",
-                    height: "90px",
-                    padding: "1% 2% 1% 2%",
-                  }}
-                >
+
+                {/* 추가된 팀원  */}
+                <div style={{ width: "96%", height: "90px", padding: "1% 2% 1% 2%", overflow: "auto" }}>
                   {todos.map((datas, index) => {
                     return (
-                      <div key={index}>
+                      <div key={index} style={{display: "flex", alignItems: "center", marginBottom: "1%"}}>
                         <FaUserAlt
                           style={{
                             width: "4%",
                             height: "4%",
-                            marginRight: "2%",
+                            marginRight: "1%",
                           }}
                         />
-                        {datas}
+                        <a style={{fontWeight: "normal", fontSize: "20px", textDecoration: "underline"}}>{datas}</a>
                         <FaRegTimesCircle
                           style={{
                             width: "4%",
