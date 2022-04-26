@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -56,7 +56,7 @@ const ModalBox = styled(Modal)`
 const ModalHeader = styled.div`
   height: 50px;
   padding: 0px 0px 0px 10px;
-  background: #6667AB;
+  background: #6667ab;
   color: white;
   font-size: 25px;
   display: flex;
@@ -68,7 +68,7 @@ const ModalHeader = styled.div`
 const ModalBody = styled.div`
   height: 500px;
   font-size: 25px;
-  color: #6667AB;
+  color: #6667ab;
   display: flex;
   flex-direction: column;
   margin: 32px 32px 50px 32px;
@@ -90,16 +90,16 @@ const style = {
 const ModalButton1 = styled.button`
   background: white;
   height: 30px;
-  border: 2px solid #6667AB;
+  border: 2px solid #6667ab;
   margin: 10px 5px 0px 0px;
   border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
 `;
 
 const ModalButton2 = styled(ModalButton1)`
-  background: #6667AB;
+  background: #6667ab;
   color: white;
   height: 30px;
-  border: 2px solid #6667AB;
+  border: 2px solid #6667ab;
   margin: 10px 5px 0px 0px;
   border-radius: 5px 5px 5px 5px / 5px 5px 5px 5px;
 `;
@@ -107,34 +107,35 @@ const ModalButton2 = styled(ModalButton1)`
 const projects = ["one", "two", "three"];
 
 const SideBar = () => {
-  
-  const [open, setOpen] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [todos, setTodos] = React.useState([])
+  const [open, setOpen] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [todos, setTodos] = useState<string[]>([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const onChange = (e: any) => {
     setEmail(e.target.value);
-  }
+  };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if(e.key === 'Enter') {
-      setTodos([...todos, e.target.value])
+  const handleKeyPress = (e: any) => {
+    let value = e.target.value;
+
+    if (e.key === "Enter") {
+      setTodos([...todos, value]);
     }
-  }
+  };
 
   //**********************************************************
   // API 연결 후 바로 바로 삭제 적용 되게 만들기!!!
   //**********************************************************
   const deleteEmail = (e: any) => {
-    for(let i = 0; i < todos.length; i++) {
-      if(todos[i] === e)  {
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i] === e) {
         todos.splice(i, 1);
         i--;
       }
     }
-  } 
+  };
 
   return (
     <SideBarContainer>
@@ -143,82 +144,102 @@ const SideBar = () => {
         {projects.map((project) => (
           <Project projectName={project}></Project>
         ))}
-        <AddProjectButton onClick={handleOpen}>+ Create New Project</AddProjectButton>
+        <AddProjectButton onClick={handleOpen}>
+          + Create New Project
+        </AddProjectButton>
       </ProjectsContainer>
 
       {/* 프로젝트 생성 모달 */}
       <ModalBox
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <ModalHeader>Create Project</ModalHeader>
-            <ModalBody>
-              <>
-                <div style={{ width: "100%", marginBottom: "3%" }}>
-                  <a>Project</a>
-                  <input style={{
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <ModalHeader>Create Project</ModalHeader>
+          <ModalBody>
+            <>
+              <div style={{ width: "100%", marginBottom: "3%" }}>
+                <a>Project</a>
+                <input
+                  style={{
                     width: "96%",
                     height: "20px",
-                    padding: "1% 2% 1% 2%"
-                  }}></input>
-                </div>
-              
-                <div style={{ width: "100%", marginBottom: "3%" }}>
-                  <a>Introduce</a>
-                  <textarea style={{
+                    padding: "1% 2% 1% 2%",
+                  }}
+                ></input>
+              </div>
+
+              <div style={{ width: "100%", marginBottom: "3%" }}>
+                <a>Introduce</a>
+                <textarea
+                  style={{
                     width: "96%",
                     height: "100px",
-                    padding: "1% 2% 1% 2%"
-                  }}></textarea>
-                </div>
-              
-                <div style={{ width: "100%", marginBottom: "3%" }}>
-                  <a>Write an email to invite members</a>
-                  <input style={{
+                    padding: "1% 2% 1% 2%",
+                  }}
+                ></textarea>
+              </div>
+
+              <div style={{ width: "100%", marginBottom: "3%" }}>
+                <a>Write an email to invite members</a>
+                <input
+                  style={{
                     width: "96%",
                     height: "20px",
-                    padding: "1% 2% 1% 2%"
-                  }} value={email} onChange={onChange} onKeyPress={handleKeyPress}></input>
-                </div>
-              
-                <div style={{ width: "100%" }}>
-                  <a>Members</a>
-                  <div style={{
+                    padding: "1% 2% 1% 2%",
+                  }}
+                  value={email}
+                  onChange={onChange}
+                  onKeyPress={handleKeyPress}
+                ></input>
+              </div>
+
+              <div style={{ width: "100%" }}>
+                <a>Members</a>
+                <div
+                  style={{
                     width: "96%",
                     height: "90px",
-                    padding: "1% 2% 1% 2%"
-                  }}>
-                    {
-                      todos.map((datas, index) => {
-                        return (
-                          <div key={index} >
-                            <FaUserAlt
-                              style={{ width: "4%", height: "4%", marginRight: "2%" }}
-                            />
-                            {datas}
-                            <FaRegTimesCircle
-                              style={{ width: "4%", height: "4%", marginLeft: "2%" }}
-                              onClick={() => deleteEmail(datas)}
-                            />
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
+                    padding: "1% 2% 1% 2%",
+                  }}
+                >
+                  {todos.map((datas, index) => {
+                    return (
+                      <div key={index}>
+                        <FaUserAlt
+                          style={{
+                            width: "4%",
+                            height: "4%",
+                            marginRight: "2%",
+                          }}
+                        />
+                        {datas}
+                        <FaRegTimesCircle
+                          style={{
+                            width: "4%",
+                            height: "4%",
+                            marginLeft: "2%",
+                          }}
+                          onClick={() => deleteEmail(datas)}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              
-                <div style={{marginTop: "2%", marginLeft: "auto", display: "flex" }}>
-                  <ModalButton1>Cancel</ModalButton1>
-                  <ModalButton2>Create</ModalButton2>
-                </div>
-              </>
-            </ModalBody>
-          </Box>
-      </ModalBox>
+              </div>
 
+              <div
+                style={{ marginTop: "2%", marginLeft: "auto", display: "flex" }}
+              >
+                <ModalButton1>Cancel</ModalButton1>
+                <ModalButton2>Create</ModalButton2>
+              </div>
+            </>
+          </ModalBody>
+        </Box>
+      </ModalBox>
     </SideBarContainer>
   );
 };
