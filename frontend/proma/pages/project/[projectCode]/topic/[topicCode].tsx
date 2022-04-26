@@ -5,12 +5,12 @@ import { FaPen, FaCheck, FaCaretSquareDown } from "react-icons/fa";
 import Image from "next/image";
 
 //styled-components
-const EpicContainer = styled.div`
+const TopicContainer = styled.div`
   width: inherit;
   padding: 10px 20px;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
   color: ${(props: ThemeType) => props.theme.textColor};
-  height: inherit;
+  height: 98%;
   overflow-y: scroll;
 `;
 const TopicTitle = styled.h1`
@@ -25,6 +25,7 @@ const SubBox = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px;
+  padding-top: 0;
   p {
     font-size: 25px;
   }
@@ -40,7 +41,7 @@ const SubTitle = styled.div`
     color: ${(props: ThemeType) => props.theme.textColor};
   }
 `;
-const EpicDetailBox = styled(SubBox)`
+const TopicDetailBox = styled(SubBox)`
   width: inherit;
   position: relative;
   ${IconBox} {
@@ -84,6 +85,7 @@ const IssueContainer = styled.div`
   padding-top: 0;
   overflow-y: scroll;
   margin: 0 10px;
+  max-height: 45vh;
 `;
 const IssueBox = styled.div`
   display: flex;
@@ -119,7 +121,7 @@ const AssigneeBox = styled.div`
   align-items: center;
 `;
 
-const EpicDetail = () => {
+const TopicDetail = () => {
   const [updateTopic, setUpdateTopic] = useState<boolean>(false);
 
   //dummyData
@@ -141,7 +143,7 @@ const EpicDetail = () => {
   ];
 
   return (
-    <EpicContainer>
+    <TopicContainer>
       <TopicTitle>{topicName}</TopicTitle>
 
       <SubBox>
@@ -150,7 +152,7 @@ const EpicDetail = () => {
           <span>Details</span>
         </SubTitle>
 
-        <EpicDetailBox>
+        <TopicDetailBox>
           <IconBox onClick={() => setUpdateTopic((cur) => !cur)}>
             {updateTopic ? <FaCheck /> : <FaPen />}
           </IconBox>
@@ -182,7 +184,7 @@ const EpicDetail = () => {
               <p>{topicDesc}</p>
             )}
           </ToggleBox>
-        </EpicDetailBox>
+        </TopicDetailBox>
       </SubBox>
 
       <SubBox>
@@ -208,8 +210,8 @@ const EpicDetail = () => {
           ))}
         </IssueContainer>
       </SubBox>
-    </EpicContainer>
+    </TopicContainer>
   );
 };
 
-export default EpicDetail;
+export default TopicDetail;

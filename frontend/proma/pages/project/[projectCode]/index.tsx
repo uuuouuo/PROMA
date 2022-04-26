@@ -99,7 +99,7 @@ const TopBar = styled(FlexBox)`
   }
 `;
 const InitialBox = styled(FlexBox)`
-  margin-top: 300px;
+  /* margin-top: 300px; */
   justify-content: center;
   height: inherit;
   ${Button} {
@@ -118,6 +118,7 @@ const ButtonBox = styled.div`
   }
 `;
 const SprintsBox = styled.div`
+margin-top: 10px;
   height: 100%;
   overflow-y: scroll;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
@@ -171,7 +172,7 @@ const ProjectSpace = () => {
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
                 <FilledButton>Create Sprint</FilledButton>
-                <UnfilledButton>Epic</UnfilledButton>
+                <UnfilledButton>Topic</UnfilledButton>
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
