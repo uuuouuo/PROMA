@@ -8,4 +8,6 @@ public interface UserRepository extends JpaRepository<User,String> {
 
   Optional<User> getUserByNickname(String nickname);
   Optional<User> getUserByNo(String userNo);
+  Optional<User> findByNo(String userNo);
+
 }
