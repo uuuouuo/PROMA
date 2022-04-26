@@ -166,6 +166,22 @@ const NameInput = styled.input`
   }
 `;
 
+const Icon1 = styled(FaPencilAlt)`
+  margin-left: auto;
+  height: 6%;
+  width: 6%;
+  padding: 4% 4% 0% 0%;
+  color: ${(props: ThemeType) => props.theme.textColor};
+`;
+
+const Icon2 = styled(FaCheck)`
+  margin-left: auto;
+  height: 6%;
+  width: 6%;
+  padding: 4% 4% 0% 0%;
+  color: ${(props: ThemeType) => props.theme.textColor};
+`;
+
 const NavBar = ({
   toggleDarkMode,
   darkMode,
@@ -255,25 +271,13 @@ const NavBar = ({
           <Box sx={style2}>
             <Header>Profile</Header>
             {modify === false ? (
-              <FaPencilAlt
-                style={{
-                  marginLeft: "auto",
-                  height: "6%",
-                  width: "6%",
-                  padding: "4% 4% 0% 0%",
-                }}
+              <Icon1
                 onClick={() => {
                   setModify(true);
                 }}
               />
             ) : (
-              <FaCheck
-                style={{
-                  marginLeft: "auto",
-                  height: "6%",
-                  width: "6%",
-                  padding: "4% 4% 0% 0%",
-                }}
+              <Icon2
                 onClick={() => {
                   setModify(false);
                 }}
