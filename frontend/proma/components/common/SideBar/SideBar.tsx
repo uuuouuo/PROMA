@@ -7,7 +7,7 @@ import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { ThemeType } from "../../../interfaces/style";
 import Project from "./Project";
-import { FaBlackberry } from "react-icons/fa";
+import { FaBlackberry, FaUserAlt, FaRegTimesCircle } from "react-icons/fa";
 
 const SideBarContainer = styled.div`
   width: 20vw;
@@ -109,8 +109,32 @@ const projects = ["one", "two", "three"];
 const SideBar = () => {
   
   const [open, setOpen] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [todos, setTodos] = React.useState([])
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const onChange = (e: any) => {
+    setEmail(e.target.value);
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if(e.key === 'Enter') {
+      setTodos([...todos, e.target.value])
+    }
+  }
+
+  //**********************************************************
+  // API 연결 후 바로 바로 삭제 적용 되게 만들기!!!
+  //**********************************************************
+  const deleteEmail = (e: any) => {
+    for(let i = 0; i < todos.length; i++) {
+      if(todos[i] === e)  {
+        todos.splice(i, 1);
+        i--;
+      }
+    }
+  } 
 
   return (
     <SideBarContainer>
@@ -157,7 +181,7 @@ const SideBar = () => {
                     width: "96%",
                     height: "20px",
                     padding: "1% 2% 1% 2%"
-                  }}></input>
+                  }} value={email} onChange={onChange} onKeyPress={handleKeyPress}></input>
                 </div>
               
                 <div style={{ width: "100%" }}>
@@ -166,7 +190,24 @@ const SideBar = () => {
                     width: "96%",
                     height: "90px",
                     padding: "1% 2% 1% 2%"
-                  }}></div>
+                  }}>
+                    {
+                      todos.map((datas, index) => {
+                        return (
+                          <div key={index} >
+                            <FaUserAlt
+                              style={{ width: "4%", height: "4%", marginRight: "2%" }}
+                            />
+                            {datas}
+                            <FaRegTimesCircle
+                              style={{ width: "4%", height: "4%", marginLeft: "2%" }}
+                              onClick={() => deleteEmail(datas)}
+                            />
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
                 </div>
               
                 <div style={{marginTop: "2%", marginLeft: "auto", display: "flex" }}>
