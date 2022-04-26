@@ -103,7 +103,7 @@ const ModalBox = styled(Modal)`
 const Header = styled.div`
   height: 50px;
   padding: 3px 20px;
-  background: #6667ab;
+  background: ${(props: ThemeType) => props.theme.mainColor};
   color: white;
   font-size: 25px;
   display: flex;
@@ -113,15 +113,17 @@ const Header = styled.div`
 
 const Login = styled.div`
   height: 50px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   display: flex;
   justify-content: center;
-  background: #3e3f42;
   font-weight: bold;
   margin: 32px 32px 32px 32px;
   align-items: center;
+  border-radius: 3px;
+  border: 1px solid white;
   color: white;
+  background-color: #3e3f42;
 `;
 
 const Profile = styled.div`
@@ -171,26 +173,23 @@ const NavBar = ({
   toggleDarkMode: any;
   darkMode: boolean;
 }) => {
-  // 1은 로그인 관련, 2는 개인 프로필 관련 선언들
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleOpen2 = () => setOpen2(true);
-  const handleClose2 = () => setOpen2(false);
+  const [loginStatus, setLoginStatus] = useState<boolean>(false);
+  const [joinStatus, setJoinStatus] = useState<boolean>(false);
+  const showLoginModal = () => setLoginStatus((cur) => !cur);
+  const showJoinModal = () => setJoinStatus((cur) => !cur);
 
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState<string>("");
   const [image, setImage] = useState("");
 
-  const [modify, setModify] = useState(false);
+  const [modify, setModify] = useState<boolean>(false);
 
   const onChangeName = (e: any) => {
-    setName(e.target.value);
+    setUserName(e.target.value);
   };
 
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter") {
-      setName(e.target.value);
+      setUserName(e.target.value);
       setModify(true);
     }
   };
@@ -205,14 +204,14 @@ const NavBar = ({
         </Link>
 
         <MenuBox>
-          {name == "" ? (
+          {userName == "" ? (
             <MenuToggleBox>
-              <MenuButton onClick={handleOpen}>Login</MenuButton>
-              <MenuButton onClick={handleOpen2}>Join</MenuButton>
+              <MenuButton onClick={showLoginModal}>Login</MenuButton>
+              <MenuButton onClick={showJoinModal}>Join</MenuButton>
             </MenuToggleBox>
           ) : (
             <MenuToggleBox>
-              <MenuIconButton onClick={handleOpen2}>
+              <MenuIconButton onClick={showJoinModal}>
                 <FaRegUserCircle />
               </MenuIconButton>
               <MenuButton onClick={() => location.reload()}>Logout</MenuButton>
@@ -224,8 +223,8 @@ const NavBar = ({
 
         {/* 로그인 모달 */}
         <ModalBox
-          open={open}
-          onClose={handleClose}
+          open={loginStatus}
+          onClose={showLoginModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -233,11 +232,11 @@ const NavBar = ({
             <Header>Login</Header>
             <Login
               onClick={() => {
-                setName("박주한");
+                setUserName("박주한");
                 setImage(
                   "https://cdn.pixabay.com/photo/2021/10/24/21/34/profile-pic-6739366_960_720.png"
                 );
-                handleClose();
+                showLoginModal();
               }}
             >
               <FaGithub style={{ marginRight: "2%" }} />
@@ -248,8 +247,8 @@ const NavBar = ({
 
         {/* 마이페이지 모달 */}
         <ModalBox
-          open={open2}
-          onClose={handleClose2}
+          open={joinStatus}
+          onClose={showJoinModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -299,7 +298,7 @@ const NavBar = ({
                       height: "150px",
                       borderRadius: "50%",
                     }}
-                    onClick={handleOpen2}
+                    onClick={showJoinModal}
                     src={image}
                   />
                 )}
@@ -311,10 +310,10 @@ const NavBar = ({
               </form>
             )}
             {modify === false ? (
-              <Username>{name}</Username>
+              <Username>{userName}</Username>
             ) : (
               <NameInput
-                value={name}
+                value={userName}
                 onKeyPress={handleKeyPress}
                 onChange={onChangeName}
               />
