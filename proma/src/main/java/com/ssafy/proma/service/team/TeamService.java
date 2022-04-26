@@ -39,11 +39,11 @@ public class TeamService extends AbstractService {
   public void createTeam(TeamCreateDto teamDto){
 
     String projectNo = teamDto.getProjectNo();
-    String NickName = teamDto.getNickname();
+    String userNo = teamDto.getUserNo();
 
     Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
     Project project = takeOp(projectOp);
-    Optional<User> userOp = userRepository.getUserByNickname(NickName);
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
     User user = takeOp(userOp);
 
 
@@ -58,9 +58,9 @@ public class TeamService extends AbstractService {
   public void joinTeam(TeamJoinDto teamDto) {
 
     int teamNo = teamDto.getTeamNo();
-    String NickName = teamDto.getNickname();
+    String userNo = teamDto.getUserNo();
 
-    Optional<User> userOp = userRepository.getUserByNickname(NickName);
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
     User user = takeOp(userOp);
 
     Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
@@ -75,9 +75,9 @@ public class TeamService extends AbstractService {
   public void exitTeam(TeamExitDto teamDto) {
 
     int teamNo = teamDto.getTeamNo();
-    String NickName = teamDto.getNickname();
+    String userNo = teamDto.getUserNo();
 
-    Optional<User> userOp = userRepository.getUserByNickname(NickName);
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
     User user = takeOp(userOp);
 
     Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
@@ -128,16 +128,8 @@ public class TeamService extends AbstractService {
 
   public List<String> getUserTeamList(int teamNo) {
 
-    System.out.println("ASfasfasdfwefsadfwef");
     Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
     Team team = takeOp(teamOp);
-    if (team == null) {
-      System.out.println("is nul!@#!@#!@#!@!@@!#");
-    }
-    else{
-      System.out.println("team " + team.getName());
-    }
-//    System.out.println("team " + team.getNo());
 
     Optional<List<UserTeam>> userTeamOp = userTeamRepository.getUserTeamsByTeam(team);
     List<UserTeam> userTeamList = takeOp(userTeamOp);
