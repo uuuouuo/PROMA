@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
+import {
+  TopicListModal,
+  TopicCreateModal,
+} from "../../../components/common/Modal";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
@@ -118,7 +122,7 @@ const ButtonBox = styled.div`
   }
 `;
 const SprintsBox = styled.div`
-margin-top: 10px;
+  margin-top: 10px;
   height: 100%;
   overflow-y: scroll;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
@@ -133,6 +137,11 @@ const ProjectSpace = () => {
 
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>("Project Name");
+
+  const [topicListModal, setTopicListModal] = useState<boolean>(false);
+  const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
+  const showTopicListModal = () => setTopicListModal((cur) => !cur);
+  const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
 
   //최초 프로젝트 시작 시 생성 => 백로그 생성됨
   const onStartProject = () => {
@@ -172,7 +181,19 @@ const ProjectSpace = () => {
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
                 <FilledButton>Create Sprint</FilledButton>
-                <UnfilledButton>Topic</UnfilledButton>
+                <UnfilledButton onClick={showTopicListModal}>
+                  Topic
+                </UnfilledButton>
+                <TopicListModal
+                  topicListModal={topicListModal}
+                  showTopicListModal={showTopicListModal}
+                  showTopicCreateModal={showTopicCreateModal}
+                />
+                <TopicCreateModal
+                  topicCreateModal={topicCreateModal}
+                  showTopicListModal={showTopicListModal}
+                  showTopicCreateModal={showTopicCreateModal}
+                />
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
