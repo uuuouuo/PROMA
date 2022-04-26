@@ -13,12 +13,12 @@ public class ReqTeamDto {
   @NoArgsConstructor
   public static class TeamCreateDto{
     String name;
-    String nickname;
+    String userNo;
     String projectNo;
 
-    public TeamCreateDto(String name, String nickname, String projectNo) {
+    public TeamCreateDto(String name, String userNo, String projectNo) {
       this.name = name;
-      this.nickname = nickname;
+      this.userNo = userNo;
       this.projectNo = projectNo;
     }
 
@@ -37,11 +37,11 @@ public class ReqTeamDto {
   public static class TeamJoinDto{
 
     Integer teamNo;
-    String nickname;
+    String userNo;
 
-    public TeamJoinDto(Integer teamNo, String nickname) {
+    public TeamJoinDto(Integer teamNo, String userNo) {
       this.teamNo = teamNo;
-      this.nickname = nickname;
+      this.userNo = userNo;
     }
     public UserTeam toEntity(Team team, User user) {
       return UserTeam.builder().team(team).user(user).build();
@@ -65,11 +65,11 @@ public class ReqTeamDto {
   public static class TeamExitDto {
 
     Integer teamNo;
-    String nickname;
+    String userNo;
 
-    public TeamExitDto(Integer teamNo, String nickname) {
+    public TeamExitDto(Integer teamNo, String userNo) {
       this.teamNo = teamNo;
-      this.nickname = nickname;
+      this.userNo = userNo;
     }
   }
 }

@@ -53,6 +53,7 @@ public class Sprint {
     public void toggleStatus(){
         this.status = this.status^true;
     }
+
     public void update(String name,String startDate,String endDate){
 
         DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");

@@ -1,9 +1,10 @@
 package com.ssafy.proma.service.topic;
 
-import com.ssafy.proma.model.dto.issue.ResIssueDto.TopicIssueDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicUpdateDto;
 import com.ssafy.proma.model.dto.topic.ResTopicDto.TopicDetailDto;
+import com.ssafy.proma.model.dto.topic.ResTopicDto.TopicNoNameDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.topic.Topic;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +54,7 @@ public class TopicService extends AbstractService {
     topic.update(title,description);
   }
 
-  public List<TopicIssueDto> getIssueList(Integer topicNo) {
+  public List<IssueNoTitleDto> getIssueList(Integer topicNo) {
 
     Optional<Topic> topicOp = topicRepository.getTopicByNo(topicNo);
     Topic topic = takeOp(topicOp);
@@ -60,8 +62,8 @@ public class TopicService extends AbstractService {
     Optional<List<Issue>> issueListOp = issueRepository.getAllByTopic(topic);
     List<Issue> issues = takeOp(issueListOp);
 
-    List<TopicIssueDto> issueDtoList = issues.stream()
-        .map(issue -> new TopicIssueDto(issue.getNo(), issue.getTitle())).collect(
+    List<IssueNoTitleDto> issueDtoList = issues.stream()
+        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
             Collectors.toList());
 
     return issueDtoList;
@@ -77,7 +79,7 @@ public class TopicService extends AbstractService {
     return topicDetailDto;
   }
 
-  public List<String> getTopicList(String projectNo) {
+  public List<TopicNoNameDto> getTopicList(String projectNo) {
 
     Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
     Project project = takeOp(projectOp);
@@ -85,10 +87,10 @@ public class TopicService extends AbstractService {
     Optional<List<Topic>> topicListOp = topicRepository.getAllByProject(project);
     List<Topic> topics = takeOp(topicListOp);
 
-    List<String> topicNameList = new ArrayList<>();
+    List<TopicNoNameDto> topicNoNameList = topics.stream()
+        .map(topic -> new TopicNoNameDto(topic.getNo(), topic.getTitle()))
+        .collect(Collectors.toList());
 
-    topics.forEach(topic -> topicNameList.add(topic.getTitle()));
-
-    return topicNameList;
+    return topicNoNameList;
   }
 }

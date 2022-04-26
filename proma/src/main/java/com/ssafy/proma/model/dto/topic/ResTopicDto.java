@@ -20,4 +20,16 @@ public class ResTopicDto {
     }
   }
 
+  @Getter
+  @NoArgsConstructor
+  public static class TopicNoNameDto{
+
+    Integer topicNo;
+    String title;
+
+    public TopicNoNameDto(Integer topicNo, String title) {
+      this.topicNo = topicNo;
+      this.title = title;
+    }
+  }
 }
