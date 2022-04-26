@@ -7,6 +7,7 @@ import { FaRegUserCircle, FaPencilAlt, FaCheck, FaGithub } from "react-icons/fa"
 import Image from "next/image";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
+import Toggle from "./Toggle";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -190,6 +191,13 @@ const NavBar = ({
     }
   }
 
+  const [toggled, setToggled] = React.useState(true);
+
+  const Changotogle = () => {
+    // setToggled((toggled) => !toggled);
+    darkMode ? "dark" : "light"
+  };
+
   return (
     <>
       <NavBarContainer>
@@ -213,6 +221,10 @@ const NavBar = ({
               <MenuButton onClick={() => location.reload()}>Logout</MenuButton>
             </MenuToggleBox>
           )}
+          {/* <Toggle onChange={(e) => Changotogle(e)} /> */}
+          <Toggle onClick={toggleDarkMode}>
+          {darkMode ? "dark" : "light"}
+          </Toggle>
           <MenuButton onClick={toggleDarkMode}>
             {darkMode ? "dark" : "light"}
           </MenuButton>
