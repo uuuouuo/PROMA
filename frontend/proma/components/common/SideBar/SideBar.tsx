@@ -141,8 +141,8 @@ const SideBar = () => {
     <SideBarContainer>
       <H4>My Projects</H4>
       <ProjectsContainer>
-        {projects.map((project) => (
-          <Project projectName={project}></Project>
+        {projects.map((project, index) => (
+          <Project projectName={project} key={index}></Project>
         ))}
         <AddProjectButton onClick={handleOpen}>
           + Create New Project

@@ -71,7 +71,7 @@ const ToggleBox = styled.div`
   p {
     font-size: 25px;
     font-weight: 600;
-    color: ${(props: ThemeType) => props.theme.mainColor};
+    color: ${(props: ThemeType) => props.theme.elementTextColor};
     margin: 0;
     margin-left: 15px;
   }
