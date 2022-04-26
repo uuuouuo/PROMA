@@ -5,9 +5,9 @@ import { useState } from "react";
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { ThemeType } from "../../interfaces/style";
 
-const Chatting = ({state}: {state: boolean}) => {
-    // const [state, setState] = useState({
-    // isPaneOpen: false,
+const Chatting = ({state, showChat}:{state:boolean; showChat:any}) => {
+    // const [func, setFunc] = useState({
+    //     isPaneOpen: false,
     // });
 
     const SlidingPaneBox = styled(SlidingPane)`
@@ -103,14 +103,11 @@ const Chatting = ({state}: {state: boolean}) => {
         <SlidingPaneBox
         // className="some-custom-class"
         // overlayClassName="some-custom-overlay-class"
-        isOpen={state.isPaneOpen}
+        isOpen={state}
         title="DB"
         subtitle="DB 단체회의방입니다."
         width="500px"
-        onRequestClose={() => {
-            // triggered on "<" on left top click or on outside click
-            setState({ isPaneOpen: false });
-        }}
+        onRequestClose={showChat}
         >
         <ChatInfo style={{marginTop: "-6%", position: "absolute"}}>
             <BsFillPeopleFill/>
@@ -143,7 +140,7 @@ const Chatting = ({state}: {state: boolean}) => {
                         height: "100px",
                         padding: "1.5% 1% 1.5% 1%",
                         borderRadius: "5px 5px 5px 0px / 5px 5px 5px 0px",
-                        }} onClick={() => setState({ isPaneOpen: true })}>
+                        }}>
                         {element.content}
                     </a>
                     </div>
@@ -181,7 +178,7 @@ const Chatting = ({state}: {state: boolean}) => {
                         height: "100px",
                         padding: "1.5% 1% 1.5% 1%",
                         borderRadius: "5px 5px 0px 5px / 5px 5px 0px 5px",
-                        }} onClick={() => setState({ isPaneOpen: true })}>
+                        }}>
                         {element.content}
                     </a>
                     </div>

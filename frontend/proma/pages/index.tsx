@@ -16,9 +16,10 @@ const Box = styled.div`
 
 const Home = () => {
   const { addToast } = useToasts();
-  const [state, setState] = useState({
-    isPaneOpen: false,
-  });
+  const [state, setState] = useState(false);
+  
+  const showChat = () => 
+    setState((cur) => !cur);
 
   return (
     <FlexBox>
@@ -36,10 +37,10 @@ const Home = () => {
       >
         알림 보기
       </button>
-      <button onClick={() => setState({ isPaneOpen: true })}>
+      <button onClick={() => setState(true)}>
         Click me to open right pane!
       </button>
-      <Chatting state={state.isPaneOpen} />
+      <Chatting state={state} showChat={showChat} />
         <br />
     </FlexBox>
   );
