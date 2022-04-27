@@ -5,7 +5,6 @@ import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageReq;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageRes;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto;
-import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomReq;
 import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomRes;
 import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto;
 import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto.ProjectChatRoomRes;
@@ -29,6 +28,7 @@ import com.ssafy.proma.repository.chat.TeamChatRoomRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
+import com.ssafy.proma.util.SecurityUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,11 +49,11 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-  public PrivateChatRoomRes getPrivateChatRoom(PrivateChatRoomReq request) {
+  public PrivateChatRoomRes getPrivateChatRoom(String subNo) {
 
     // user check
-    User pub = findUser(request.getPubNo());
-    User sub = findUser(request.getSubNo());
+    User pub = findUser(SecurityUtil.getCurrentUserNo());
+    User sub = findUser(subNo);
 
     // chatroom check
     PrivateChatRoom chatRoom = null;
