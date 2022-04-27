@@ -1,14 +1,11 @@
 package com.ssafy.proma.service.user.oauth;
 
-import com.fasterxml.jackson.annotation.OptBoolean;
 import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import com.ssafy.proma.config.auth.provider.ClientGithub;
-import com.ssafy.proma.model.dto.UserDto;
-import com.ssafy.proma.model.dto.UserDto.LoginRes;
+import com.ssafy.proma.model.dto.user.UserDto.LoginRes;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
