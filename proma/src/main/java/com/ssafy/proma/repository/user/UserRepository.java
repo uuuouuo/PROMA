@@ -1,13 +1,16 @@
 package com.ssafy.proma.repository.user;
 
 import com.ssafy.proma.model.entity.user.User;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<User,String> {
+import java.util.Optional;
 
-  Optional<User> getUserByNickname(String nickname);
-  Optional<User> getUserByNo(String userNo);
-  Optional<User> findByNo(String userNo);
+public interface UserRepository extends JpaRepository<User, String> {
+
+    Optional<User> findByNo(String userNo);
+    Optional<User> getUserByNo(String userNo);
+    Optional<User> findByNoAndIsDeleted(String userNo, Boolean deleted);
+    Optional<User> findByNodeIdAndIsDeleted(String userNodeId, Boolean deleted);
 
 }
