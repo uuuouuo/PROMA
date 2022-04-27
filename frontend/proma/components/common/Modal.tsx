@@ -3,13 +3,16 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import {
-  FaRegUserCircle,
-  FaPencilAlt,
+  FaPen,
   FaCheck,
   FaGithub,
+  FaUserAlt,
+  FaRegTimesCircle,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
+import Image from "next/image";
 
 //styling
 const style = {
@@ -99,7 +102,7 @@ const ButtonBox = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin: 10px 5px;
+  margin: 15px 5px 10px 0;
 `;
 const Button = styled.button`
   border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
@@ -117,72 +120,234 @@ const CreateButton = styled(Button)`
   color: white;
   background-color: ${(props: ThemeType) => props.theme.mainColor};
 `;
-const WarningModalBox = styled(Modal)`
-    .MuiBox-root {
-        width: fit-content;
-        min-width: 300px;
-        padding: 0px;
-        border: 0px;
-        border-radius: 3px;
-        overflow: hidden;
-        background-color: ${(props: ThemeType) => props.theme.bgColor};
-        input,
-        textarea {
-        padding: 3px 10px;
-        border: none;
-        outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
-        border-radius: 3px;
-        resize: none;
-        width: 100%;
-        &:focus {
-            outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-        }
-        }
-        button {
-        &:hover {
-            cursor: pointer;
-        }
-        }
-    }
-`;
 const WarningContainer = styled.div`
-    padding: 5px 5px;
-    font-size: 22px;
-    font-weight: 550;
-    color: ${(props: ThemeType) => props.theme.elementTextColor};
-    text-align-last: center;
-    p {
-    color: red;
-}
-`;
-const Warningimg = styled.img`
-    width: 30%;
-`;
-const WarningMainArea = styled.div`
-    width: inherit;
+  padding: 30px;
+  font-size: 22px;
+  font-weight: 550;
+  color: #efaf01;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 80px;
+  p {
+    color: #d71d32;
+    font-size: 20px;
+    text-align: center;
+  }
 `;
 const WarningButtonBox = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
 `;
 const MaintainButton = styled(Button)`
-    color: white;
-    background-color: ${(props: ThemeType) => props.theme.mainColor};
-    font-size: 18px;
-    width: 50%;
+  width: inherit;
+  margin-top: 20px;
+  padding: 5px 15px;
+  color: white;
+  background-color: ${(props: ThemeType) => props.theme.mainColor};
+  font-size: 18px;
 `;
 const DeleteButton = styled(Button)`
-    color: grey;
-    background-color: ${(props: ThemeType) => props.theme.bgColor};
-    border: 0px solid ${(props: ThemeType) => props.theme.bgColor};
-    font-size: 15px;
-    width: 50%;
-    margin-top: 15px;
-    margin-bottom: 5px;
+  color: ${(props: ThemeType) => props.theme.subPurpleColor};
+  background-color: ${(props: ThemeType) => props.theme.bgColor};
+  border: 0px solid ${(props: ThemeType) => props.theme.bgColor};
+  font-size: 15px;
+  width: inherit;
+  margin-top: 10px;
 `;
+const MemberBox = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  span {
+    font-size: 20px;
+    margin: 0 10px;
+  }
+`;
+const SocialLoginButton = styled.button`
+  width: 100%;
+  margin: 15px 0;
+  padding: 15px;
+  border: none;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  color: ${(props: ThemeType) => props.theme.bgColor};
+  background-color: ${(props: ThemeType) => props.theme.textColor};
+  span {
+    margin-left: 10px;
+    font-size: 22px;
+  }
+`;
+const UserProfileBox = styled(InputArea)`
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  button {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    border: none;
+    color: ${(props: ThemeType) => props.theme.textColor};
+    background-color: inherit;
+    font-size: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  div {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p,
+    input {
+      margin-top: 30px;
+      width: inherit;
+      font-size: 25px;
+    }
+    p {
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+`;
+
+export const ProjectCreateModal = ({
+  projectCreateModal,
+  showProjectCreateModal,
+}: {
+  projectCreateModal: boolean;
+  showProjectCreateModal: any;
+}) => {
+  interface projectType {
+    name: string;
+    desc: string;
+    invitedMembers: Array<string>;
+  }
+
+  const [newProjectInfo, setNewProjectInfo] = useState<projectType>({
+    name: "",
+    desc: "",
+    invitedMembers: [],
+  });
+  const [memberEmail, setMemberEmail] = useState<string>("");
+
+  const onChangeProjectName = (e: any) => {
+    const value = e.target.value as string;
+    setNewProjectInfo((cur) => ({ ...cur, name: value }));
+  };
+
+  const onChangeProjectDesc = (e: any) => {
+    const value = e.target.value as string;
+    setNewProjectInfo((cur) => ({ ...cur, desc: value }));
+  };
+
+  const onChangeMemberEmail = (e: any) => {
+    const value = e.target.value as string;
+    setMemberEmail(value);
+  };
+
+  const addMember = (e: any) => {
+    if (
+      newProjectInfo.invitedMembers.indexOf(memberEmail) === -1 &&
+      e.key === "Enter"
+    ) {
+      setNewProjectInfo((cur) => ({
+        ...cur,
+        invitedMembers: [...cur.invitedMembers, memberEmail],
+      }));
+    } else if (
+      newProjectInfo.invitedMembers.indexOf(memberEmail) > -1 &&
+      e.key === "Enter"
+    ) {
+      alert("This email already exists in the member list.");
+    } else {
+      return;
+    }
+
+    e.target.value = "";
+  };
+
+  const removeMember = (index: number) => {
+    let memberList = newProjectInfo.invitedMembers;
+    let updatedList = memberList.splice(index, 1);
+    setNewProjectInfo((cur) => ({
+      ...cur,
+      invitedMembers: updatedList,
+    }));
+  };
+
+  const createNewProject = () => {
+    //invite member
+    //post project api
+
+    showProjectCreateModal();
+  };
+
+  return (
+    <ModalBox
+      open={projectCreateModal}
+      onClose={showProjectCreateModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Header>Create Project</Header>
+        <BodyContainer>
+          <InputArea>
+            <p>Project</p>
+            <input
+              type="text"
+              value={newProjectInfo.name}
+              placeholder="Please type project name."
+              onChange={onChangeProjectName}
+              autoFocus
+            />
+
+            <p>Introduce</p>
+            <textarea
+              value={newProjectInfo.desc}
+              placeholder="Please type project introduction."
+              onChange={onChangeProjectDesc}
+            />
+
+            <p>Write an email to invite members</p>
+            <input
+              type="email"
+              value={memberEmail}
+              placeholder="Please type member's email."
+              onChange={onChangeMemberEmail}
+              onKeyPress={addMember}
+            />
+
+            <p>Members</p>
+            <div>
+              {newProjectInfo.invitedMembers.map((member, index) => (
+                <MemberBox key={index}>
+                  <FaUserAlt />
+                  <span>{member}</span>
+                  <FaRegTimesCircle onClick={() => removeMember(index)} />
+                </MemberBox>
+              ))}
+            </div>
+          </InputArea>
+
+          <ButtonBox>
+            <CancelButton onClick={showProjectCreateModal}>Cancel</CancelButton>
+            <CreateButton onClick={createNewProject}>Create</CreateButton>
+          </ButtonBox>
+        </BodyContainer>
+      </Box>
+    </ModalBox>
+  );
+};
 
 export const SprintCreateModal = ({
   sprintCreateModal,
@@ -280,6 +445,50 @@ export const SprintCreateModal = ({
           <ButtonBox>
             <CancelButton onClick={cancelCreateSprint}>Cancel</CancelButton>
             <CreateButton onClick={createNewSprint}>Create</CreateButton>
+          </ButtonBox>
+        </BodyContainer>
+      </Box>
+    </ModalBox>
+  );
+};
+
+export const TeamCreateModal = ({
+  teamCreateModal,
+  showTeamCreateModal,
+}: {
+  teamCreateModal: boolean;
+  showTeamCreateModal: any;
+}) => {
+  const [teamName, setTeamName] = useState<string>("");
+
+  const createNewTeam = () => {
+    //post team api
+
+    showTeamCreateModal();
+  };
+  return (
+    <ModalBox
+      open={teamCreateModal}
+      onClose={showTeamCreateModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Header>Create Team</Header>
+        <BodyContainer>
+          <InputArea>
+            <p>Team</p>
+            <input
+              type="text"
+              value={teamName}
+              placeholder="Please type team name."
+              onChange={(e) => setTeamName(e.target.value)}
+            />
+          </InputArea>
+
+          <ButtonBox>
+            <CancelButton onClick={showTeamCreateModal}>Cancel</CancelButton>
+            <CreateButton onClick={createNewTeam}>Create</CreateButton>
           </ButtonBox>
         </BodyContainer>
       </Box>
@@ -513,53 +722,201 @@ export const IssueCreateModal = ({
   );
 };
 
+export const LoginModal = ({
+  loginModal,
+  showLoginModal,
+  showJoinModal,
+  toggleLoginStatus,
+}: {
+  loginModal: boolean;
+  showLoginModal: any;
+  showJoinModal: any;
+  toggleLoginStatus: any;
+}) => {
+  const onSocialLogin = () => {
+    //github로 가서 로그인
+    //로그인 성공하면 기존 회원인지 여부 확인
+
+    //확인 후 유저라면 바로 로그인 후 로그인 모달 닫기
+    // toggleLoginStatus();
+    // showLoginModal();
+
+    //아니라면 조인모달 띄움
+    showLoginModal();
+    showJoinModal();
+  };
+
+  return (
+    <ModalBox
+      open={loginModal}
+      onClose={showLoginModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Header>Login</Header>
+        <BodyContainer>
+          <SocialLoginButton onClick={onSocialLogin}>
+            <FaGithub />
+            <span>GitHub</span>
+          </SocialLoginButton>
+        </BodyContainer>
+      </Box>
+    </ModalBox>
+  );
+};
+
+export const JoinModal = ({
+  joinModal,
+  showJoinModal,
+  toggleLoginStatus,
+}: {
+  joinModal: boolean;
+  showJoinModal: any;
+  toggleLoginStatus: any;
+}) => {
+  const [userName, setUserName] = useState<string>("");
+  const [userProfileImage, setUserProfileImage] = useState<string>("");
+
+  const joinProma = () => {
+    //post new user api
+    //등록 후 바로 로그인 시키고
+
+    //로그인 시 상태 갱신 후 모달 닫기
+    toggleLoginStatus();
+    showJoinModal();
+  };
+
+  return (
+    <ModalBox
+      open={joinModal}
+      onClose={showJoinModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Header>Join</Header>
+        <BodyContainer>
+          <InputArea>
+            <p>Profile Image</p>
+            <input type="file" />
+            <p>Name</p>
+            <input
+              type="text"
+              value={userName}
+              placeholder="Please type your name."
+            />
+          </InputArea>
+
+          <ButtonBox>
+            <CancelButton onClick={showJoinModal}>Cancel</CancelButton>
+            <CreateButton onClick={joinProma}>Join</CreateButton>
+          </ButtonBox>
+        </BodyContainer>
+      </Box>
+    </ModalBox>
+  );
+};
+
+export const UserProfileModal = ({
+  userProfileModal,
+  showUserProfileModal,
+}: {
+  userProfileModal: boolean;
+  showUserProfileModal: any;
+}) => {
+  const [userName, setUserName] = useState<string>("sue");
+  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
+
+  return (
+    <ModalBox
+      open={userProfileModal}
+      onClose={showUserProfileModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Header>Profile</Header>
+        <BodyContainer>
+          <UserProfileBox>
+            <button onClick={() => setUpdateStatus((cur) => !cur)}>
+              {!updateStatus ? <FaPen /> : <FaCheck />}
+            </button>
+            {!updateStatus ? (
+              <div>
+                <Image src="/profileimg.png" width={180} height={180} />
+                <p>{userName}</p>
+              </div>
+            ) : (
+              <div>
+                <Image src="/profileimg.png" width={180} height={180} />
+                <input
+                  type="text"
+                  value={userName}
+                  placeholder="Type your name."
+                  onChange={(e) => setUserName(e.target.value)}
+                  autoFocus
+                />
+              </div>
+            )}
+          </UserProfileBox>
+        </BodyContainer>
+      </Box>
+    </ModalBox>
+  );
+};
+
 export const WarningModal = ({
   warningCreateModal,
   showWarningListModal,
   showWarningCreateModal,
-  comment
-  }: {
-      warningCreateModal: boolean;
-      showWarningListModal: any;
-      showWarningCreateModal: any;
-      comment: string
-  }) => {    
-      const cancelCreateTopic = () => {
-          showWarningListModal();
-          showWarningCreateModal();
-      };
-  
-      const createNewTopic = () => {
-      //post new topic api
-  
-      showWarningCreateModal();
+  comment,
+}: {
+  warningCreateModal: boolean;
+  showWarningListModal: any;
+  showWarningCreateModal: any;
+  comment: string;
+}) => {
+  const cancelCreateTopic = () => {
+    showWarningListModal();
+    showWarningCreateModal();
   };
 
-      return (
-          <WarningModalBox
-              open={warningCreateModal}
-              onClose={showWarningCreateModal}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-          >
-              <Box sx={style}>
-                  <WarningContainer>
-                      <Warningimg src="/img/warning-icon.png"></Warningimg>
-                  <WarningMainArea>
-                      <p>
-                        {
-                          comment.split('<br/>').map( line => {
-                            return (<span>{line}<br/></span>)
-                          })
-                        }
-                      </p>
-                  </WarningMainArea>
-                      <WarningButtonBox>
-                          <MaintainButton onClick={showWarningCreateModal}>아니요 유지할래요!</MaintainButton>
-                          <DeleteButton>네 삭제할게요</DeleteButton>
-                      </WarningButtonBox>
-                  </WarningContainer>
-              </Box>
-          </WarningModalBox>
-      );
+  const createNewTopic = () => {
+    //post new topic api
+
+    showWarningCreateModal();
+  };
+
+  return (
+    <ModalBox
+      open={warningCreateModal}
+      onClose={showWarningCreateModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <WarningContainer>
+          <FaExclamationTriangle />
+          <p>
+            {comment.split("<br/>").map((line) => {
+              return (
+                <span>
+                  {line}
+                  <br />
+                </span>
+              );
+            })}
+          </p>
+
+          <WarningButtonBox>
+            <MaintainButton onClick={showWarningCreateModal}>
+              아니요 유지할래요!
+            </MaintainButton>
+            <DeleteButton>네 삭제할게요</DeleteButton>
+          </WarningButtonBox>
+        </WarningContainer>
+      </Box>
+    </ModalBox>
+  );
 };

@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
 import Team from "./Team";
 import Link from "next/link";
 import { useState } from "react";
 import Chatting from "../../chatting/Chatting";
+import { TeamCreateModal } from "../Modal";
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -83,84 +82,13 @@ const TeamBox = styled.div`
   }
 `;
 
-const ModalBox = styled(Modal)`
-  .MuiBox-root {
-    padding: 0px;
-    border: 0px;
-    border-radius: 3px;
-    overflow: hidden;
-    background-color: ${(props: ThemeType) => props.theme.bgColor};
-  }
-`;
-
-const ModalHeader = styled.div`
-  height: 50px;
-  padding: 3px 20px;
-  background: #6667ab;
-  color: white;
-  font-size: 25px;
-  display: flex;
-  align-items: center;
-  text-decoration: underline;
-`;
-
-const ModalBody = styled.div`
-  height: 50px;
-  font-size: 25px;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  margin: 32px 32px 50px 32px;
-  align-items: center;
-  color: ${(props: ThemeType) => props.theme.mainColor};
-  input {
-    border: none;
-    border-radius: 3px;
-    font-size: 20px;
-    padding: 5px 10px;
-    outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
-    &:focus {
-      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-    }
-  }
-`;
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
-const ModalButton1 = styled.button`
-  background: white;
-  height: 25px;
-  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-  margin: 10px 0px 0px 10px;
-  border-radius: 3px;
-  color: ${(props: ThemeType) => props.theme.mainColor};
-`;
-
-const ModalButton2 = styled(ModalButton1)`
-  background: ${(props: ThemeType) => props.theme.mainColor};
-  color: white;
-  border: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-`;
-
 //dummy data
 const teams = ["team1", "team2", "team3"];
 
 const Project = ({ projectName }: { projectName: string }) => {
   const [showTeams, setShowTeams] = useState<boolean>(false);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
+  const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
   // 채팅창 띄우기
   const [state, setState] = useState(false);
@@ -185,33 +113,15 @@ const Project = ({ projectName }: { projectName: string }) => {
           {teams.map((team) => (
             <Team teamName={team} />
           ))}
-          <AddTeamButton onClick={handleOpen}>+ Add Team</AddTeamButton>
+          <AddTeamButton onClick={showTeamCreateModal}>
+            + Add Team
+          </AddTeamButton>
+          <TeamCreateModal
+            teamCreateModal={teamCreateModal}
+            showTeamCreateModal={showTeamCreateModal}
+          />
         </TeamBox>
       ) : null}
-
-      {/* 팀 생성 모달 */}
-      <ModalBox
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <ModalHeader>Create Team</ModalHeader>
-          <ModalBody>
-            <div style={{ display: "flex", width: "100%" }}>
-              <a style={{ marginRight: "5%" }}>Team</a>
-              <input style={{ width: "100%" }}></input>
-            </div>
-            <div
-              style={{ marginTop: "2%", marginLeft: "auto", display: "flex" }}
-            >
-              <ModalButton1 onClick={handleClose}>Cancel</ModalButton1>
-              <ModalButton2>Create</ModalButton2>
-            </div>
-          </ModalBody>
-        </Box>
-      </ModalBox>
     </ProjectContainer>
   );
 };

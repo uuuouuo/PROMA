@@ -191,7 +191,7 @@ const ProjectSpace = () => {
             <FlexBox>
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
-                <FilledButton>Create Sprint</FilledButton>
+                <FilledButton onClick={showSprintCreateModal}>Create Sprint</FilledButton>
                 <SprintCreateModal
                   sprintCreateModal={sprintCreateModal}
                   showSprintCreateModal={showSprintCreateModal}
