@@ -1,0 +1,196 @@
+package com.ssafy.proma.service.issue;
+
+import com.ssafy.proma.model.dto.issue.ReqIssueDto;
+import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
+import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
+import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
+import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueUpdateDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
+import com.ssafy.proma.model.entity.issue.Issue;
+import com.ssafy.proma.model.entity.sprint.Sprint;
+import com.ssafy.proma.model.entity.team.Team;
+import com.ssafy.proma.model.entity.topic.Topic;
+import com.ssafy.proma.model.entity.user.User;
+import com.ssafy.proma.repository.issue.IssueRepository;
+import com.ssafy.proma.repository.sprint.SprintRepository;
+import com.ssafy.proma.repository.team.TeamRepository;
+import com.ssafy.proma.repository.topic.TopicRepository;
+import com.ssafy.proma.repository.user.UserRepository;
+import com.ssafy.proma.service.AbstractService;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class IssueService extends AbstractService {
+
+  private final IssueRepository issueRepository;
+  private final SprintRepository sprintRepository;
+  private final TeamRepository teamRepository;
+  private final TopicRepository topicRepository;
+  private final UserRepository userRepository;
+
+  @Transactional
+  public void createIssue(IssueCreateDto issueCreateDto) {
+
+    Integer sprintNo = issueCreateDto.getSprintNo();
+    Integer teamNo = issueCreateDto.getTeamNo();
+    Integer topicNo = issueCreateDto.getTopicNo();
+    String userNo = issueCreateDto.getUserNo();
+
+    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Sprint sprint = takeOp(sprintOp);
+
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<Topic> topicOp = topicRepository.getTopicByNo(topicNo);
+    Topic topic = takeOp(topicOp);
+
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    User user = takeOp(userOp);
+
+    Issue issue = issueCreateDto.toEntity(sprint, team, topic, user);
+
+    issueRepository.save(issue);
+
+
+  }
+
+  @Transactional
+  public void updateIssue(Integer issueNo, IssueUpdateDto issueUpdateDto) {
+
+    String title = issueUpdateDto.getTitle();
+    String description = issueUpdateDto.getDescription();
+    Integer topicNo = issueUpdateDto.getTopicNo();
+    String userNo = issueUpdateDto.getUserNo();
+
+
+    Optional<Topic> topicOp = topicRepository.getTopicByNo(topicNo);
+    Topic topic = takeOp(topicOp);
+
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    User user = takeOp(userOp);
+
+    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Issue issue = takeOp(issueOp);
+
+    issue.update(title,description,user,topic);
+
+  }
+
+  public List<IssueNoTitleDto> getSprintTeamIssue(Integer sprintNo, Integer teamNo) {
+
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<List<Issue>> issueListOp = null;
+
+    if(sprintNo == null ){
+      issueListOp = issueRepository.getAllByTeamAndSprintNull(team);
+    }
+    else{
+      Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+      Sprint sprint = takeOp(sprintOp);
+
+      issueListOp = issueRepository.getAllBySprintAndTeam(sprint,team);
+    }
+    List<Issue> issues = takeOp(issueListOp);
+
+    List<IssueNoTitleDto> issueList = issues.stream()
+        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
+            Collectors.toList());
+
+    return issueList;
+  }
+
+  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo) {
+
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<List<Issue>> issueListOp = issueRepository.getAllByTeamAndStatusLike(team,status);
+    List<Issue> issues = takeOp(issueListOp);
+
+    List<IssueNoTitleDto> issueList = issues.stream()
+        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
+            Collectors.toList());
+
+    return issueList;
+  }
+
+  @Transactional
+  public void assignSprintIssue(IssueSprintDto issueSprintDto) {
+
+    Integer issueNo = issueSprintDto.getIssueNo();
+    Integer sprintNo = issueSprintDto.getSprintNo();
+
+    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Issue issue = takeOp(issueOp);
+
+    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Sprint sprint = takeOp(sprintOp);
+
+    issue.assignSprint(sprint);
+
+  }
+
+  @Transactional
+  public void changeStatusIssue(IssueStatusDto issueStatusDto) {
+
+    Integer issueNo = issueStatusDto.getIssueNo();
+    String status = issueStatusDto.getStatus();
+
+    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Issue issue = takeOp(issueOp);
+
+    issue.changeStatus(status);
+
+  }
+
+  public List<IssueNoTitleDto> getUserIssue(Integer teamNo) {
+
+    Optional<User> userByNo = userRepository.getUserByNo("1");
+    User user = takeOp(userByNo);
+
+    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<List<Issue>> issueListOp = issueRepository.getAllByUserAndTeam(user,team);
+    List<Issue> issues = takeOp(issueListOp);
+
+    List<IssueNoTitleDto> issueList = issues.stream()
+        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
+            Collectors.toList());
+
+    return issueList;
+  }
+
+  public IssueDetailsDto getDetailsIssue(Integer issueNo) {
+
+    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Issue issue = takeOp(issueOp);
+    String issueTitle = issue.getTitle();
+    String description = issue.getDescription();
+    String status = issue.getStatus();
+
+    User user = issue.getUser();
+    String userNo = user.getNo();
+    String nickname = user.getNickname();
+
+    Topic topic = issue.getTopic();
+    Integer topicNo = topic.getNo();
+    String topicTitle = topic.getTitle();
+
+    IssueDetailsDto issueDetailsDto = new IssueDetailsDto(issueNo,
+        issueTitle,description,status,topicNo,topicTitle,userNo,nickname);
+
+    return issueDetailsDto;
+  }
+}

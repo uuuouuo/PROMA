@@ -3,14 +3,19 @@ package com.ssafy.proma.model.entity.team;
 import com.ssafy.proma.model.entity.project.Project;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import lombok.NoArgsConstructor;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @ApiModel(value = "Team : 팀정보", description = "팀의 상세 정보를 나타낸다.")
 public class Team {
     @Id
@@ -27,6 +32,14 @@ public class Team {
     @JoinColumn(name = "PROJECT_NO", nullable = false)
     @ApiModelProperty(value = "팀을 포함하고 있는 프로젝트")
     private Project project;
+
+    protected Team(){
+
+    }
+
+    public void update(String name){
+        this.name = name;
+    }
 
 }
 

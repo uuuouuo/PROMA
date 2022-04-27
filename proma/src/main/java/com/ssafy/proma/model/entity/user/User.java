@@ -1,16 +1,15 @@
 package com.ssafy.proma.model.entity.user;
 
-import com.ssafy.proma.config.auth.provider.ClientGithub;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.Map;
 
 @Getter
 @Entity
+@Builder
 @ApiModel(value = "User : 회원정보", description = "회원의 상세 정보를 나타낸다.")
 public class User {
 
