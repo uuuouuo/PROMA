@@ -1,6 +1,5 @@
 package com.ssafy.proma.config.websocket;
 
-import com.ssafy.proma.config.websocket.WebsocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
