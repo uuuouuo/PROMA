@@ -8,9 +8,11 @@ import com.ssafy.proma.model.dto.UserDto.LoginRes;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -26,19 +28,30 @@ public class GithubAuthService {
         User user = clientGithub.getUserData(code);
 
         String userNo = user.getNo();
-        System.out.println(userNo);
+        System.out.println(userNo + " " + user.getNickname());
 
-        Optional<User> findUser = userRepository.findByNo(userNo);
+        Optional<User> findUserByNodeID = userRepository.findByNoAndIsDeleted(userNo, false);
 
-        String jwtToken = jwtTokenService.create(user);
-
-        LoginRes loginRes = new LoginRes();
-        loginRes.setJwtToken(jwtToken);
-        if (findUser.isEmpty()) {
+        if (findUserByNodeID.isEmpty()) {
             userRepository.save(user);
         }
 
+        String jwtToken = jwtTokenService.create(user);
+        System.out.println(jwtToken);
+
+        LoginRes loginRes = new LoginRes();
+        loginRes.setJwtToken(jwtToken);
+
         return  loginRes;
+    }
+
+    public boolean revoke(String code) {
+        try {
+            clientGithub.deleteUserData(code);
+        } catch (IOException e){
+            return false;
+        }
+        return true;
     }
 
     public String updateToken(String userNo) {

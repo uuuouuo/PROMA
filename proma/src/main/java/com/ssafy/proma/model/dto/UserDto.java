@@ -8,6 +8,5 @@ public class UserDto {
     public static class LoginRes {
 
         private String jwtToken;
-        //private Boolean isMember;
     }
 }

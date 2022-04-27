@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtTokenService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public String create(User user){
         String jwtToken = JWT.create()
@@ -30,9 +30,9 @@ public class JwtTokenService {
 
     public String getUserNo(String jwtToken) {
 
-        String userId = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getClaim("userNo").asString();
+        String userNo = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getClaim("userNo").asString();
 
-        return userId;
+        return userNo;
     }
 
     public boolean validate(String jwtToken) {
@@ -64,8 +64,8 @@ public class JwtTokenService {
 
         if(validate(jwtToken)) {
 
-            String userId = getUserNo(jwtToken);
-            Optional<User> userOptional = userRepository.findByNo(userId);
+            String userNo = getUserNo(jwtToken);
+            Optional<User> userOptional = userRepository.findByNo(userNo);
 
             User user = null;
 
