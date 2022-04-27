@@ -6,10 +6,11 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
 import {
+  SprintCreateModal,
   TopicListModal,
   TopicCreateModal,
+  WarningModal,
 } from "../../../components/common/Modal";
-import { WarningModal } from "../../../components/common/Modal";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
@@ -141,11 +142,13 @@ const ProjectSpace = () => {
 
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
+  const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
   const [warningListModal, setWarningListModal] = useState<boolean>(false);
   const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
 
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
+  const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningListModal = () => setWarningListModal((cur) => !cur);
   const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
 
@@ -187,6 +190,10 @@ const ProjectSpace = () => {
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
                 <FilledButton>Create Sprint</FilledButton>
+                <SprintCreateModal
+                  sprintCreateModal={sprintCreateModal}
+                  showSprintCreateModal={showSprintCreateModal}
+                />
                 <UnfilledButton onClick={showTopicListModal}>
                   Topic
                 </UnfilledButton>
@@ -213,7 +220,9 @@ const ProjectSpace = () => {
                 </InitialBox>
               )}
             </SprintsBox>
-            <WarnButton onClick={showWarningCreateModal}>프로젝트 종료</WarnButton>
+            <WarnButton onClick={showWarningCreateModal}>
+              프로젝트 종료
+            </WarnButton>
             <WarningModal
               warningCreateModal={warningCreateModal}
               showWarningListModal={showWarningListModal}
