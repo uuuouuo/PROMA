@@ -1,10 +1,10 @@
 package com.ssafy.proma.service.project;
 
-import com.ssafy.proma.model.dto.project.ReqProjectDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
+import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
+import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
-import com.ssafy.proma.model.entity.project.UserProject.UserProjectBuilder;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
@@ -71,4 +71,44 @@ public class ProjectService extends AbstractService {
 //    Optional<List<UserProject>> UserProjectListOp = userProjectRepository.
 
   }
+
+  @Transactional
+  public void changeProjectName(ProjectUpdateDto request) {
+    String userNo = request.getUserNo();
+    String projectNo = request.getProjectNo();
+    String name = request.getName();
+
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    User user = takeOp(userOp);
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+    if(userProject.getRole().equals("MANAGER")) {
+      project.update(name);
+    } else {
+      new IllegalStateException("이름 변경은 매니저만 가능합니다.");
+    }
+  }
+
+  @Transactional
+  public void deleteProject(ProjectDeleteDto request) {
+    String userNo = request.getUserNo();
+    String projectNo = request.getProjectNo();
+
+    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    User user = takeOp(userOp);
+    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+    if(userProject.getRole().equals("MANAGER")) {
+      project.delete(true);
+    } else {
+      new IllegalStateException("프로젝트 삭제는 매니저만 가능합니다.");
+    }
+  }
+
 }

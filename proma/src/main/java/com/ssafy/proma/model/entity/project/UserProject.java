@@ -1,15 +1,20 @@
 package com.ssafy.proma.model.entity.project;
 
+import static javax.persistence.FetchType.LAZY;
+
 import com.ssafy.proma.model.entity.user.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Entity

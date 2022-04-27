@@ -30,7 +30,6 @@ public class TeamController {
   private final TeamService teamService;
   private final TeamRepository teamRepository;
 
-  // 팀생성
   @ApiOperation(value = "팀 생성", notes = "팀을 생성한다.")
   @PostMapping
   public ResponseEntity createTeam(@RequestBody TeamCreateDto teamDto){
@@ -41,8 +40,6 @@ public class TeamController {
 
   }
 
-
-  //팀 조인
   @ApiOperation(value = "팀 참여", notes = "유저가 팀에 참여한다.")
   @PostMapping("/join")
   public ResponseEntity joinTeam(@RequestBody TeamJoinDto teamDto){
@@ -52,8 +49,6 @@ public class TeamController {
     return ResponseEntity.ok().build();
   }
 
-
-  //팀 나가기
   @ApiOperation(value = "팀 나가기", notes = "유저가 팀을 나갈 수 있다.")
   @PostMapping("/exit")
   public ResponseEntity exitTeam(@RequestBody TeamExitDto teamDto){
@@ -63,8 +58,6 @@ public class TeamController {
     return ResponseEntity.ok().build();
   }
 
-
-  //팀 삭제
   @ApiOperation(value = "팀 삭제", notes = "팀을 삭제한다.")
   @DeleteMapping("/{teamNo}")
   public ResponseEntity deleteTeam(@PathVariable Integer teamNo){
@@ -74,17 +67,15 @@ public class TeamController {
     return ResponseEntity.ok().build();
   }
 
-  //팀 수정
   @ApiOperation(value = "팀 수정", notes = "팀 이름을 수정한다.")
   @PutMapping("/{teamNo}")
-  public ResponseEntity updateTeam(@PathVariable Integer teamNo, @RequestBody TeamUpdateDto teamUpdateDto){
+  public ResponseEntity updateTeam(@RequestBody TeamUpdateDto teamUpdateDto){
 
-    teamService.updateTeam(teamNo, teamUpdateDto);
+    teamService.updateTeam(teamUpdateDto);
 
     return ResponseEntity.ok().build();
   }
 
-  // 프로젝트에 포함된 모든 팀 조회
   @ApiOperation(value = "모든 팀 조회", notes = "프로젝트에 포함된 모든 팀을 조회한다.")
   @GetMapping("/{projectNo}")
   public ResponseEntity<List<TeamDto>> getTeamList(@PathVariable String projectNo){
@@ -94,7 +85,6 @@ public class TeamController {
     return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
   }
 
-  // 팀에 속해있는 유저 조회
   @ApiOperation(value = "팀원 조회", notes = "팀에 속해있는 모든 유저를 조회한다.")
   @GetMapping("/user/{teamNo}")
   public ResponseEntity<List<String>> getUserTeamList(@PathVariable Integer teamNo){
