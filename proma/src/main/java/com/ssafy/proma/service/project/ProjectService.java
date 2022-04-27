@@ -12,6 +12,8 @@ import com.ssafy.proma.repository.project.UserProjectRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 
+import com.ssafy.proma.util.SecurityUtil;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +34,14 @@ public class ProjectService extends AbstractService {
   private final ProjectRepository projectRepository;
   private final UserProjectRepository userProjectRepository;
   private final MailService mailService;
+  private final SecurityUtil securityUtil;
 
   @Transactional
   public void createProject(ProjectCreateDto projectDto) {
 
-    Optional<User> userOp = userRepository.findByNo("U001");
+    String userNo = securityUtil.getCurrentUserNo();
+
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
     List<String> inviteMails = projectDto.getInviteMails();
 
@@ -44,26 +49,28 @@ public class ProjectService extends AbstractService {
 
     Project project = projectDto.toEntity(projectNo);
 
-
-    UserProject userProject = UserProject.builder().user(user).project(project).role("MANAGER").build();
+    UserProject userProject = UserProject.builder().user(user).project(project).role("MANAGER")
+        .build();
 
     projectRepository.save(project);
     userProjectRepository.save(userProject);
 
-    mailService.mailSend(inviteMails,projectNo,user.getNickname());
+    mailService.mailSend(inviteMails, projectNo, user.getNickname());
 
   }
 
   @Transactional
   public void joinProject(String projectNo) {
 
-    Optional<User> userOp = userRepository.findByNo("U002");
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    UserProject userProject = UserProject.builder().user(user).project(project).role("MEMBER").build();
+    UserProject userProject = UserProject.builder().user(user).project(project).role("MEMBER")
+        .build();
 
     userProjectRepository.save(userProject);
 
@@ -71,7 +78,9 @@ public class ProjectService extends AbstractService {
 
   @Transactional
   public void changeProjectName(ProjectUpdateDto request) {
-    String userNo = request.getUserNo();
+
+    String userNo = securityUtil.getCurrentUserNo();
+
     String projectNo = request.getProjectNo();
     String name = request.getName();
 
@@ -82,7 +91,7 @@ public class ProjectService extends AbstractService {
 
     UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
 
-    if(userProject.getRole().equals("MANAGER")) {
+    if (userProject.getRole().equals("MANAGER")) {
       project.update(name);
     } else {
       new IllegalStateException("이름 변경은 매니저만 가능합니다.");
@@ -91,7 +100,8 @@ public class ProjectService extends AbstractService {
 
   @Transactional
   public void deleteProject(ProjectDeleteDto request) {
-    String userNo = request.getUserNo();
+
+    String userNo = securityUtil.getCurrentUserNo();
     String projectNo = request.getProjectNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
@@ -101,29 +111,29 @@ public class ProjectService extends AbstractService {
 
     UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
 
-    if(userProject.getRole().equals("MANAGER")) {
+    if (userProject.getRole().equals("MANAGER")) {
       project.delete(true);
     } else {
       new IllegalStateException("프로젝트 삭제는 매니저만 가능합니다.");
     }
   }
 
-  public Map<String, Object> getProjectList() {
-
+  public Map<String, Object> getProjectList() throws Exception {
     Map<String, Object> resultMap = new HashMap<>();
 
-    Optional<User> userOp = userRepository.findByNo("U002");
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+
     User user = takeOp(userOp);
-
     List<UserProject> userProjectList = userProjectRepository.findByUser(user);
-    List<ProjectNoTitleDto> projectList = userProjectList.stream().map(
-            project -> new ProjectNoTitleDto(project.getProject().getNo(), project.getProject().getName(), project.getRole())
-    ).collect(Collectors.toList());
-
+    List<ProjectNoTitleDto> projectList = userProjectList.stream()
+        .filter(project -> !project.getProject().isDeleted()).map(
+            project -> new ProjectNoTitleDto(project.getProject().getNo(),
+                project.getProject().getName(), project.getRole())).collect(Collectors.toList());
     resultMap.put("projectList", projectList);
     resultMap.put("message", "프로젝트 조회 성공");
-
     return resultMap;
   }
+
 
 }

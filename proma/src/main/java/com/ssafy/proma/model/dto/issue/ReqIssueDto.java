@@ -19,7 +19,6 @@ public class ReqIssueDto {
     Integer sprintNo;
     Integer teamNo;
     Integer topicNo;
-    String userNo;
     String status;
 
     public Issue toEntity(Sprint sprint, Team team, Topic topic, User user) {
@@ -34,7 +33,6 @@ public class ReqIssueDto {
     String title;
     String description;
     Integer topicNo;
-    String userNo;
 
   }
 
