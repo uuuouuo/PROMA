@@ -118,6 +118,72 @@ const CreateButton = styled(Button)`
   color: white;
   background-color: ${(props: ThemeType) => props.theme.mainColor};
 `;
+const WarningModalBox = styled(Modal)`
+    .MuiBox-root {
+        width: fit-content;
+        min-width: 300px;
+        padding: 0px;
+        border: 0px;
+        border-radius: 3px;
+        overflow: hidden;
+        background-color: ${(props: ThemeType) => props.theme.bgColor};
+        input,
+        textarea {
+        padding: 3px 10px;
+        border: none;
+        outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+        border-radius: 3px;
+        resize: none;
+        width: 100%;
+        &:focus {
+            outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
+        }
+        }
+        button {
+        &:hover {
+            cursor: pointer;
+        }
+        }
+    }
+`;
+const WarningContainer = styled.div`
+    padding: 5px 5px;
+    font-size: 22px;
+    font-weight: 550;
+    color: ${(props: ThemeType) => props.theme.elementTextColor};
+    text-align-last: center;
+    p {
+    color: red;
+}
+`;
+const Warningimg = styled.img`
+    width: 30%;
+`;
+const WarningMainArea = styled.div`
+    width: inherit;
+`;
+const WarningButtonBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 15px;
+`;
+const MaintainButton = styled(Button)`
+    color: white;
+    background-color: ${(props: ThemeType) => props.theme.mainColor};
+    font-size: 18px;
+    width: 50%;
+`;
+const DeleteButton = styled(Button)`
+    color: grey;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
+    border: 0px solid ${(props: ThemeType) => props.theme.bgColor};
+    font-size: 15px;
+    width: 50%;
+    margin-top: 15px;
+    margin-bottom: 5px;
+`;
 
 export const SprintCreateModal = ({
   sprintCreateModal,
@@ -446,4 +512,53 @@ export const IssueCreateModal = ({
       </Box>
     </ModalBox>
   );
+};
+
+export const WarningModal = ({
+  warningCreateModal,
+  showWarningListModal,
+  showWarningCreateModal,
+  }: {
+      warningCreateModal: boolean;
+      showWarningListModal: any;
+      showWarningCreateModal: any;
+  }) => {    
+      const cancelCreateTopic = () => {
+          showWarningListModal();
+          showWarningCreateModal();
+      };
+  
+      const createNewTopic = () => {
+      //post new topic api
+  
+      showWarningCreateModal();
+  };
+
+      return (
+          <WarningModalBox
+              open={warningCreateModal}
+              onClose={showWarningCreateModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+          >
+              <Box sx={style}>
+                  <WarningContainer>
+                      <Warningimg src="/img/warning-icon.png"></Warningimg>
+                  <WarningMainArea>
+                      <p>
+                          프로젝트 종료 시<br />
+                          프로젝트 내 활동 정보가 모두 삭제되며, <br/>
+                          삭제된 데이터는 복구가 불가합니다.<br/><br/>
+
+                          정말 종료하시겠습니까?
+                      </p>
+                  </WarningMainArea>
+                      <WarningButtonBox>
+                          <MaintainButton>아니요 유지할래요!</MaintainButton>
+                          <DeleteButton>네 삭제할게요</DeleteButton>
+                      </WarningButtonBox>
+                  </WarningContainer>
+              </Box>
+          </WarningModalBox>
+      );
 };

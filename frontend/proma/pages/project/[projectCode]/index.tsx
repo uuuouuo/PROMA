@@ -9,7 +9,7 @@ import {
   TopicListModal,
   TopicCreateModal,
 } from "../../../components/common/Modal";
-import { WarningModal } from "../../../components/common/WarningModal";
+import { WarningModal } from "../../../components/common/Modal";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
