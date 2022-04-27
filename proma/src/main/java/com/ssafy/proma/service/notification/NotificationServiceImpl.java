@@ -97,7 +97,7 @@ public class NotificationServiceImpl implements NotificationService{
         String message = "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
         log.debug(message);
 
-        List<Issue> issueList = issueRepository.getAllByTopic(topic).get();
+        List<Issue> issueList = issueRepository.findByTopic(topic).get();
         for(Issue relatedIssue : issueList){
 
             notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());

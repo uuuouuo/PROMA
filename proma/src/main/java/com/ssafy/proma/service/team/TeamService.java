@@ -41,9 +41,9 @@ public class TeamService extends AbstractService {
     String projectNo = teamDto.getProjectNo();
     String userNo = teamDto.getUserNo();
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
 
@@ -60,10 +60,10 @@ public class TeamService extends AbstractService {
     int teamNo = teamDto.getTeamNo();
     String userNo = teamDto.getUserNo();
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
     UserTeam userTeam = teamDto.toEntity(team, user);
@@ -77,25 +77,25 @@ public class TeamService extends AbstractService {
     int teamNo = teamDto.getTeamNo();
     String userNo = teamDto.getUserNo();
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    userTeamRepository.deleteUserTeamByUserAndTeam(user,team);
+    userTeamRepository.deleteByNameAndTeam(user,team);
 
   }
 
   @Transactional
   public void deleteTeam(Integer teamNo) {
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
     issueRepository.deleteAllByTeam(team);
     userTeamRepository.deleteAllByTeam(team);
-    teamRepository.deleteTeamByNo(teamNo);
+    teamRepository.deleteByNo(teamNo);
 
   }
 
@@ -105,7 +105,7 @@ public class TeamService extends AbstractService {
     Integer teamNo = teamDto.getTeamNo();
     String name = teamDto.getName();
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
     team.update(name);
@@ -114,10 +114,10 @@ public class TeamService extends AbstractService {
 
   public List<TeamDto> getTeamList(String projectNo) {
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    Optional<List<Team>> teamListOp = teamRepository.getTeamsByProject(project);
+    Optional<List<Team>> teamListOp = teamRepository.findByProject(project);
     List<Team> teams = takeOp(teamListOp);
 
     List<TeamDto> teamDtoList = teams.stream().map(team -> new TeamDto(team))
@@ -129,10 +129,10 @@ public class TeamService extends AbstractService {
 
   public List<String> getUserTeamList(int teamNo) {
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    Optional<List<UserTeam>> userTeamOp = userTeamRepository.getUserTeamsByTeam(team);
+    Optional<List<UserTeam>> userTeamOp = userTeamRepository.findByTeam(team);
     List<UserTeam> userTeamList = takeOp(userTeamOp);
 
     List<String> userNicknameList = new ArrayList<>();

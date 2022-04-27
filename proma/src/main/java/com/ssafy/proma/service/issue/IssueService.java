@@ -1,6 +1,5 @@
 package com.ssafy.proma.service.issue;
 
-import com.ssafy.proma.model.dto.issue.ReqIssueDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
@@ -44,16 +43,16 @@ public class IssueService extends AbstractService {
     Integer topicNo = issueCreateDto.getTopicNo();
     String userNo = issueCreateDto.getUserNo();
 
-    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    Optional<Topic> topicOp = topicRepository.getTopicByNo(topicNo);
+    Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
     Issue issue = issueCreateDto.toEntity(sprint, team, topic, user);
@@ -72,13 +71,13 @@ public class IssueService extends AbstractService {
     String userNo = issueUpdateDto.getUserNo();
 
 
-    Optional<Topic> topicOp = topicRepository.getTopicByNo(topicNo);
+    Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
-    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Optional<Issue> issueOp = issueRepository.findByNo(issueNo);
     Issue issue = takeOp(issueOp);
 
     issue.update(title,description,user,topic);
@@ -87,19 +86,19 @@ public class IssueService extends AbstractService {
 
   public List<IssueNoTitleDto> getSprintTeamIssue(Integer sprintNo, Integer teamNo) {
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
     Optional<List<Issue>> issueListOp = null;
 
     if(sprintNo == null ){
-      issueListOp = issueRepository.getAllByTeamAndSprintNull(team);
+      issueListOp = issueRepository.findByTeamAndSprintNull(team);
     }
     else{
-      Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+      Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
       Sprint sprint = takeOp(sprintOp);
 
-      issueListOp = issueRepository.getAllBySprintAndTeam(sprint,team);
+      issueListOp = issueRepository.findBySprintAndTeam(sprint,team);
     }
     List<Issue> issues = takeOp(issueListOp);
 
@@ -112,10 +111,10 @@ public class IssueService extends AbstractService {
 
   public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo) {
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    Optional<List<Issue>> issueListOp = issueRepository.getAllByTeamAndStatusLike(team,status);
+    Optional<List<Issue>> issueListOp = issueRepository.findByTeamAndStatusLike(team,status);
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
@@ -131,10 +130,10 @@ public class IssueService extends AbstractService {
     Integer issueNo = issueSprintDto.getIssueNo();
     Integer sprintNo = issueSprintDto.getSprintNo();
 
-    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Optional<Issue> issueOp = issueRepository.findByNo(issueNo);
     Issue issue = takeOp(issueOp);
 
-    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
     issue.assignSprint(sprint);
@@ -147,7 +146,7 @@ public class IssueService extends AbstractService {
     Integer issueNo = issueStatusDto.getIssueNo();
     String status = issueStatusDto.getStatus();
 
-    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Optional<Issue> issueOp = issueRepository.findByNo(issueNo);
     Issue issue = takeOp(issueOp);
 
     issue.changeStatus(status);
@@ -156,13 +155,13 @@ public class IssueService extends AbstractService {
 
   public List<IssueNoTitleDto> getUserIssue(Integer teamNo) {
 
-    Optional<User> userByNo = userRepository.getUserByNo("1");
+    Optional<User> userByNo = userRepository.findByNo("1");
     User user = takeOp(userByNo);
 
-    Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    Optional<List<Issue>> issueListOp = issueRepository.getAllByUserAndTeam(user,team);
+    Optional<List<Issue>> issueListOp = issueRepository.findByUserAndTeam(user,team);
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
@@ -174,7 +173,7 @@ public class IssueService extends AbstractService {
 
   public IssueDetailsDto getDetailsIssue(Integer issueNo) {
 
-    Optional<Issue> issueOp = issueRepository.getByNo(issueNo);
+    Optional<Issue> issueOp = issueRepository.findByNo(issueNo);
     Issue issue = takeOp(issueOp);
     String issueTitle = issue.getTitle();
     String description = issue.getDescription();

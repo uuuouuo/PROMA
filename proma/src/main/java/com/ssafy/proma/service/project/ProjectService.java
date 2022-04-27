@@ -36,7 +36,7 @@ public class ProjectService extends AbstractService {
   @Transactional
   public void createProject(ProjectCreateDto projectDto) {
 
-    Optional<User> userOp = userRepository.getUserByNo("U001");
+    Optional<User> userOp = userRepository.findByNo("U001");
     User user = takeOp(userOp);
     List<String> inviteMails = projectDto.getInviteMails();
 
@@ -57,10 +57,10 @@ public class ProjectService extends AbstractService {
   @Transactional
   public void joinProject(String projectNo) {
 
-    Optional<User> userOp = userRepository.getUserByNo("U002");
+    Optional<User> userOp = userRepository.findByNo("U002");
     User user = takeOp(userOp);
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
     UserProject userProject = UserProject.builder().user(user).project(project).role("MEMBER").build();
@@ -75,9 +75,9 @@ public class ProjectService extends AbstractService {
     String projectNo = request.getProjectNo();
     String name = request.getName();
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
     UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
@@ -94,9 +94,9 @@ public class ProjectService extends AbstractService {
     String userNo = request.getUserNo();
     String projectNo = request.getProjectNo();
 
-    Optional<User> userOp = userRepository.getUserByNo(userNo);
+    Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
     UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
@@ -112,7 +112,7 @@ public class ProjectService extends AbstractService {
 
     Map<String, Object> resultMap = new HashMap<>();
 
-    Optional<User> userOp = userRepository.getUserByNo("U002");
+    Optional<User> userOp = userRepository.findByNo("U002");
     User user = takeOp(userOp);
 
     List<UserProject> userProjectList = userProjectRepository.findByUser(user);

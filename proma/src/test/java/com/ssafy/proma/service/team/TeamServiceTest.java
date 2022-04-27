@@ -44,7 +44,7 @@ class TeamServiceTest {
     teamService.createTeam(teamDto);
 
     //then
-//    teamRepository.getTeamByNo("1");
+//    teamRepository.findByNo("1");
 //    UserTeamRepository
 
   }
@@ -55,7 +55,7 @@ class TeamServiceTest {
     //given
     User user = User.builder().no("3").nickname("jsm").profileImage("asfsadfsdf").isDeleted(false).build();
 //    Project project = Project.builder().no("1").name("happy").description("asdfsadfwefs").isDeleted(false).build();
-//    Optional<Project> projectByNo = projectRepository.getProjectByNo("1");
+//    Optional<Project> projectByNo = projectRepository.findByNo("1");
 //    Project project = projectByNo.get();
     TeamJoinDto teamDto = new TeamJoinDto(1,"jsm");
     userRepository.save(user);

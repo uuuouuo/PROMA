@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TopicRepository extends JpaRepository<Topic,Integer> {
 
-  Optional<Topic> getTopicByNo(Integer topicNo);
-
-  Optional<List<Topic>> getAllByProject(Project project);
-
-//  Optional<Topic> getTopicByTitle
+  Optional<Topic> findByNo(Integer topicNo);
+  Optional<List<Topic>> findAllByProject(Project project);
 
 }

@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectRepository extends JpaRepository<Project,String> {
 
-  Optional<Project> getProjectByNo(String projectNo);
+  Optional<Project> findByNo(String projectNo);
 
 }

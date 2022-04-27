@@ -23,7 +23,6 @@ public class ProjectController {
 
   private final ProjectService projectService;
 
-  // 프로젝트 만드는거
   @PostMapping
   public ResponseEntity createProject(@RequestBody ProjectCreateDto projectDto){
 
@@ -32,7 +31,6 @@ public class ProjectController {
     return ResponseEntity.ok().build();
   }
 
-  // 프로젝트 들어오는거
   @PostMapping("/join")
   public ResponseEntity joinProject(@RequestBody ProjectJoinDto projectJoinDto){
 

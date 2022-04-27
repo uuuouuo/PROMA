@@ -35,7 +35,6 @@ public class TeamController {
   public ResponseEntity createTeam(@RequestBody TeamCreateDto teamDto){
 
     teamService.createTeam(teamDto);
-
     return ResponseEntity.ok().build();
 
   }
@@ -45,7 +44,6 @@ public class TeamController {
   public ResponseEntity joinTeam(@RequestBody TeamJoinDto teamDto){
 
     teamService.joinTeam(teamDto);
-
     return ResponseEntity.ok().build();
   }
 
@@ -54,7 +52,6 @@ public class TeamController {
   public ResponseEntity exitTeam(@RequestBody TeamExitDto teamDto){
 
     teamService.exitTeam(teamDto);
-
     return ResponseEntity.ok().build();
   }
 
@@ -63,16 +60,14 @@ public class TeamController {
   public ResponseEntity deleteTeam(@PathVariable Integer teamNo){
 
     teamService.deleteTeam(teamNo);
-
     return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "팀 수정", notes = "팀 이름을 수정한다.")
-  @PutMapping("/{teamNo}")
+  @PutMapping
   public ResponseEntity updateTeam(@RequestBody TeamUpdateDto teamUpdateDto){
 
     teamService.updateTeam(teamUpdateDto);
-
     return ResponseEntity.ok().build();
   }
 
@@ -81,7 +76,6 @@ public class TeamController {
   public ResponseEntity<List<TeamDto>> getTeamList(@PathVariable String projectNo){
 
     List<TeamDto> teamDtoList = teamService.getTeamList(projectNo);
-
     return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
   }
 
@@ -89,23 +83,8 @@ public class TeamController {
   @GetMapping("/user/{teamNo}")
   public ResponseEntity<List<String>> getUserTeamList(@PathVariable Integer teamNo){
 
-    System.out.println("ASFAWDFWESDFWAEFSAFWEFSD");
     List<String> userTeamList = teamService.getUserTeamList(teamNo);
-
     return new ResponseEntity<>(userTeamList, HttpStatus.OK);
   }
-
-
-
-
-  //팀에 속한 백로그 조회
-
-  //팀에 속한 진행중인 이슈 조회
-
-  //팀에 속한 todo
-
-  //팀에 속한 in progress
-
-  //팀에 속한 done
 
 }

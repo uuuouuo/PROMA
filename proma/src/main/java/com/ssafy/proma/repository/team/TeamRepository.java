@@ -8,11 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamRepository extends JpaRepository<Team, Integer> {
 
-  Optional<Team> getTeamByNo(Integer teamNo);
-  Optional<Team> getTeamByNameAndProject(String name, Project project);
-  void deleteTeamByNameAndProject(String name, Project project);
-
-  void deleteTeamByNo(Integer teamNo);
-
-  Optional<List<Team>> getTeamsByProject(Project project);
+  Optional<Team> findByNo(Integer teamNo);
+  Optional<Team> findByNameAndProject(String name, Project project);
+  void deleteByNameAndProject(String name, Project project);
+  void deleteByNo(Integer teamNo);
+  Optional<List<Team>> findByProject(Project project);
 }

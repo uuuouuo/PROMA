@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SprintRepository extends JpaRepository<Sprint,Integer> {
 
-  Optional<Sprint> getByNo(Integer sprintNo);
-  Optional<List<Sprint>> getAllByProject(Project project);
+  Optional<Sprint> findByNo(Integer sprintNo);
+  Optional<List<Sprint>> findAllByProject(Project project);
 }

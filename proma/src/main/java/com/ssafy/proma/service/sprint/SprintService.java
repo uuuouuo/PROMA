@@ -29,7 +29,7 @@ public class SprintService extends AbstractService {
 
     String projectNo = sprintCreateDto.getProjectNo();
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
     Sprint sprint = sprintCreateDto.toEntity(project);
@@ -40,7 +40,7 @@ public class SprintService extends AbstractService {
   @Transactional
   public void startSprint(Integer sprintNo) {
 
-    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
     sprint.toggleStatus();
@@ -53,7 +53,7 @@ public class SprintService extends AbstractService {
     String startDate = sprintUpdateDto.getStartDate();
     String endDate = sprintUpdateDto.getEndDate();
 
-    Optional<Sprint> sprintOp = sprintRepository.getByNo(sprintNo);
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
     sprint.update(name,startDate,endDate);
@@ -62,10 +62,10 @@ public class SprintService extends AbstractService {
 
   public List<SprintDto> getSprintList(String projectNo) {
 
-    Optional<Project> projectOp = projectRepository.getProjectByNo(projectNo);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    Optional<List<Sprint>> projectListOp = sprintRepository.getAllByProject(project);
+    Optional<List<Sprint>> projectListOp = sprintRepository.findAllByProject(project);
     List<Sprint> sprintList = takeOp(projectListOp);
 
     List<SprintDto> sprintDtoList = sprintList.stream().map(

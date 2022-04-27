@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PrivateChatMessageRepository extends JpaRepository<PrivateChatMessage, Integer> {
 
-//  List<PrivateChatMessage> findAllByPrivateChatRoom(PrivateChatRoom chatRoom);
-//  void findAllBy
   List<PrivateChatMessage> findAllByChatRoom(PrivateChatRoom privateChatRoom);
 }
