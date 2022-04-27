@@ -1,4 +1,4 @@
-package com.ssafy.proma.config;
+package com.ssafy.proma.config.websocket;
 
 import com.ssafy.proma.config.websocket.WebsocketHandler;
 import lombok.RequiredArgsConstructor;
