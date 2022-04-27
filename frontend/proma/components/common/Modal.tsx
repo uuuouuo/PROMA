@@ -518,10 +518,12 @@ export const WarningModal = ({
   warningCreateModal,
   showWarningListModal,
   showWarningCreateModal,
+  comment
   }: {
       warningCreateModal: boolean;
       showWarningListModal: any;
       showWarningCreateModal: any;
+      comment: string
   }) => {    
       const cancelCreateTopic = () => {
           showWarningListModal();
@@ -546,15 +548,15 @@ export const WarningModal = ({
                       <Warningimg src="/img/warning-icon.png"></Warningimg>
                   <WarningMainArea>
                       <p>
-                          프로젝트 종료 시<br />
-                          프로젝트 내 활동 정보가 모두 삭제되며, <br/>
-                          삭제된 데이터는 복구가 불가합니다.<br/><br/>
-
-                          정말 종료하시겠습니까?
+                        {
+                          comment.split('<br/>').map( line => {
+                            return (<span>{line}<br/></span>)
+                          })
+                        }
                       </p>
                   </WarningMainArea>
                       <WarningButtonBox>
-                          <MaintainButton>아니요 유지할래요!</MaintainButton>
+                          <MaintainButton onClick={showWarningCreateModal}>아니요 유지할래요!</MaintainButton>
                           <DeleteButton>네 삭제할게요</DeleteButton>
                       </WarningButtonBox>
                   </WarningContainer>
