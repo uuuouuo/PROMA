@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserTeamRepository extends JpaRepository<UserTeam,Integer> {
 
-  void deleteByNameAndTeam(User user, Team team);
+  void deleteByUserAndTeam(User user, Team team);
   void deleteAllByTeam(Team team);
   Optional<List<UserTeam>> findByTeam(Team team);
 

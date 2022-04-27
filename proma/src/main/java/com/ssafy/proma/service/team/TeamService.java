@@ -15,6 +15,7 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
+import com.ssafy.proma.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,13 +34,14 @@ public class TeamService extends AbstractService {
   private final ProjectRepository projectRepository;
   private final UserTeamRepository userTeamRepository;
   private final IssueRepository issueRepository;
-
+  private final SecurityUtil securityUtil;
 
   @Transactional
   public void createTeam(TeamCreateDto teamDto){
 
     String projectNo = teamDto.getProjectNo();
-    String userNo = teamDto.getUserNo();
+//    String userNo = teamDto.getUserNo();
+    String userNo = securityUtil.getCurrentUserNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
@@ -58,7 +60,8 @@ public class TeamService extends AbstractService {
   public void joinTeam(TeamJoinDto teamDto) {
 
     int teamNo = teamDto.getTeamNo();
-    String userNo = teamDto.getUserNo();
+//    String userNo = teamDto.getUserNo();
+    String userNo = securityUtil.getCurrentUserNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
@@ -75,7 +78,8 @@ public class TeamService extends AbstractService {
   public void exitTeam(TeamExitDto teamDto) {
 
     int teamNo = teamDto.getTeamNo();
-    String userNo = teamDto.getUserNo();
+//    String userNo = teamDto.getUserNo();
+    String userNo = securityUtil.getCurrentUserNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
@@ -83,7 +87,7 @@ public class TeamService extends AbstractService {
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    userTeamRepository.deleteByNameAndTeam(user,team);
+    userTeamRepository.deleteByUserAndTeam(user,team);
 
   }
 

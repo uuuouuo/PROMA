@@ -2,6 +2,7 @@ package com.ssafy.proma.controller;
 
 import com.ssafy.proma.model.dto.notification.NotificationDto;
 import com.ssafy.proma.service.notification.NotificationService;
+import com.ssafy.proma.util.SecurityUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +26,13 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @ApiOperation(value = "모든 알림 조회", notes = "해당 회원이 수신한 모든 알림 조회")
-    @GetMapping("/list/{userNo}")
-    public ResponseEntity getNotificationList(@PathVariable String userNo){
-        log.debug(userNo + " 알림 조회");
+    @GetMapping()
+    public ResponseEntity getNotificationList(){
 
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
+            String userNo = SecurityUtil.getCurrentUserNo();
             resultMap = notificationService.getNotificationList(userNo);
 
             if(resultMap.get("message").equals("알림 조회 성공")) {
@@ -47,7 +48,7 @@ public class NotificationController {
     }
 
     @ApiOperation(value = "알림 확인 체크", notes = "알림의 checked를 true로 변경")
-    @GetMapping("/check/{notificationNo}")
+    @PutMapping("/{notificationNo}")
     public ResponseEntity checkNotification(@PathVariable Integer notificationNo){
         log.debug(notificationNo + " 알림 확인");
 

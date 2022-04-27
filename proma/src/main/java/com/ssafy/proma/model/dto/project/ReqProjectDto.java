@@ -33,37 +33,21 @@ public class ReqProjectDto {
 
     String projectNo;
 
-    public ProjectJoinDto(String projectNo) {
-      this.projectNo = projectNo;
-    }
   }
 
   @Getter
   @NoArgsConstructor
   public static class ProjectUpdateDto{
 
-    String userNo;
     String projectNo;
     String name;
-
-    public ProjectUpdateDto(String userNo, String projectNo, String name) {
-      this.userNo = userNo;
-      this.projectNo = projectNo;
-      this.name = name;
-    }
   }
 
   @Getter
   @NoArgsConstructor
   public static class ProjectDeleteDto{
 
-    String userNo;
     String projectNo;
-
-    public ProjectDeleteDto(String userNo, String projectNo, String name) {
-      this.userNo = userNo;
-      this.projectNo = projectNo;
-    }
   }
 
 }
