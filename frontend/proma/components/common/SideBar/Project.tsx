@@ -6,6 +6,7 @@ import Modal from "@mui/material/Modal";
 import Team from "./Team";
 import Link from "next/link";
 import { useState } from "react";
+import Chatting from "../../chatting/Chatting";
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -161,6 +162,10 @@ const Project = ({ projectName }: { projectName: string }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // 채팅창 띄우기
+  const [state, setState] = useState(false);
+  const showChat = () => setState((cur) => !cur);
+
   return (
     <ProjectContainer>
       <Header>
@@ -168,7 +173,8 @@ const Project = ({ projectName }: { projectName: string }) => {
           <a>{projectName}</a>
         </Link>
         <div>
-          <ChatButton>Chat</ChatButton>
+          <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
+          <Chatting state={state} showChat={showChat} />
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
           </ArrowButton>
@@ -200,7 +206,7 @@ const Project = ({ projectName }: { projectName: string }) => {
             <div
               style={{ marginTop: "2%", marginLeft: "auto", display: "flex" }}
             >
-              <ModalButton1>Cancel</ModalButton1>
+              <ModalButton1 onClick={handleClose}>Cancel</ModalButton1>
               <ModalButton2>Create</ModalButton2>
             </div>
           </ModalBody>

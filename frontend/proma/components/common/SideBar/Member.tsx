@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import Image from "next/image";
+import { useState } from "react";
+import Chatting from "../../chatting/Chatting";
 
 //styled-components
 const MemberContainer = styled.div`
@@ -40,6 +42,11 @@ const ChatButton = styled.button`
 `;
 
 const Member = ({ memberName }: { memberName: string }) => {
+
+  // 채팅창 띄우기
+  const [state, setState] = useState(false);
+  const showChat = () => setState((cur) => !cur);
+  
   return (
     <MemberContainer>
       <div>
@@ -48,7 +55,8 @@ const Member = ({ memberName }: { memberName: string }) => {
         </ImageBox>
         <span>{memberName}</span>
       </div>
-      <ChatButton>Chat</ChatButton>
+      <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
+      <Chatting state={state} showChat={showChat} />
     </MemberContainer>
   );
 };

@@ -4,6 +4,7 @@ import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Link from "next/link";
 import { useState } from "react";
+import Chatting from "../../chatting/Chatting";
 
 //dummy data
 const members = ["kim", "Park", "Choi", "Seo", "Jang"];
@@ -64,6 +65,10 @@ const Team = ({ teamName }: { teamName: string }) => {
   const [showMembers, setShowMembers] = useState<boolean>(false);
   const [joinTeam, setJoinTeam] = useState<boolean>(false);
 
+  // 채팅창 띄우기
+  const [state, setState] = useState(false);
+  const showChat = () => setState((cur) => !cur);
+
   const onJoinTeam = () => {
     //join 하겠냐는 모달창 띄우고 거기서
     setJoinTeam(true);
@@ -79,7 +84,10 @@ const Team = ({ teamName }: { teamName: string }) => {
         </Link>
         <div>
           {joinTeam ? (
-            <ChatJoinButton onClick={onShowChat}>Chat</ChatJoinButton>
+            <>
+              <ChatJoinButton onClick={() => setState(true)}>Chat</ChatJoinButton>
+              <Chatting state={state} showChat={showChat} />
+            </>
           ) : (
             <ChatJoinButton onClick={onJoinTeam}>Join</ChatJoinButton>
           )}

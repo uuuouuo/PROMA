@@ -255,7 +255,7 @@ const SideBar = () => {
               <div
                 style={{ marginTop: "2%", marginLeft: "auto", display: "flex" }}
               >
-                <ModalButton1>Cancel</ModalButton1>
+                <ModalButton1 onClick={handleClose}>Cancel</ModalButton1>
                 <ModalButton2>Create</ModalButton2>
               </div>
             </>
