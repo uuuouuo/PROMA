@@ -1,10 +1,8 @@
 import styled, { keyframes } from "styled-components";
 import { ThemeType } from "../interfaces/style";
 import { FaHandPointLeft } from "react-icons/fa";
-// import { useToasts } from "react-toast-notifications";
-// import "react-sliding-pane/dist/react-sliding-pane.css";
-// import { useState } from "react";
-// import Chatting from "../components/chatting/Chatting";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const animation = keyframes`
     0% {
@@ -44,19 +42,52 @@ const MainContainer = styled.div`
   }
 `;
 
-// const Box = styled.div`
-//   color: white;
-//   background-color: #6667ab;
-// `;
+const StyledContainer = styled(ToastContainer)`
+  &&&.Toastify__toast-container {
+    * {
+      margin: 0;
+      color: ${(props: ThemeType) => props.theme.elementTextColor};
+    }
+  }
+  .Toastify__toast {
+    border: 0.5px solid ${(props: ThemeType) => props.theme.elementTextColor};
+    min-width: 300px;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
+  }
+  .Toastify__toast-body {
+  }
+  .Toastify__progress-bar {
+    background-color: black;
+  }
+`;
+
+// let toastId = null;
+function notify() {
+  toast("PROMA", {
+    position: toast.POSITION.TOP_RIGHT,
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+}
 
 const Home = () => {
-  //   const { addToast } = useToasts();
-
-  //   const [state, setState] = useState(false);
-  //   const showChat = () => setState((cur) => !cur);
-
   return (
     <MainContainer>
+      <StyledContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <strong>PROMA</strong>
       <span>for work management</span>
       <div>
@@ -65,22 +96,9 @@ const Home = () => {
         </span>
         <p>Please go to the project space.</p>
       </div>
-      {/* <button
-        onClick={() =>
-          addToast(
-            <Box>
-              <p>Epic 'design'</p>
-              <p>Issue 'style' 종료</p>
-            </Box>
-          )
-        }
-      >
-        알림 보기
-      </button> */}
-      {/* <button onClick={() => setState(true)}>
-        Click me to open right pane!
-      </button> */}
-      {/* <Chatting state={state} showChat={showChat} /> */}
+      <div>
+        <button onClick={notify}>Sample Notify</button>
+      </div>
     </MainContainer>
   );
 };

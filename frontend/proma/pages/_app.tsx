@@ -13,7 +13,6 @@ import Footer from "../components/common/Footer";
 import Head from "next/head";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { ToastProvider } from "react-toast-notifications";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -94,16 +93,14 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <GlobalStyle />
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <ToastProvider autoDismiss={true} autoDismissTimeout={timeOut}>
-          <Container>
-            <NavBar toggleDarkMode={onToggleDarkMode} darkMode={darkMode} />
-            <MainComponent>
-              <SideBar />
-              <Component {...pageProps} />
-            </MainComponent>
-            <Footer />
-          </Container>
-        </ToastProvider>
+        <Container>
+          <NavBar toggleDarkMode={onToggleDarkMode} darkMode={darkMode} />
+          <MainComponent>
+            <SideBar />
+            <Component {...pageProps} />
+          </MainComponent>
+          <Footer />
+        </Container>
       </ThemeProvider>
     </>
   );
