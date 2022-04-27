@@ -1,5 +1,6 @@
 package com.ssafy.proma.controller;
 
+import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageReq;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageRes;
 import com.ssafy.proma.service.chat.ChatService;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 @RequiredArgsConstructor
 public class ChatMessageController {
+
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatService chatService;
+    private final JwtTokenService jwtTokenService;
 
     @ApiOperation(value = "개인 채팅 메세지 전송", notes = "해당 개인 채팅방으로 메세지 전송")
     @MessageMapping("/chat/private-msg")
