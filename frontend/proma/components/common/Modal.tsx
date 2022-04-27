@@ -10,7 +10,6 @@ import {
 } from "react-icons/fa";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
-import { dir } from "console";
 
 //styling
 const style = {
