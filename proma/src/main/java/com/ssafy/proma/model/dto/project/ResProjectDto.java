@@ -9,12 +9,14 @@ public class ResProjectDto {
   @NoArgsConstructor
   public static class ProjectNoTitleDto{
 
-    Integer projectNo;
+    String projectNo;
     String title;
+    String role;
 
-    public ProjectNoTitleDto(Integer projectNo, String title) {
+    public ProjectNoTitleDto(String projectNo, String title, String role) {
       this.projectNo = projectNo;
       this.title = title;
+      this.role = role;
     }
   }
 
