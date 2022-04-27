@@ -6,10 +6,10 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
 import {
-  SprintCreateModal,
   TopicListModal,
   TopicCreateModal,
 } from "../../../components/common/Modal";
+import { WarningModal } from "../../../components/common/WarningModal";
 
 //해당 프로젝트 내 스프린트 get api 로직 필요
 
@@ -141,10 +141,13 @@ const ProjectSpace = () => {
 
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
-  const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
+  const [warningListModal, setWarningListModal] = useState<boolean>(false);
+  const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
+
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
-  const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
+  const showWarningListModal = () => setWarningListModal((cur) => !cur);
+  const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
 
   //최초 프로젝트 시작 시 생성 => 백로그 생성됨
   const onStartProject = () => {
@@ -183,13 +186,7 @@ const ProjectSpace = () => {
             <FlexBox>
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
-                <FilledButton onClick={showSprintCreateModal}>
-                  Create Sprint
-                </FilledButton>
-                <SprintCreateModal
-                  sprintCreateModal={sprintCreateModal}
-                  showSprintCreateModal={showSprintCreateModal}
-                />
+                <FilledButton>Create Sprint</FilledButton>
                 <UnfilledButton onClick={showTopicListModal}>
                   Topic
                 </UnfilledButton>
@@ -216,7 +213,12 @@ const ProjectSpace = () => {
                 </InitialBox>
               )}
             </SprintsBox>
-            <WarnButton>프로젝트 종료</WarnButton>
+            <WarnButton onClick={showWarningCreateModal}>프로젝트 종료</WarnButton>
+            <WarningModal
+              warningCreateModal={warningCreateModal}
+              showWarningListModal={showWarningListModal}
+              showWarningCreateModal={showWarningCreateModal}
+            />
           </WorkSpace>
         </DragDropContext>
       ) : null}
