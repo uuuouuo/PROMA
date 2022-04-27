@@ -34,17 +34,14 @@ public class UserService implements UserDetailsService {
         return findUser;
     }
 
-    public boolean deleteUser(HttpHeaders headers){
-        User user = tokenToUser(headers);
+    public boolean deleteUser(String userNo){
+        User user = getByUserNo(userNo);
         User findUser = userRepository.findByNo(user.getNo()).get();
         findUser.deleteUser();
         return true;
     }
 
-    public User tokenToUser(HttpHeaders headers) {
-        String jwtToken = headers.getFirst("JWT");
-        String changeJwtToken = jwtToken.replace("Bearer ", "");
-        String userNo = JWT.require(Algorithm.HMAC512("proma")).build().verify(changeJwtToken).getClaim("userNo").asString();
+    public User getByUserNo(String userNo){
         Optional<User> findUser = userRepository.findByNo(userNo);
         if(findUser.isPresent()){
             return findUser.get();
