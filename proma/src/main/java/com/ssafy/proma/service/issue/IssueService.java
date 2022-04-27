@@ -17,6 +17,7 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
+import com.ssafy.proma.util.SecurityUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public class IssueService extends AbstractService {
   private final TeamRepository teamRepository;
   private final TopicRepository topicRepository;
   private final UserRepository userRepository;
+  private final SecurityUtil securityUtil;
 
   @Transactional
   public void createIssue(IssueCreateDto issueCreateDto) {
@@ -41,7 +43,10 @@ public class IssueService extends AbstractService {
     Integer sprintNo = issueCreateDto.getSprintNo();
     Integer teamNo = issueCreateDto.getTeamNo();
     Integer topicNo = issueCreateDto.getTopicNo();
-    String userNo = issueCreateDto.getUserNo();
+
+    String userNo = securityUtil.getCurrentUserNo();
+
+//    String userNo = issueCreateDto.getUserNo();
 
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
@@ -68,7 +73,10 @@ public class IssueService extends AbstractService {
     String title = issueUpdateDto.getTitle();
     String description = issueUpdateDto.getDescription();
     Integer topicNo = issueUpdateDto.getTopicNo();
-    String userNo = issueUpdateDto.getUserNo();
+
+    String userNo = securityUtil.getCurrentUserNo();
+
+//    String userNo = issueUpdateDto.getUserNo();
 
 
     Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
@@ -155,7 +163,8 @@ public class IssueService extends AbstractService {
 
   public List<IssueNoTitleDto> getUserIssue(Integer teamNo) {
 
-    Optional<User> userByNo = userRepository.findByNo("1");
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userByNo = userRepository.findByNo(userNo);
     User user = takeOp(userByNo);
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
