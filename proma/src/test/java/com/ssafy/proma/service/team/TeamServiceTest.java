@@ -3,16 +3,13 @@ package com.ssafy.proma.service.team;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
-import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
 import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
-import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -94,11 +91,11 @@ class TeamServiceTest {
   void updateTeam() {
 
     //given
-    TeamUpdateDto teamDto = new TeamUpdateDto("BE");
+//    TeamUpdateDto teamDto = new TeamUpdateDto("BE");
 
     //when
 
-    teamService.updateTeam(1,teamDto);
+//    teamService.updateTeam(1,teamDto);
 
 
   }

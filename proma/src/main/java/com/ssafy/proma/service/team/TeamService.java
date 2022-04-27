@@ -100,8 +100,9 @@ public class TeamService extends AbstractService {
   }
 
   @Transactional
-  public void updateTeam(Integer teamNo, TeamUpdateDto teamDto) {
+  public void updateTeam(TeamUpdateDto teamDto) {
 
+    Integer teamNo = teamDto.getTeamNo();
     String name = teamDto.getName();
 
     Optional<Team> teamOp = teamRepository.getTeamByNo(teamNo);

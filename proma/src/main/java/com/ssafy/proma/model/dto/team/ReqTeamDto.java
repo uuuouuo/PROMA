@@ -53,9 +53,11 @@ public class ReqTeamDto {
   @NoArgsConstructor
   public static class TeamUpdateDto {
 
+    Integer teamNo;
     String name;
 
-    public TeamUpdateDto(String name) {
+    public TeamUpdateDto(Integer teamNo, String name) {
+      this.teamNo = teamNo;
       this.name = name;
     }
   }

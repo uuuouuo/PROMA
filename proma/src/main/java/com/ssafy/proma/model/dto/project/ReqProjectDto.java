@@ -1,9 +1,7 @@
 package com.ssafy.proma.model.dto.project;
 
 import com.ssafy.proma.model.entity.project.Project;
-import com.ssafy.proma.model.entity.topic.Topic;
 import java.util.List;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,6 +34,34 @@ public class ReqProjectDto {
     String projectNo;
 
     public ProjectJoinDto(String projectNo) {
+      this.projectNo = projectNo;
+    }
+  }
+
+  @Getter
+  @NoArgsConstructor
+  public static class ProjectUpdateDto{
+
+    String userNo;
+    String projectNo;
+    String name;
+
+    public ProjectUpdateDto(String userNo, String projectNo, String name) {
+      this.userNo = userNo;
+      this.projectNo = projectNo;
+      this.name = name;
+    }
+  }
+
+  @Getter
+  @NoArgsConstructor
+  public static class ProjectDeleteDto{
+
+    String userNo;
+    String projectNo;
+
+    public ProjectDeleteDto(String userNo, String projectNo, String name) {
+      this.userNo = userNo;
       this.projectNo = projectNo;
     }
   }

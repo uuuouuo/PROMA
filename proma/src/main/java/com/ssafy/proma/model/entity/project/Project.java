@@ -32,7 +32,13 @@ public class Project {
     @ApiModelProperty(value = "프로젝트 삭제 여부")
     private boolean isDeleted;
 
-    protected Project(){
+    protected Project(){}
 
+    public void update(String name){
+        this.name = name;
+    }
+
+    public void delete(boolean isDeleted){
+        this.isDeleted = isDeleted;
     }
 }

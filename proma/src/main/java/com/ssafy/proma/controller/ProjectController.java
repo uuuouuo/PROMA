@@ -1,17 +1,15 @@
 package com.ssafy.proma.controller;
 
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
+import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectJoinDto;
-import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
+import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
 import com.ssafy.proma.service.project.ProjectService;
-import java.util.List;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +40,19 @@ public class ProjectController {
     return ResponseEntity.ok().build();
   }
 
+  @ApiOperation(value = "프로젝트 수정", notes = "프로젝트 이름 수정")
+  @PutMapping("/change")
+  public ResponseEntity updateProject(@RequestBody ProjectUpdateDto request) {
+    projectService.changeProjectName(request);
+    return ResponseEntity.ok().build();
+  }
 
+  @ApiOperation(value = "프로젝트 종료", notes = "프로젝트 종료 및 삭제")
+  @PutMapping("/delete")
+  public ResponseEntity deleteProject(@RequestBody ProjectDeleteDto request) {
+    projectService.deleteProject(request);
+    return ResponseEntity.ok().build();
+  }
 
 //  @GetMapping
 //  public ResponseEntity<List<ProjectNoTitleDto>> getProjectLst(){
