@@ -33,6 +33,10 @@ public class UserProject {
     @ApiModelProperty(value = "프로젝트 정보")
     private Project project;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "유저 권한")
+    private String role;
+
     protected UserProject(){
 
     }

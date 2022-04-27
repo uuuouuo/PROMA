@@ -1,10 +1,8 @@
 package com.ssafy.proma.service.notification;
 
-import com.ssafy.proma.model.dto.issue.ResIssueDto.TopicIssueDto;
 import com.ssafy.proma.model.dto.notification.NotificationDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.notification.Notification;
-import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.topic.Topic;
