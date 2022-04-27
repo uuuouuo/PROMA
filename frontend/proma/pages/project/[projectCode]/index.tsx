@@ -139,14 +139,14 @@ const ProjectSpace = () => {
 
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>("Project Name");
-
+  const [comment, setComment] = useState<string>("프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?")
+  
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
   const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
   const [warningListModal, setWarningListModal] = useState<boolean>(false);
   const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-  const [comment, setComment] = useState<string>("프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
-)
+
 
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
