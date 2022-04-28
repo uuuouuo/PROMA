@@ -22,7 +22,7 @@ public class JwtTokenService {
     public String create(User user){
         String jwtToken = JWT.create()
                 .withSubject("jwt토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 600))
 //                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60))
                 .withClaim("userNo", user.getNo())
                 .sign(Algorithm.HMAC512("proma"));
