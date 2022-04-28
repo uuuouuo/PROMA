@@ -13,7 +13,6 @@ import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 
 import com.ssafy.proma.util.SecurityUtil;
-import java.security.Security;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

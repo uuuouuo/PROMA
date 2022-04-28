@@ -32,7 +32,7 @@ public class MailService {
         mailHandler.setSubject(nickname + "님이 귀하를 project에 초대했습니다.");
         // HTML Layout
         String htmlContent = "<h1 style=\"color:#333;font-size:20px\">초대</h1>";
-        htmlContent += "<div style=\"color:#333333\"><div style=\"color:#333333\"><b>"+nickname+"</b>님이 <a href=\"localhost:3000/"+projectNo+"\">일지</a> 페이지에 초대했습니다.</div><div style=\"color:#333333;margin-top:16px\"><a href=\"localhost:3000/" +projectNo+"\"><b>여기를 클릭하여 확인하세요.</b></a></div></div>";
+        htmlContent += "<div style=\"color:#333333\"><div style=\"color:#333333\"><b>"+nickname+"</b>님이 <a href=\"k6c107.p.ssafy.io/project/"+projectNo+"\">일지</a> 페이지에 초대했습니다.</div><div style=\"color:#333333;margin-top:16px\"><a href=\"k6c107.p.ssafy.io/project/" +projectNo+"\"><b>여기를 클릭하여 확인하세요.</b></a></div></div>";
 
 //      String htmlContent = "<p>" + mailDto.getMessage();
         mailHandler.setText(htmlContent, true);
