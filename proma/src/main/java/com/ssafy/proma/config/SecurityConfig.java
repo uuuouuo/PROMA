@@ -6,11 +6,9 @@ import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import com.ssafy.proma.exception.CustomAuthenticationEntryPoint;
 import com.ssafy.proma.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -45,15 +43,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),
                         userRepository, jwtTokenService))
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/api/v2/**", "/swagger-ui.html", "/swagger/**",
+                        "/swagger-resources/**", "/webjars/**", "/v2/api-docs")
                 .permitAll()
+                .antMatchers("/user/login/**", "GET")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .oauth2Login()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
-//                .defaultSuccessUrl("/")
-//                .userInfoEndpoint()
-//                .userService(principalOauth2UserService);
     }
 }

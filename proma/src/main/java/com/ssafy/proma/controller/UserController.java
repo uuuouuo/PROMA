@@ -1,5 +1,6 @@
 package com.ssafy.proma.controller;
 
+import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import com.ssafy.proma.model.dto.user.UserDto.LoginRes;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.service.user.UserService;
@@ -7,6 +8,7 @@ import com.ssafy.proma.service.user.oauth.GithubAuthService;
 import com.ssafy.proma.util.SecurityUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ public class UserController {
 
     private final UserService userService;
     private final GithubAuthService githubAuthService;
+    private final JwtTokenService jwtTokenService;
     private final SecurityUtil securityUtil;
 
     @GetMapping("/login/github")
@@ -34,19 +37,39 @@ public class UserController {
     }
 
     @DeleteMapping("/withdrawal/github")
-    @ApiOperation(value = "회원 탈퇴", notes = "Proma 탈퇴를 하는 주소이다. 탈퇴 성공 시 SUCCESS를 반환한다.", response = Map.class)
-    public ResponseEntity<String> withdrawal(@RequestParam("code") String code){
+    @ApiOperation(value = "회원 탈퇴", notes = "Proma 탈퇴한다. 탈퇴 성공 시 SUCCESS를 반환한다.", response = Map.class)
+    public ResponseEntity withdrawal(@RequestParam("code") String code){
         // github revoke
         githubAuthService.revoke(code);
         // db isDelete true 변경
         String userNo = securityUtil.getCurrentUserNo();
         userService.deleteUser(userNo);
-        return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
+    @GetMapping(value = "/refresh")
+    @ApiOperation(value = "JWT 토큰 재발급", notes = "JWT 토큰을 재발급한다. 재발급 성공 시 토큰을 반환한다.", response = Map.class)
+    public ResponseEntity<String> refresh(HttpServletResponse response) {
+        String userNo = securityUtil.getCurrentUserNo();
+        String jwtToken = githubAuthService.updateToken(userNo);
+        response.setHeader("JWT","Bearer " + jwtToken);
 
-    @GetMapping()
-    @ApiOperation(value = "(사용X)회원정보 테스트용 API", notes = "Header에 담긴 토큰을 자동으로 체크해 유저정보를 알려준다.", response = Map.class)
+        return new ResponseEntity<String>(jwtToken, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/token")
+    @ApiOperation(value = "(사용X)토큰 테스트용 API", notes = "프론트 사용하는 API 아님.", response = Map.class)
+    public ResponseEntity<String> tokenCheck(@RequestHeader HttpHeaders headers){
+        boolean check = jwtTokenService.validate(headers.getFirst("JWT"));
+        if(check){
+            return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+        }
+        return new ResponseEntity<String>("FAIL", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/data")
+    @ApiOperation(value = "(사용X)회원정보 테스트용 API", notes = "프론트 사용하는 API 아님.", response = Map.class)
     public ResponseEntity<User> findUser(){
         String userNo = securityUtil.getCurrentUserNo();
         System.out.println(userNo);
