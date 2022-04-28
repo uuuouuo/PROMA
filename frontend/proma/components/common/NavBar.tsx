@@ -22,18 +22,15 @@ const NavBarContainer = styled.div`
     }
   }
 `;
-
 const Logo = styled.a`
   &:hover {
     cursor: pointer;
   }
 `;
-
 const MenuBox = styled.div`
   display: flex;
   align-items: center;
 `;
-
 const MenuButton = styled.button`
   background-color: inherit;
   border: none;
@@ -41,25 +38,17 @@ const MenuButton = styled.button`
   color: white;
   margin-right: 20px;
 `;
-
 const MenuIconButton = styled(MenuButton)`
   font-size: 30px;
   margin-top: 10px;
 `;
-
 const MenuToggleBox = styled.div`
   display: flex;
   align-items: center;
   font-size: 25px;
 `;
 
-const NavBar = ({
-  toggleDarkMode,
-  darkMode,
-}: {
-  toggleDarkMode: any;
-  darkMode: boolean;
-}) => {
+const NavBar = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
@@ -111,7 +100,7 @@ const NavBar = ({
           </MenuToggleBox>
         )}
 
-        <Toggle changeMode={toggleDarkMode} />
+        <Toggle />
       </MenuBox>
     </NavBarContainer>
   );

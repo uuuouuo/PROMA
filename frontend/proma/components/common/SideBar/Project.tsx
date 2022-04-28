@@ -110,8 +110,8 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
       </Header>
       {showTeams ? (
         <TeamBox>
-          {teams.map((team) => (
-            <Team teamName={team} />
+          {teams.map((team, index) => (
+            <Team teamName={team} key={index} />
           ))}
           <AddTeamButton onClick={showTeamCreateModal}>
             + Add Team

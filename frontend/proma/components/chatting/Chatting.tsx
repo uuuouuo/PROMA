@@ -133,9 +133,8 @@ const Chatting = ({ state, showChat }: { state: boolean; showChat: any }) => {
       width="500px"
       onRequestClose={showChat}
     >
-
       <ChatContainer>
-        {dummy2.map((element, idx) => {
+        {/* {dummy2.map((element, idx) => {
           if (element.name !== "박주한")
             return (
               <>
@@ -210,7 +209,7 @@ const Chatting = ({ state, showChat }: { state: boolean; showChat: any }) => {
                 </div>
               </>
             );
-        })}
+        })} */}
       </ChatContainer>
 
       <InputChat>

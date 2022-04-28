@@ -13,6 +13,8 @@ import Footer from "../components/common/Footer";
 import Head from "next/head";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import { connect } from "react-redux";
+import { RootState } from "../store/modules";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -60,12 +62,17 @@ const MainComponent = styled.div`
 let sock = new SockJS("http://k6c107.p.ssafy.io:8081/ws-stomp");
 let client = Stomp.over(sock);
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const [darkMode, setDarkMode] = useState(false);
-  const onToggleDarkMode = (e: any) => {
-    setDarkMode((cur) => !cur);
+const mapStateToProps = (state: RootState) => {
+  return {
+    darkModeState: state.themeReducer.darkMode,
   };
+};
 
+function MyApp({
+  Component,
+  pageProps,
+  darkModeState,
+}: AppProps & { darkModeState: boolean }) {
   useEffect(() => {
     //알림 연결 로직
     client.connect({}, () => {
@@ -92,9 +99,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/logo.png" />
       </Head>
       <GlobalStyle />
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <ThemeProvider theme={darkModeState ? darkTheme : lightTheme}>
         <Container>
-          <NavBar toggleDarkMode={onToggleDarkMode} darkMode={darkMode} />
+          <NavBar />
           <MainComponent>
             <SideBar />
             <Component {...pageProps} />
@@ -106,4 +113,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default wrapper.withRedux(MyApp);
+export default wrapper.withRedux(connect(mapStateToProps, null)(MyApp));

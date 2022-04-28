@@ -1,6 +1,8 @@
-// import React from 'react';
 import styled from "styled-components";
 import { ThemeType } from "../../interfaces/style";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
+import { switchTheme } from "../../store/modules/theme";
 
 const InputWrapper = styled.label`
   position: relative;
@@ -46,11 +48,36 @@ const Slider = styled.span`
   }
 `;
 
-const Toggle = ({ changeMode }: { changeMode: any }) => (
-  <InputWrapper>
-    <Input type="checkbox" onChange={changeMode} />
-    <Slider />
-  </InputWrapper>
-);
+const mapStateToProps = (state: RootState) => {
+  return {
+    darkModeState: state.themeReducer.darkMode,
+  };
+};
 
-export default Toggle;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    switchTheme: () => dispatch(switchTheme()),
+  };
+};
+
+const Toggle = ({
+  darkModeState,
+  switchTheme,
+}: {
+  darkModeState: boolean;
+  switchTheme: any;
+}) => {
+  const switchMode = (e: any) => {
+    let switchedMode = e.target.checked;
+    switchTheme(switchedMode);
+  };
+
+  return (
+    <InputWrapper>
+      <Input type="checkbox" checked={darkModeState} onChange={switchMode} />
+      <Slider />
+    </InputWrapper>
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toggle);

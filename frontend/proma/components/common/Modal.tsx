@@ -899,9 +899,9 @@ export const WarningModal = ({
         <WarningContainer>
           <FaExclamationTriangle />
           <p>
-            {comment.split("<br/>").map((line) => {
+            {comment.split("<br/>").map((line, index) => {
               return (
-                <span>
+                <span key={index}>
                   {line}
                   <br />
                 </span>

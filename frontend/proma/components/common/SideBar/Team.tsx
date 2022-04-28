@@ -85,7 +85,9 @@ const Team = ({ teamName }: { teamName: string }) => {
         <div>
           {joinTeam ? (
             <>
-              <ChatJoinButton onClick={() => setState(true)}>Chat</ChatJoinButton>
+              <ChatJoinButton onClick={() => setState(true)}>
+                Chat
+              </ChatJoinButton>
               <Chatting state={state} showChat={showChat} />
             </>
           ) : (
@@ -98,8 +100,8 @@ const Team = ({ teamName }: { teamName: string }) => {
       </Header>
       {showMembers ? (
         <MemberBox>
-          {members.map((member) => (
-            <Member memberName={member} />
+          {members.map((member, index) => (
+            <Member memberName={member} key={index} />
           ))}
         </MemberBox>
       ) : null}
