@@ -44,7 +44,7 @@
     //alert(document.title);
     // websocket & stomp initialize
     // var sock = new SockJS("/ws-stomp");
-    var sock = new SockJS("http://k6c107.p.ssafy.io:8080/ws-stomp");
+    var sock = new SockJS("http://k6c107.p.ssafy.io:8081/ws-stomp");
     var ws = Stomp.over(sock);
     var reconnect = 0;
     // vue.js
@@ -67,7 +67,7 @@
                 // axios.get('http://j6c103.p.ssafy.io:8081/chat2/room/'+this.roomId).then(response => { this.room = response.data; });
             },
             sendMessage: function() {
-                ws.send("/pub/chat/private-msg", {}, JSON.stringify({roomNo:this.roomNo, pubNo:this.pubNo, content:this.content}));
+                ws.send("/pub/chat/private-msg", {"JWT":""}, JSON.stringify({roomNo:this.roomNo, pubNo:this.pubNo, content:this.content}));
                 this.message = '';
             },
             recvMessage: function(recv) {
@@ -78,7 +78,7 @@
 
     function connect() {
         // pub/sub event
-        ws.connect({}, function(frame) {
+        ws.connect({"JWT":""}, function(frame) {
             ws.subscribe("/sub/chat/room/user/"+vm.$data.roomNo, function(message) {
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
@@ -89,7 +89,7 @@
                 setTimeout(function() {
                     console.log("connection reconnect");
                     // sock = new SockJS("/ws-stomp");
-                    sock = new SockJS("k6c107.p.ssafy.io:8080/ws-stomp");
+                    sock = new SockJS("http://k6c107.p.ssafy.io:8081/ws-stomp");
                     ws = Stomp.over(sock);
                     connect();
                 },10*1000);
