@@ -23,6 +23,7 @@ public class JwtTokenService {
         String jwtToken = JWT.create()
                 .withSubject("jwt토큰")
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+//                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60))
                 .withClaim("userNo", user.getNo())
                 .sign(Algorithm.HMAC512("proma"));
         return jwtToken;
@@ -31,19 +32,18 @@ public class JwtTokenService {
     public String getUserNo(String jwtToken) {
 
         String userNo = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getClaim("userNo").asString();
-
         return userNo;
     }
 
     public boolean validate(String jwtToken) {
-        return validateExpired(jwtToken) && validateForm(jwtToken);
+        return validateForm(jwtToken) && validateExpired(jwtToken);
     }
 
     public boolean validateExpired(String jwtToken){
         Date expiresAt = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getExpiresAt();
         Date cur = new Date();
 
-        if(expiresAt.compareTo(cur)<0) {
+        if(expiresAt.compareTo(cur) < 0) {
             return false;
         }
         return true;
