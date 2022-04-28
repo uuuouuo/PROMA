@@ -3,6 +3,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import counterReducer from "./counter";
+import projectReducer from "./project";
 
 const persistConfig = {
   key: "root",
@@ -14,6 +15,7 @@ const persistConfig = {
 
 export const rootReducer = combineReducers({
   counterReducer,
+  projectReducer,
   // 모듈 추가시 여기에 추가
 });
 

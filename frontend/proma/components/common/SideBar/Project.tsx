@@ -85,7 +85,7 @@ const TeamBox = styled.div`
 //dummy data
 const teams = ["team1", "team2", "team3"];
 
-const Project = ({ projectName }: { projectName: string }) => {
+const Project = ({ projectInfo }: { projectInfo: any }) => {
   const [showTeams, setShowTeams] = useState<boolean>(false);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
@@ -98,7 +98,7 @@ const Project = ({ projectName }: { projectName: string }) => {
     <ProjectContainer>
       <Header>
         <Link href="/project/0">
-          <a>{projectName}</a>
+          <a>{projectInfo.title}</a>
         </Link>
         <div>
           <ChatButton onClick={() => setState(true)}>Chat</ChatButton>

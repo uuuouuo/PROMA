@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { ThemeType } from "../../../interfaces/style";
 import Project from "./Project";
 import { ProjectCreateModal } from "../Modal";
 
+import { connect } from "react-redux";
+import { getProjectList } from "../../../store/modules/project";
+import { RootState } from "../../../store/modules";
+
+//styled-components
 const SideBarContainer = styled.div`
   width: 20vw;
   min-width: 200px;
@@ -15,17 +20,14 @@ const SideBarContainer = styled.div`
   flex-direction: column;
   overflow-y: scroll;
 `;
-
 const H4 = styled.h4`
   color: ${(props: ThemeType) => props.theme.mainColor};
   margin-left: 20px;
 `;
-
 const ProjectsContainer = styled.div`
   height: 90%;
   padding: 0 20px;
 `;
-
 const AddProjectButton = styled.button`
   background-color: inherit;
   color: ${(props: ThemeType) => props.theme.mainColor};
@@ -40,19 +42,48 @@ const AddProjectButton = styled.button`
   }
 `;
 
-//dummy data
-const projects = ["one", "two", "three"];
+const mapStateToProps = (state: RootState) => {
+  return {
+    projectList: state.projectReducer.projectList,
+  };
+};
 
-const SideBar = () => {
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getProjects: () => dispatch(getProjectList()),
+  };
+};
+
+// interface projectListType {
+//     [
+//         {
+//             projectNo: string;
+//             title: string;
+//             role:string;
+//         }
+//     ]
+// }
+
+const SideBar = ({
+  projectList,
+  getProjects,
+}: {
+  projectList: any;
+  getProjects: any;
+}) => {
   const [projectCreateModal, setProjectCreateModal] = useState<boolean>(false);
   const showProjectCreateModal = () => setProjectCreateModal((cur) => !cur);
+
+  useEffect(() => {
+    getProjects();
+  }, []);
 
   return (
     <SideBarContainer>
       <H4>My Projects</H4>
       <ProjectsContainer>
-        {projects.map((project, index) => (
-          <Project projectName={project} key={index}></Project>
+        {projectList?.map((project: any, index: any) => (
+          <Project projectInfo={project} key={index} />
         ))}
         <AddProjectButton onClick={showProjectCreateModal}>
           + Create New Project
@@ -66,4 +97,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default connect(mapStateToProps, mapDispatchToProps)(SideBar);
