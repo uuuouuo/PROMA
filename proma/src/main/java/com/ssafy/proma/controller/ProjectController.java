@@ -76,4 +76,28 @@ public class ProjectController {
 
     return new ResponseEntity(resultMap, status);
   }
+
+  @GetMapping("/{projectNo}")
+  @ApiOperation(value = "단일 프로젝트 조회", notes = "프로젝트 정보 조회")
+  public ResponseEntity getProject(@PathVariable String projectNo){
+
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = projectService.getProject(projectNo);
+
+      if(resultMap.get("message").equals("프로젝트 조회 성공")) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("프로젝트 조회 실패 : {}", e.getMessage());
+
+      resultMap.put("message", "프로젝트 조회 실패");
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
+  }
+
 }
