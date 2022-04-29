@@ -6,16 +6,11 @@ import {
   FaPen,
   FaCheck,
   FaGithub,
-  FaUserAlt,
-  FaRegTimesCircle,
   FaExclamationTriangle,
 } from "react-icons/fa";
 import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
 import Image from "next/image";
-import { postNewProject } from "../../store/modules/project";
-import { BACKEND_URL } from "../../config";
-import axios from "axios";
 
 //styling
 export const style = {

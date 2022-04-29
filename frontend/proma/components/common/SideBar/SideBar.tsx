@@ -3,10 +3,10 @@ import styled from "styled-components";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import { ThemeType } from "../../../interfaces/style";
 import Project from "./Project";
-import { ProjectCreateModal } from "../Modal";
+import { ProjectCreateModal } from "../../Modals/ProjectCreateModal";
 
 import { connect } from "react-redux";
-import { getProjectList } from "../../../store/modules/project";
+import { getProjectList, postNewProject } from "../../../store/modules/project";
 import { RootState } from "../../../store/modules";
 
 //styled-components
@@ -51,25 +51,19 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getProjects: () => dispatch(getProjectList()),
+    postNewProject: (newProjectInfo: any) =>
+      dispatch(postNewProject(newProjectInfo)),
   };
 };
-
-// interface projectListType {
-//     [
-//         {
-//             projectNo: string;
-//             title: string;
-//             role:string;
-//         }
-//     ]
-// }
 
 const SideBar = ({
   projectList,
   getProjects,
+  postNewProject,
 }: {
   projectList: any;
   getProjects: any;
+  postNewProject: any;
 }) => {
   const [projectCreateModal, setProjectCreateModal] = useState<boolean>(false);
   const showProjectCreateModal = () => setProjectCreateModal((cur) => !cur);
@@ -91,6 +85,7 @@ const SideBar = ({
         <ProjectCreateModal
           projectCreateModal={projectCreateModal}
           showProjectCreateModal={showProjectCreateModal}
+          postNewProject={postNewProject}
         />
       </ProjectsContainer>
     </SideBarContainer>
