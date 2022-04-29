@@ -1,5 +1,7 @@
 package com.ssafy.proma.model.dto.project;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +20,12 @@ public class ResProjectDto {
       this.title = title;
       this.role = role;
     }
+  }
+
+  @Getter
+  @AllArgsConstructor
+  public static class ProjectDetailDto{
+    String title;
   }
 
 }

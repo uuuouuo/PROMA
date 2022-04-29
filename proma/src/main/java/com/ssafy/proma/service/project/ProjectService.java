@@ -3,7 +3,9 @@ package com.ssafy.proma.service.project;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
+import com.ssafy.proma.model.dto.project.ResProjectDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
+import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectDetailDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.user.User;
@@ -134,5 +136,16 @@ public class ProjectService extends AbstractService {
     return resultMap;
   }
 
+  public Map<String, Object> getProject(String projectNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    ProjectDetailDto projectDetailDto = new ProjectDetailDto(project.getName());
+
+    resultMap.put("project", projectDetailDto);
+    resultMap.put("message", "프로젝트 조회 성공");
+    return resultMap;
+  }
 }
