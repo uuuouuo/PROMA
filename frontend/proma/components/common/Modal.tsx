@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -614,8 +614,9 @@ export const LoginModal = ({
     // showLoginModal();
 
     //아니라면 조인모달 띄움
-    showLoginModal();
-    showJoinModal();
+    // showLoginModal();
+    // showJoinModal();
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=e9aef6fccada43586c11`;
   };
 
   return (
