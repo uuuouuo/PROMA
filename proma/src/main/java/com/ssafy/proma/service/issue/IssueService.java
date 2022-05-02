@@ -5,8 +5,10 @@ import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueUpdateDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.TopicDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.team.Team;
@@ -196,12 +198,17 @@ public class IssueService extends AbstractService {
     String userNo = user.getNo();
     String nickname = user.getNickname();
 
+    Team team = issue.getTeam();
+    Integer teamNo = team.getNo();
+    String teamName = team.getName();
+
     Topic topic = issue.getTopic();
     Integer topicNo = topic.getNo();
     String topicTitle = topic.getTitle();
 
     IssueDetailsDto issueDetailsDto = new IssueDetailsDto(issueNo,
-        issueTitle,description,status,topicNo,topicTitle,userNo,nickname);
+        new TeamDto(teamNo, teamName), issueTitle, description, status
+            , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname));
 
     return issueDetailsDto;
   }
