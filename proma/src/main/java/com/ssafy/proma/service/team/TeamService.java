@@ -16,9 +16,8 @@ import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 import com.ssafy.proma.util.SecurityUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -146,5 +145,18 @@ public class TeamService extends AbstractService {
     });
 
     return userNicknameList;
+  }
+
+  public Map<String, Object> getTeam(Integer teamNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
+
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    TeamDto teamDto = new TeamDto(teamNo, team.getName());
+    
+    resultMap.put("team", teamDto);
+    resultMap.put("message", "팀 조회 성공");
+    return resultMap;
   }
 }
