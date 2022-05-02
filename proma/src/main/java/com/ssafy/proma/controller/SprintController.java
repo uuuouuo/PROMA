@@ -32,7 +32,7 @@ public class SprintController {
   }
 
   @ApiOperation(value = "스프린트 시작/종료", notes = "스프린트를 시작/종료한다.")
-  @PutMapping("/{sprintNo}")
+  @PutMapping("/status/{sprintNo}")
   public ResponseEntity startSprint(@PathVariable Integer sprintNo){
     sprintService.startSprint(sprintNo);
     return ResponseEntity.ok().build();
