@@ -46,17 +46,17 @@ public class IssueController {
     return ResponseEntity.ok().build();
   }
 
-//  @GetMapping
-//  @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이유 제목을 보낸다")
-//  public ResponseEntity<List<IssueNoTitleDto>> getSprintTeamIssue(
-//      @RequestParam(value="sprintNo",required = false) Integer sprintNo,
-//      @RequestParam(value="teamNo") Integer teamNo) {
-//
-//    List<IssueNoTitleDto> issueList = issueService.getSprintTeamIssue(sprintNo,teamNo);
-//
-//    return new ResponseEntity<>(issueList, HttpStatus.OK);
-//
-//  }
+  @GetMapping
+  @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이유 제목을 보낸다")
+  public ResponseEntity<List<IssueNoTitleDto>> getSprintTeamIssue(
+      @RequestParam(value="sprintNo",required = false) Integer sprintNo,
+      @RequestParam(value="teamNo") Integer teamNo) {
+
+    List<IssueNoTitleDto> issueList = issueService.getSprintTeamIssue(sprintNo,teamNo);
+
+    return new ResponseEntity<>(issueList, HttpStatus.OK);
+
+  }
 
   @GetMapping("/{teamNo}")
   @ApiOperation(value = "팀에 속한 이슈를 상태별 조회", notes = "팀에 속한 이슈를 상태별 조회한다. 이슈 번호, 이유 제목을 보낸다")
