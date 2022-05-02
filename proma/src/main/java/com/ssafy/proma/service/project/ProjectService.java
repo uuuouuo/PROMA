@@ -83,7 +83,7 @@ public class ProjectService extends AbstractService {
     String userNo = securityUtil.getCurrentUserNo();
 
     String projectNo = request.getProjectNo();
-    String name = request.getName();
+    String name = request.getTitle();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
