@@ -1,5 +1,7 @@
 package com.ssafy.proma.model.dto.issue;
 
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +12,12 @@ public class ResIssueDto {
   public static class IssueNoTitleDto{
 
     Integer issueNo;
+    UserDto assignee;
     String title;
 
-    public IssueNoTitleDto(Integer issueNo, String title) {
+    public IssueNoTitleDto(Integer issueNo, UserDto assignee, String title) {
       this.issueNo = issueNo;
+      this.assignee = assignee;
       this.title = title;
     }
   }
@@ -23,20 +27,22 @@ public class ResIssueDto {
   public static class IssueDetailsDto{
 
     Integer issueNo;
+    TeamDto team;
     String issueTitle;
     String description;
     String status;
     TopicDto topic;
     UserDto assignee;
 
-    public IssueDetailsDto(Integer issueNo, String issueTitle, String description,
-        String status, Integer topicNo, String topicTitle, String userNo, String nickname) {
+    public IssueDetailsDto(Integer issueNo, TeamDto team, String issueTitle, String description,
+        String status, TopicDto topic, UserDto assignee) {
       this.issueNo = issueNo;
+      this.team = team;
       this.issueTitle = issueTitle;
       this.description = description;
       this.status = status;
-      this.topic = new TopicDto(topicNo,topicTitle);
-      this.assignee = new UserDto(userNo,nickname);
+      this.topic = topic;
+      this.assignee = assignee;
     }
 
     @Getter
@@ -51,13 +57,15 @@ public class ResIssueDto {
     }
 
     @Getter
-    public static class UserDto{
-      String userNo;
-      String nickname;
+        public static class UserDto{
+          String userNo;
+          String nickname;
+          String image;
 
-      public UserDto(String userNo, String nickname) {
-        this.userNo = userNo;
-        this.nickname = nickname;
+          public UserDto(String userNo, String nickname, String image) {
+            this.userNo = userNo;
+            this.nickname = nickname;
+            this.image = image;
       }
     }
 

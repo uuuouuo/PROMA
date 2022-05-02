@@ -27,36 +27,28 @@ public class SprintController {
   @ApiOperation(value = "스프린트 생성", notes = "스프린트를 생성한다.")
   @PostMapping
   public ResponseEntity createSprint(@RequestBody SprintCreateDto sprintCreateDto){
-
     sprintService.createSprint(sprintCreateDto);
-
     return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "스프린트 시작/종료", notes = "스프린트를 시작/종료한다.")
-  @GetMapping("/{sprintNo}")
+  @PutMapping("/status/{sprintNo}")
   public ResponseEntity startSprint(@PathVariable Integer sprintNo){
-
     sprintService.startSprint(sprintNo);
-
     return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "스프린트 수정", notes = "스프린트를 수정한다.")
   @PutMapping("/{sprintNo}")
   public ResponseEntity updateSprint(@PathVariable Integer sprintNo, @RequestBody SprintUpdateDto sprintUpdateDto){
-
     sprintService.updateSprint(sprintNo,sprintUpdateDto);
-
     return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "모든 스프린트 조회", notes = "프로젝트에 포함된 모든 스프린트 조회")
   @GetMapping("/list/{projectNo}")
   public ResponseEntity<List<SprintDto>> getSprintList(@PathVariable String projectNo){
-
     List<SprintDto> sprintList = sprintService.getSprintList(projectNo);
-
     return new ResponseEntity<>(sprintList, HttpStatus.OK);
   }
 }

@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.topic;
 
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicUpdateDto;
@@ -61,8 +62,9 @@ public class TopicService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueDtoList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueDtoList;
   }

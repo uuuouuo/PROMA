@@ -33,7 +33,7 @@ public class ReqIssueDto {
     String title;
     String description;
     Integer topicNo;
-
+    String userNo;
   }
 
   @Getter

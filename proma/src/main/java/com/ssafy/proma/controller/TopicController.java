@@ -43,7 +43,7 @@ public class TopicController {
 
   }
 
-  @ApiOperation(value = "토픽에 포함된 스토리 조회", notes = "토픽에 포함된 스토리를 조회한다.")
+  @ApiOperation(value = "토픽에 포함된 이슈 조회", notes = "토픽에 포함된 이슈를 조회한다.")
   @GetMapping("/{topicNo}")
   public ResponseEntity<List<IssueNoTitleDto>> getTopicIssue(@PathVariable Integer topicNo){
 

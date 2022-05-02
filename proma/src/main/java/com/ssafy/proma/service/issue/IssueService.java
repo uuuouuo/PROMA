@@ -5,7 +5,10 @@ import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueUpdateDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.TopicDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.team.Team;
@@ -74,7 +77,7 @@ public class IssueService extends AbstractService {
     String description = issueUpdateDto.getDescription();
     Integer topicNo = issueUpdateDto.getTopicNo();
 
-    String userNo = securityUtil.getCurrentUserNo();
+    String userNo = issueUpdateDto.getUserNo();
 
 //    String userNo = issueUpdateDto.getUserNo();
 
@@ -111,23 +114,27 @@ public class IssueService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }
 
-  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo) {
+  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo,Integer sprintNo) {
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
+    Sprint sprint = takeOp(sprintOp);
 
-    Optional<List<Issue>> issueListOp = issueRepository.findByTeamAndStatusLike(team,status);
+    Optional<List<Issue>> issueListOp = issueRepository.findByTeamAndSprintAndStatusLike(team,sprint,status);
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }
@@ -174,8 +181,9 @@ public class IssueService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }
@@ -191,14 +199,47 @@ public class IssueService extends AbstractService {
     User user = issue.getUser();
     String userNo = user.getNo();
     String nickname = user.getNickname();
+    String image = user.getProfileImage();
+    Team team = issue.getTeam();
+    Integer teamNo = team.getNo();
+    String teamName = team.getName();
 
     Topic topic = issue.getTopic();
     Integer topicNo = topic.getNo();
     String topicTitle = topic.getTitle();
 
     IssueDetailsDto issueDetailsDto = new IssueDetailsDto(issueNo,
-        issueTitle,description,status,topicNo,topicTitle,userNo,nickname);
+        new TeamDto(teamNo, teamName), issueTitle, description, status
+            , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname,image));
 
     return issueDetailsDto;
+  }
+
+  public List<IssueNoTitleDto> getIssue(Integer sprintNo, Integer teamNo, String status,
+      Boolean onlyMyIssue) {
+
+    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
+    Team team = takeOp(teamOp);
+
+    Optional<List<Issue>> issueListOp = null;
+
+    if(sprintNo == null ){
+      issueListOp = issueRepository.findByTeamAndSprintNull(team);
+    }
+    else{
+      Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
+      Sprint sprint = takeOp(sprintOp);
+
+      issueListOp = issueRepository.findBySprintAndTeam(sprint,team);
+    }
+    List<Issue> issues = takeOp(issueListOp);
+
+    List<IssueNoTitleDto> issueList = issues.stream()
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+        .collect(Collectors.toList());
+
+    return issueList;
+
   }
 }
