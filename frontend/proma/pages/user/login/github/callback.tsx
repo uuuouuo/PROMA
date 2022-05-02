@@ -7,9 +7,10 @@ const Callback = () => {
     useEffect(() => {
         const code = window.location.search.replace("?code=", "");
         localStorage.setItem("code", code);
-        console.log(code);
         getMemberList();
-    })
+        console.log(code);
+        
+    }, [])
 
     return (
         <></>
