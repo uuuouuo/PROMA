@@ -2,20 +2,23 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export type MemberState = {
-    members: Array<object>;
+    memberList: any;
 };
 
 const initialState: MemberState = {
-    members: [],
+    memberList: [],
 }
 
 export const getMemberList = createAsyncThunk(
     "GET/USER/LOGIN/GITHUB",
-    async ({ code }: { code: string }, { rejectWithValue }) => {
-        return await axios
-            .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
-            .then((res) => res.data)
-            .catch((err) => rejectWithValue(err.response.data));
+    async () => {
+        // return await axios
+        //     .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=`, code)
+        //     // .then((res) => res.data)
+        //     .then((res) => console.log(res))
+        const code = localStorage.getItem("code");
+        const response = await axios.get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`).then((res) => console.log(res))
+        // return response.data;
     }
 );
 
@@ -27,7 +30,7 @@ const memberSlice = createSlice({
         builder
             .addCase(getMemberList.pending, (state) => { })
             .addCase(getMemberList.fulfilled, (state, { payload }) => {
-                state.members = payload;
+                state.memberList = payload;
             })
             .addCase(getMemberList.rejected, (state) => { });
     },

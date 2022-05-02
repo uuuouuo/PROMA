@@ -1,36 +1,19 @@
 import { useEffect } from 'react';
-import qs from 'qs';
-// import Loader from './Loader';
+import { BsChevronCompactLeft } from 'react-icons/bs';
+import { getMemberList } from "../../../../store/modules/member";
 
 const Callback = () => {
-    const authUri = `http://k6c107.p.ssafy.io:3000/user/login/github/callback`;
 
     useEffect(() => {
-        const getToken = async () => {
-        const { code } = qs.parse(location.search, {
-            ignoreQueryPrefix: true,
-        });
+        const code = window.location.search.replace("?code=", "");
+        localStorage.setItem("code", code);
+        console.log(code);
+        getMemberList();
+    })
 
-        try {
-            const response = await fetch(`${authUri}?code=${code}`);
-            const data = await response.json();
-
-            localStorage.setItem('token', data.jwt);
-            localStorage.setItem('ProfileURL', data.avatar_url);
-
-            // history.push('/');
-        } catch (error) {}
-        };
-
-        getToken();
-    }, [authUri]);
-
-    // return <Loader />;
-
-    // useEffect(() => {
-    //     const url = window.location.href;
-    //     console.log(url);
-    // })
+    return (
+        <></>
+    );
 };
 
 export default Callback;
