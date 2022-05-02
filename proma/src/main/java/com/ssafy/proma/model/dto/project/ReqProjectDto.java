@@ -40,7 +40,7 @@ public class ReqProjectDto {
   public static class ProjectUpdateDto{
 
     String projectNo;
-    String name;
+    String title;
   }
 
   @Getter

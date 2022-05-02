@@ -49,7 +49,7 @@ public class SprintService extends AbstractService {
   @Transactional
   public void updateSprint(Integer sprintNo, SprintUpdateDto sprintUpdateDto) {
 
-    String name = sprintUpdateDto.getName();
+    String name = sprintUpdateDto.getTitle();
     String startDate = sprintUpdateDto.getStartDate();
     String endDate = sprintUpdateDto.getEndDate();
 

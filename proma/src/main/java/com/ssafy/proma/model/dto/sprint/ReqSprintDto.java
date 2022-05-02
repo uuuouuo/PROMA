@@ -15,13 +15,13 @@ public class ReqSprintDto{
   @NoArgsConstructor
   public static class SprintCreateDto{
 
-    String name;
+    String title;
     String startDate;
     String endDate;
     String projectNo;
 
-    public SprintCreateDto(String name, String startDate, String endDate, String projectNo) {
-      this.name = name;
+    public SprintCreateDto(String title, String startDate, String endDate, String projectNo) {
+      this.title = title;
       this.startDate = startDate;
       this.endDate = endDate;
       this.projectNo = projectNo;
@@ -34,19 +34,19 @@ public class ReqSprintDto{
       LocalDate startDateTime = LocalDate.parse(startDate, DATEFORMATTER);
       LocalDate endDateTime = LocalDate.parse(endDate, DATEFORMATTER);
 
-      return Sprint.builder().name(name).startDate(startDateTime).endDate(endDateTime).status(false).project(project).build();
+      return Sprint.builder().name(title).startDate(startDateTime).endDate(endDateTime).status(false).project(project).build();
     }
 
     @Getter
     @NoArgsConstructor
     public static class SprintUpdateDto{
 
-      String name;
+      String title;
       String startDate;
       String endDate;
 
-      public SprintUpdateDto(String name, String startDate, String endDate) {
-        this.name = name;
+      public SprintUpdateDto(String title, String startDate, String endDate) {
+        this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
       }
