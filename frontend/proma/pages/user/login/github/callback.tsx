@@ -7,7 +7,8 @@ const Callback = () => {
     useEffect(() => {
         const code = window.location.search.replace("?code=", "");
         localStorage.setItem("code", code);
-        getMemberList().then(() => Log_in());
+        // getMemberList().then(() => Log_in());
+        getMemberInfo();
     }, []);
 
     const Log_in = () => {
