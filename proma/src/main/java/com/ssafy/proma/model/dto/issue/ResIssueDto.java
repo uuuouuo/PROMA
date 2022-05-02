@@ -10,6 +10,7 @@ public class ResIssueDto {
   public static class IssueNoTitleDto{
 
     Integer issueNo;
+
     String title;
 
     public IssueNoTitleDto(Integer issueNo, String title) {
@@ -51,13 +52,13 @@ public class ResIssueDto {
     }
 
     @Getter
-    public static class UserDto{
-      String userNo;
-      String nickname;
+        public static class UserDto{
+          String userNo;
+          String nickname;
 
-      public UserDto(String userNo, String nickname) {
-        this.userNo = userNo;
-        this.nickname = nickname;
+          public UserDto(String userNo, String nickname) {
+            this.userNo = userNo;
+            this.nickname = nickname;
       }
     }
 
