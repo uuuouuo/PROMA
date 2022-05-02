@@ -63,7 +63,7 @@ public class TopicService extends AbstractService {
 
     List<IssueNoTitleDto> issueDtoList = issues.stream()
         .map(issue -> new IssueNoTitleDto(issue.getNo()
-            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname()), issue.getTitle()))
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
         .collect(Collectors.toList());
 
     return issueDtoList;

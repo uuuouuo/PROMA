@@ -19,5 +19,6 @@ public interface IssueRepository extends JpaRepository<Issue,Integer> {
   Optional<List<Issue>> findByTeamAndStatusLike(Team team, String status);
   Optional<List<Issue>> findByUserAndTeam(User user, Team team);
 
+  Optional<List<Issue>> findByTeamAndSprintAndStatusLike(Team team, Sprint sprint, String status);
 }
 

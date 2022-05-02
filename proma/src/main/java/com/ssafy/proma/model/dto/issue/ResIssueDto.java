@@ -60,10 +60,12 @@ public class ResIssueDto {
         public static class UserDto{
           String userNo;
           String nickname;
+          String image;
 
-          public UserDto(String userNo, String nickname) {
+          public UserDto(String userNo, String nickname, String image) {
             this.userNo = userNo;
             this.nickname = nickname;
+            this.image = image;
       }
     }
 
