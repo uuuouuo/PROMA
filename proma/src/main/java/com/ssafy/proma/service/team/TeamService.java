@@ -106,7 +106,7 @@ public class TeamService extends AbstractService {
   public void updateTeam(TeamUpdateDto teamDto) {
 
     Integer teamNo = teamDto.getTeamNo();
-    String name = teamDto.getName();
+    String name = teamDto.getTitle();
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
