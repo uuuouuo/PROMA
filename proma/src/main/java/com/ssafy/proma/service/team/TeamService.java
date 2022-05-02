@@ -4,6 +4,7 @@ import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamMemberDto;
 import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
@@ -130,7 +131,9 @@ public class TeamService extends AbstractService {
 
   }
 
-  public List<String> getUserTeamList(int teamNo) {
+  public Map<String, Object> getUserTeamList(Integer teamNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -138,13 +141,16 @@ public class TeamService extends AbstractService {
     Optional<List<UserTeam>> userTeamOp = userTeamRepository.findByTeam(team);
     List<UserTeam> userTeamList = takeOp(userTeamOp);
 
-    List<String> userNicknameList = new ArrayList<>();
+    //탈퇴 회원 필터링 필요
+    List<TeamMemberDto> teamMemberDtoList = userTeamList.stream()
+            .filter(member -> !member.getUser().isDeleted())
+            .map(member -> new TeamMemberDto(member.getUser().getNo(), member.getUser().getNickname(), member.getUser().getProfileImage()))
+            .collect(Collectors.toList());
 
-    userTeamList.forEach(userTeam->{
-      userNicknameList.add(userTeam.getUser().getNickname());
-    });
 
-    return userNicknameList;
+    resultMap.put("memberList", teamMemberDtoList);
+    resultMap.put("message", "팀원 조회 성공");
+    return resultMap;
   }
 
   public Map<String, Object> getTeam(Integer teamNo) throws Exception {

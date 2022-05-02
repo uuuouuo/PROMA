@@ -87,15 +87,30 @@ public class TeamController {
 
   @ApiOperation(value = "팀원 조회", notes = "팀에 속해있는 모든 유저를 조회한다.")
   @GetMapping("/user/{teamNo}")
-  public ResponseEntity<List<String>> getUserTeamList(@PathVariable Integer teamNo){
+  public ResponseEntity getUserTeamList(@PathVariable Integer teamNo){
 
-    List<String> userTeamList = teamService.getUserTeamList(teamNo);
-    return new ResponseEntity<>(userTeamList, HttpStatus.OK);
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.getUserTeamList(teamNo);
+
+      if(resultMap.get("message").equals("팀원 조회 성공")) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀원 조회 실패 : {}", e.getMessage());
+
+      resultMap.put("message", "팀원 조회 실패");
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "단일 팀 정보 조회", notes = "팀 정보 조회")
   @GetMapping("/info/{teamNo}")
-  public ResponseEntity<List<String>> getTeam(@PathVariable Integer teamNo){
+  public ResponseEntity getTeam(@PathVariable Integer teamNo){
 
     Map<String, Object> resultMap = new HashMap<>();
     HttpStatus status = HttpStatus.ACCEPTED;
