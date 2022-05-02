@@ -9,8 +9,13 @@ import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.service.team.TeamService;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/team")
@@ -87,4 +93,26 @@ public class TeamController {
     return new ResponseEntity<>(userTeamList, HttpStatus.OK);
   }
 
+  @ApiOperation(value = "단일 팀 정보 조회", notes = "팀 정보 조회")
+  @GetMapping("/info/{teamNo}")
+  public ResponseEntity<List<String>> getTeam(@PathVariable Integer teamNo){
+
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.getTeam(teamNo);
+
+      if(resultMap.get("message").equals("팀 조회 성공")) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 조회 실패 : {}", e.getMessage());
+
+      resultMap.put("message", "팀 조회 실패");
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
+  }
 }

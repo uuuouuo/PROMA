@@ -12,12 +12,12 @@ public class ReqTeamDto {
   @Getter
   @NoArgsConstructor
   public static class TeamCreateDto{
-    String name;
+    String title;
     String projectNo;
 
 
     public Team toEntity(Project project) {
-      return Team.builder().name(name).project(project).build();
+      return Team.builder().name(title).project(project).build();
     }
 
     public UserTeam toEntity(Team team, User user) {
@@ -48,11 +48,11 @@ public class ReqTeamDto {
   public static class TeamUpdateDto {
 
     Integer teamNo;
-    String name;
+    String title;
 
-    public TeamUpdateDto(Integer teamNo, String name) {
+    public TeamUpdateDto(Integer teamNo, String title) {
       this.teamNo = teamNo;
-      this.name = name;
+      this.title = title;
     }
   }
 

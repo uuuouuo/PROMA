@@ -11,16 +11,16 @@ public class ResTeamDto {
   public static class TeamDto{
 
     Integer teamNo;
-    String name;
+    String title;
 
-    public TeamDto(Integer teamNo, String name) {
+    public TeamDto(Integer teamNo, String title) {
       this.teamNo = teamNo;
-      this.name = name;
+      this.title = title;
     }
 
     public TeamDto(Team team){
       this.teamNo = team.getNo();
-      this.name = team.getName();
+      this.title = team.getName();
     }
 
   }
