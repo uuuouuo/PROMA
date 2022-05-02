@@ -5,6 +5,7 @@ import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueUpdateDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.sprint.Sprint;
@@ -111,8 +112,9 @@ public class IssueService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }
@@ -126,8 +128,9 @@ public class IssueService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }
@@ -174,8 +177,9 @@ public class IssueService extends AbstractService {
     List<Issue> issues = takeOp(issueListOp);
 
     List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo(), issue.getTitle())).collect(
-            Collectors.toList());
+        .map(issue -> new IssueNoTitleDto(issue.getNo()
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname()), issue.getTitle()))
+        .collect(Collectors.toList());
 
     return issueList;
   }

@@ -1,5 +1,6 @@
 package com.ssafy.proma.model.dto.issue;
 
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,11 +11,12 @@ public class ResIssueDto {
   public static class IssueNoTitleDto{
 
     Integer issueNo;
-
+    UserDto assignee;
     String title;
 
-    public IssueNoTitleDto(Integer issueNo, String title) {
+    public IssueNoTitleDto(Integer issueNo, UserDto assignee, String title) {
       this.issueNo = issueNo;
+      this.assignee = assignee;
       this.title = title;
     }
   }
