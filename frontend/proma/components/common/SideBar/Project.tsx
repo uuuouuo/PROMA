@@ -97,7 +97,7 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
   return (
     <ProjectContainer>
       <Header>
-        <Link href="/project/0">
+        <Link href={`/project/${projectInfo.projectNo}`}>
           <a>{projectInfo.title}</a>
         </Link>
         <div>

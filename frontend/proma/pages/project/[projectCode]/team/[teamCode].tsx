@@ -5,7 +5,10 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
-import { IssueCreateModal, WarningModal } from "../../../../components/common/Modal";
+import {
+  IssueCreateModal,
+  WarningModal,
+} from "../../../../components/common/Modal";
 
 //team info get api 필요
 
@@ -31,6 +34,10 @@ const FlexBox = styled.div`
   }
   input {
     font-size: 20px;
+  }
+  span {
+    font-size: 20px;
+    margin-right: 15px;
   }
 `;
 const TopBar = styled(FlexBox)`
@@ -235,13 +242,18 @@ const TeamSpace = () => {
   const [warningListModal, setWarningListModal] = useState<boolean>(false);
   const [warningListModal2, setWarningListModal2] = useState<boolean>(false);
   const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-  const [warningCreateModal2, setWarningCreateModal2] = useState<boolean>(false);
+  const [warningCreateModal2, setWarningCreateModal2] =
+    useState<boolean>(false);
   const showWarningListModal = () => setWarningListModal((cur) => !cur);
   const showWarningListModal2 = () => setWarningListModal2((cur) => !cur);
   const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
   const showWarningCreateModal2 = () => setWarningCreateModal2((cur) => !cur);
-  const [comment, setComment] = useState<string>("팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?")
-  const [comment2, setComment2] = useState<string>("팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?")
+  const [comment, setComment] = useState<string>(
+    "팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?"
+  );
+  const [comment2, setComment2] = useState<string>(
+    "팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?"
+  );
 
   return (
     <TeamSpaceContainer>
@@ -268,6 +280,7 @@ const TeamSpace = () => {
       <SubTopBar>
         {updateSprintName ? (
           <FlexBox>
+            <span>Active: </span>
             <input
               value={sprintName}
               onChange={(e) => setSprintName(e.target.value)}
@@ -279,6 +292,7 @@ const TeamSpace = () => {
           </FlexBox>
         ) : (
           <FlexBox>
+            <span>Active: </span>
             <h2>{sprintName}</h2>
             <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
           </FlexBox>
