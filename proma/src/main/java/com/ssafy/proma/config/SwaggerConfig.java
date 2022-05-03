@@ -44,7 +44,7 @@ public class SwaggerConfig {
   }
 
   private ApiKey apiKey() {
-    return new ApiKey("JWT", JwtProperties.JWT_HEADER_STRING, "header");
+    return new ApiKey(JwtProperties.JWT_HEADER_STRING, JwtProperties.JWT_HEADER_STRING, "header");
   }
 
   private SecurityContext securityContext() {
