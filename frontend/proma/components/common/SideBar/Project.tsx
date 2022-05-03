@@ -23,7 +23,7 @@ const Header = styled.div`
   border-radius: 3px;
   padding: 0 10px 0 15px;
   a {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     text-decoration: none;
     color: ${(props: ThemeType) => props.theme.elementTextColor};

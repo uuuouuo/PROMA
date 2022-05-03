@@ -22,19 +22,20 @@ import { useRouter } from "next/router";
 
 //dummy data
 const sprints: any[] = [
-  {
-    sprintNo: 0,
-    sprintName: "1주차",
-  },
-  {
-    sprintNo: 1,
-    sprintName: "2주차",
-  },
-  {
-    sprintNo: 2,
-    sprintName: "Backlog",
-  },
+  //   {
+  //     sprintNo: 1,
+  //     sprintName: "1주차",
+  //   },
+  //   {
+  //     sprintNo: 2,
+  //     sprintName: "2주차",
+  //   },
 ];
+
+const backlog = {
+  sprintNo: 0,
+  sprintName: "Backlog",
+};
 
 //styled-components
 const Button = styled.button`
@@ -276,15 +277,10 @@ const ProjectSpace = ({
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {sprints.length > 0 ? (
-                sprints.map((sprint, index) => (
-                  <Sprint sprint={sprint} key={index} />
-                ))
-              ) : (
-                <InitialBox>
-                  <Button onClick={onStartProject}>프로젝트 시작하기</Button>
-                </InitialBox>
-              )}
+              {sprints?.map((sprint, index) => (
+                <Sprint sprint={sprint} key={index} />
+              ))}
+              <Sprint sprint={backlog} />
             </SprintsBox>
             <WarnButton onClick={showWarningCreateModal}>
               프로젝트 종료

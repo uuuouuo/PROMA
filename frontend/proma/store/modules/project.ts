@@ -70,8 +70,6 @@ export const postNewProject = createAsyncThunk(
 export const updateProjectInfo = createAsyncThunk(
   "PUT/PROJECT",
   async (newProjectInfo: any, thunkAPI) => {
-    console.log(newProjectInfo);
-
     return await axios
       .put(`${BACKEND_URL}/project/change`, newProjectInfo, {
         headers: {
@@ -84,6 +82,23 @@ export const updateProjectInfo = createAsyncThunk(
         thunkAPI.dispatch(getProjectInfo(newProjectInfo.projectNo));
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//delete project api
+export const deleteProject = createAsyncThunk(
+  "DELETE/PROJECT",
+  async (_, { rejectWithValue }) => {
+    return await axios
+      .delete(`${BACKEND_URL}/project/change`, {
+        headers: {
+          JWT: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log("project is deleted", res);
+      })
+      .catch((err) => rejectWithValue(err.response.data));
   }
 );
 
