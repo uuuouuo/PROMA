@@ -30,7 +30,7 @@ public class Project {
 
     @Column
     @ApiModelProperty(value = "프로젝트 삭제 여부")
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     protected Project(){}
 
