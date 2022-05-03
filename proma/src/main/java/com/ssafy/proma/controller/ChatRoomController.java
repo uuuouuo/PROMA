@@ -1,7 +1,7 @@
 package com.ssafy.proma.controller;
 
-import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_ERROR_MESSAGE;
 import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_ERROR_MESSAGE;
@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,12 +30,13 @@ public class ChatRoomController {
 
   @ApiOperation(value = "개인 채팅 생성 및 조회", notes = "해당 유저와 개인 채팅방 생성 및 조회")
   @GetMapping("/room/user/{subNo}")
-  public ResponseEntity<Map<String, Object>> getPrivateChatRoom(@PathVariable String subNo) {
+  public ResponseEntity<Map<String, Object>> getPrivateChatRoom(@PathVariable String subNo
+      ,@PageableDefault(page = 0, size = 10) Pageable pageable) {
     Map<String, Object> result = new HashMap<>();
     HttpStatus status = HttpStatus.ACCEPTED;
 
     try{
-      result = chatService.getPrivateChatRoom(subNo);
+      result = chatService.getPrivateChatRoom(subNo, pageable);
 
       if(result.get("message").equals(PRIVATE_CHATROOM_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;

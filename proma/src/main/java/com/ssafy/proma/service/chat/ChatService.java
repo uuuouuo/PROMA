@@ -33,11 +33,13 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.util.SecurityUtil;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,7 +56,40 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-  public Map<String, Object> getPrivateChatRoom(String subNo) {
+//  public Map<String, Object> getPrivateChatRoom(String subNo) {
+//
+//    // user check
+//    User pub = findUser(SecurityUtil.getCurrentUserNo());
+//    User sub = findUser(subNo);
+//
+//    // chatroom check
+//    PrivateChatRoom chatRoom = null;
+//    if(pub.getNo().compareTo(sub.getNo()) > 0) {
+//      chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(pub, sub)
+//          .orElseGet(() -> createPrivateChatRoom(pub, sub));
+//    } else {
+//      chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(sub, pub)
+//          .orElseGet(() -> createPrivateChatRoom(sub, pub));
+//    }
+//
+//    // 해당 chatroom 의 messageList 가져오기
+//    List<ChatMessageListRes> msgResList =
+//        privateChatMessageRepository.findAllByChatRoom(chatRoom)
+//            .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
+//                , m.getContent(), m.getTime()))
+//            .collect(Collectors.toList());
+//
+//    PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
+//
+//    Map<String, Object> result = new HashMap<>();
+//    result.put("response", response);
+//    result.put("message", TEAM_CHATROOM_SUCCESS_MESSAGE);
+//
+//    return result;
+//
+//  }
+
+  public Map<String, Object> getPrivateChatRoom(String subNo, Pageable pageable) {
 
     // user check
     User pub = findUser(SecurityUtil.getCurrentUserNo());
@@ -71,11 +106,16 @@ public class ChatService {
     }
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgResList =
-        privateChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-                , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<PrivateChatMessage> msgList = new ArrayList<>();
+    msgList = privateChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new PrivateChatMessage()).collect(Collectors.toList());
+
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    msgList.forEach(m -> {
+      ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+          m.getUser().getNickname(), m.getContent(), m.getTime());
+      msgResList.add(chatMsgListRes);
+    });
 
     PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
 
@@ -102,6 +142,17 @@ public class ChatService {
         .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
             , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
+
+//    List<PrivateChatMessage> msgList = new ArrayList<>();
+//    msgList = privateChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+//        .stream().map(m -> new PrivateChatMessage()).collect(Collectors.toList());
+//
+//    List<ChatMessageListRes> msgResList = new ArrayList<>();
+//    msgList.forEach(m -> {
+//      ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+//          m.getUser().getNickname(), m.getContent(), m.getTime());
+//      msgResList.add(chatMsgListRes);
+//    });
 
     TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgList);
 
