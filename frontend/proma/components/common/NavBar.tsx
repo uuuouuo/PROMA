@@ -7,6 +7,9 @@ import Link from "next/link";
 import Toggle from "./Toggle";
 import { LoginModal, JoinModal, UserProfileModal } from "./Modal";
 import { FaRegUserCircle } from "react-icons/fa";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
+import { getLogout } from "../../store/modules/member";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -48,7 +51,17 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const NavBar = () => {
+const mapStateToProps = (state: RootState) => {
+  return {
+      userInfo : state.userReducer.userInfo,
+  };
+}
+  
+const NavBar = ({
+  userInfo,
+}: {
+    userInfo: any;
+}) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
@@ -60,7 +73,7 @@ const NavBar = () => {
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
 
   const setLogOut = () => {
-    setIsLogin(false);
+    getLogout();
   }; 
 
   return (
@@ -96,7 +109,7 @@ const NavBar = () => {
               userProfileModal={userProfileModal}
               showUserProfileModal={showUserProfileModal}
             />
-            <MenuButton onClick={setLogOut}>Logout</MenuButton>
+            <MenuButton onClick={() => setLogOut()}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
@@ -106,4 +119,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default  connect(mapStateToProps, null)(NavBar);
