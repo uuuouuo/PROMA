@@ -25,4 +25,16 @@ public class ResSprintDto {
     }
   }
 
+  @Getter
+  @NoArgsConstructor
+  public static class SprintNoTitle{
+
+    Integer sprintNo;
+    String title;
+
+    public SprintNoTitle(Integer sprintNo, String title) {
+      this.sprintNo = sprintNo;
+      this.title = title;
+    }
+  }
 }

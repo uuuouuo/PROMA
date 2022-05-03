@@ -10,4 +10,5 @@ public interface SprintRepository extends JpaRepository<Sprint,Integer> {
 
   Optional<Sprint> findByNo(Integer sprintNo);
   Optional<List<Sprint>> findAllByProject(Project project);
+  Optional<Sprint> findByProjectAndStatusTrue(Project project);
 }
