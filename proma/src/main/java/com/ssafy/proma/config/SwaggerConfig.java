@@ -1,5 +1,6 @@
 package com.ssafy.proma.config;
 
+import com.ssafy.proma.config.auth.jwt.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -43,7 +44,7 @@ public class SwaggerConfig {
   }
 
   private ApiKey apiKey() {
-    return new ApiKey("JWT", "JWT", "header");
+    return new ApiKey("JWT", JwtProperties.JWT_HEADER_STRING, "header");
   }
 
   private SecurityContext securityContext() {
@@ -60,6 +61,6 @@ public class SwaggerConfig {
     AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
     AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
     authorizationScopes[0] = authorizationScope;
-    return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+    return Arrays.asList(new SecurityReference(JwtProperties.JWT_HEADER_STRING, authorizationScopes));
   }
 }

@@ -2,6 +2,7 @@ package com.ssafy.proma.config.auth.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.proma.config.auth.security.PrincipalDetails;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
@@ -22,25 +23,45 @@ public class JwtTokenService {
     public String create(User user){
         String jwtToken = JWT.create()
                 .withSubject("jwt토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 600))
-//                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.JWT_EXPIRATION_TIME))
                 .withClaim("userNo", user.getNo())
-                .sign(Algorithm.HMAC512("proma"));
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
         return jwtToken;
+    }
+
+    public String createRefresh(){
+        String refreshToken = JWT.create()
+                .withSubject("jwt토큰")
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REF_EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        return refreshToken;
     }
 
     public String getUserNo(String jwtToken) {
 
-        String userNo = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getClaim("userNo").asString();
+        String userNo = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken).getClaim("userNo").asString();
         return userNo;
     }
 
     public boolean validate(String jwtToken) {
-        return validateForm(jwtToken) && validateExpired(jwtToken);
+        return validateExpired(jwtToken) && validateForm(jwtToken);
     }
 
-    public boolean validateExpired(String jwtToken){
-        Date expiresAt = JWT.require(Algorithm.HMAC512("proma")).build().verify(jwtToken).getExpiresAt();
+    public boolean validateJwt(String jwtToken) {
+        try{
+            if(validateExpired(jwtToken)) {
+                return false;
+            }
+            return true;
+        } catch (TokenExpiredException e) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean validateExpired(String token){
+        Date expiresAt = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getExpiresAt();
         Date cur = new Date();
 
         if(expiresAt.compareTo(cur) < 0) {
@@ -96,7 +117,7 @@ public class JwtTokenService {
                 .withSubject("jwt토큰")
                 .withExpiresAt(new Date(System.currentTimeMillis() - System.currentTimeMillis()))
                 .withClaim("userNo", user.getNo())
-                .sign(Algorithm.HMAC512("proma"));
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
         return jwtToken;
     }
 }

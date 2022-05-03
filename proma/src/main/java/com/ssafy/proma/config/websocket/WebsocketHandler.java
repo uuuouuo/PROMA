@@ -1,5 +1,6 @@
 package com.ssafy.proma.config.websocket;
 
+import com.ssafy.proma.config.auth.jwt.JwtProperties;
 import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
@@ -21,7 +22,7 @@ public class WebsocketHandler implements ChannelInterceptor {
     StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
     // websocket 연결시 헤더의 jwt token 검증
     if (StompCommand.CONNECT == accessor.getCommand()) {
-      jwtTokenService.validate(accessor.getFirstNativeHeader("JWT"));
+      jwtTokenService.validate(accessor.getFirstNativeHeader(JwtProperties.JWT_HEADER_STRING));
     }
     return message;
   }

@@ -30,14 +30,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        String jwtHeader = request.getHeader("JWT");
 
-        if(jwtHeader == null || !jwtHeader.startsWith("Bearer")) {
+        String path = request.getServletPath();
+
+        if(path.equals("/user/refresh")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        String jwtHeader = request.getHeader(JwtProperties.JWT_HEADER_STRING);
+
+        if(jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
             chain.doFilter(request,response);
             return;
         }
 
-        String jwtToken = request.getHeader("JWT").replace("Bearer ","");
+        String jwtToken = request.getHeader(JwtProperties.JWT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,"");
         String userNo = jwtTokenService.getUserNo(jwtToken);
 
         if(userNo != null) {

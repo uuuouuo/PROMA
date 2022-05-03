@@ -6,6 +6,7 @@ import com.ssafy.proma.model.dto.user.UserDto.LoginRes;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GithubAuthService {
 
@@ -34,10 +36,14 @@ public class GithubAuthService {
         }
 
         String jwtToken = jwtTokenService.create(user);
+        String refToken = jwtTokenService.createRefresh();
         System.out.println(jwtToken);
+        User findUser = userRepository.findByNo(userNo).get();
+        findUser.setRefresh(refToken);
 
         LoginRes loginRes = new LoginRes();
         loginRes.setJwtToken(jwtToken);
+        loginRes.setRefToken(refToken);
 
         return  loginRes;
     }
@@ -49,6 +55,20 @@ public class GithubAuthService {
             return false;
         }
         return true;
+    }
+
+    public String refreshToken(String userNo, String jwtToken, String refToken){
+        if(!jwtTokenService.validateJwt(jwtToken))
+            throw new AccessDeniedException("Token 만료되지 않음");
+
+        User user = userRepository.findByNo(userNo).get();
+
+        if(!refToken.equals(user.getRefresh()) || !jwtTokenService.validateExpired(refToken))
+            throw new AccessDeniedException("Refresh Token 유효하지 않음");
+
+        String newJwtToken = jwtTokenService.create(user);
+
+        return newJwtToken;
     }
 
     public String updateToken(String userNo) {
@@ -64,17 +84,16 @@ public class GithubAuthService {
         return newJwtToken;
     }
 
-    public String logout(String userNo) {
+    public boolean logout(String userNo) {
 
         Optional<User> userOptional = userRepository.findByNo(userNo);
 
-        String newJwtToken = null;
-
         if(userOptional.isPresent()) {
             User user = userOptional.get();
-            newJwtToken = jwtTokenService.logout(user);
+            user.setRefresh("invalidate");
+            return true;
         }
-        return newJwtToken;
+        return false;
 
     }
 }

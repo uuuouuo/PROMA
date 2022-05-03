@@ -32,15 +32,20 @@ public class User {
 
     @Column
     @ApiModelProperty(value = "회원 삭제 여부")
-    private boolean isDeleted;
+    private Boolean isDeleted;
+
+    @Column
+    @ApiModelProperty(value = "리프레쉬 토큰")
+    private String refresh;
 
     @Builder
-    public User(String no, String nickname, String nodeId, String profileImage, boolean isDeleted){
+    public User(String no, String nickname, String nodeId, String profileImage, Boolean isDeleted, String refresh){
         this.no = no;
         this.nickname = nickname;
         this.nodeId = nodeId;
         this.profileImage = profileImage;
         this.isDeleted = isDeleted;
+        this.refresh = refresh;
     }
 
     public void createUser(String userNo, String userNickname, String userNodeId) {
@@ -49,10 +54,15 @@ public class User {
         this.nodeId = userNodeId;
         this.profileImage = null;
         this.isDeleted = false;
+        this.refresh = null;
     }
 
     public void deleteUser(){
-        this.isDeleted = true;
+        this.isDeleted = this.isDeleted^true;
+    }
+
+    public void setRefresh(String refresh) {
+        this.refresh = refresh;
     }
 
     public User() {
