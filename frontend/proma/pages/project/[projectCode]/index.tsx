@@ -9,8 +9,8 @@ import {
   SprintCreateModal,
   TopicListModal,
   TopicCreateModal,
-  WarningModal,
 } from "../../../components/common/Modal";
+import { WarningModal } from "../../../components/Modals/WarningModal";
 
 import { connect } from "react-redux";
 import {
@@ -123,7 +123,6 @@ const mapDispatchToProps = (dispatch: any) => {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
-    deleteProject: () => dispatch(deleteProject()),
   };
 };
 
@@ -131,12 +130,10 @@ const ProjectSpace = ({
   getProjectInfo,
   projectName,
   updateProjectInfo,
-  deleteProject,
 }: {
   getProjectInfo: any;
   projectName: string;
   updateProjectInfo: any;
-  deleteProject: any;
 }) => {
   const router = useRouter();
 

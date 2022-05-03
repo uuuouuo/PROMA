@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { BACKEND_URL } from "../../config";
-import axios from "axios";
+
+import { apiInstance } from "../../api";
+const api = apiInstance();
 
 //state type
 export type ProjectState = {
@@ -22,12 +23,8 @@ const token =
 export const getProjectList = createAsyncThunk(
   "GET/PROJECTS",
   async (_, { rejectWithValue }) => {
-    return await axios
-      .get(`${BACKEND_URL}/project`, {
-        headers: {
-          JWT: `Bearer ${token}`,
-        },
-      })
+    return await api
+      .get(`/project`)
       .then((res) => res.data)
       .catch((err) => rejectWithValue(err.response.data));
   }
@@ -37,12 +34,8 @@ export const getProjectList = createAsyncThunk(
 export const getProjectInfo = createAsyncThunk(
   "GET/PROJECT",
   async (projectNo: string, { rejectWithValue }) => {
-    return await axios
-      .get(`${BACKEND_URL}/project/${projectNo}`, {
-        headers: {
-          JWT: `Bearer ${token}`,
-        },
-      })
+    return await api
+      .get(`/project/${projectNo}`)
       .then((res) => res.data)
       .catch((err) => rejectWithValue(err.response.data));
   }
@@ -52,12 +45,8 @@ export const getProjectInfo = createAsyncThunk(
 export const postNewProject = createAsyncThunk(
   "POST/PROJECT",
   async (newProjectInfo: any, thunkAPI) => {
-    return await axios
-      .post(`${BACKEND_URL}/project`, newProjectInfo, {
-        headers: {
-          JWT: `Bearer ${token}`,
-        },
-      })
+    return await api
+      .post(`/project`, newProjectInfo)
       .then((res) => {
         alert("An invitation email has been sent to the members.");
         thunkAPI.dispatch(getProjectList());
@@ -70,12 +59,8 @@ export const postNewProject = createAsyncThunk(
 export const updateProjectInfo = createAsyncThunk(
   "PUT/PROJECT",
   async (newProjectInfo: any, thunkAPI) => {
-    return await axios
-      .put(`${BACKEND_URL}/project/change`, newProjectInfo, {
-        headers: {
-          JWT: `Bearer ${token}`,
-        },
-      })
+    return await api
+      .put(`/project/change`, newProjectInfo)
       .then((res) => {
         console.log("project is updated", res);
 
@@ -89,12 +74,8 @@ export const updateProjectInfo = createAsyncThunk(
 export const deleteProject = createAsyncThunk(
   "DELETE/PROJECT",
   async (_, { rejectWithValue }) => {
-    return await axios
-      .delete(`${BACKEND_URL}/project/change`, {
-        headers: {
-          JWT: `Bearer ${token}`,
-        },
-      })
+    return await api
+      .delete(`/project/change`)
       .then((res) => {
         console.log("project is deleted", res);
       })
