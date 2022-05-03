@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.topic;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
@@ -13,7 +14,10 @@ import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.service.AbstractService;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -92,5 +96,22 @@ public class TopicService extends AbstractService {
         .collect(Collectors.toList());
 
     return topicNoNameList;
+  }
+
+  @Transactional
+  public Map<String, Object> deleteTopic(Integer topicNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
+
+    System.out.println(topicNo );
+
+    Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
+    Topic topic = takeOp(topicOp);
+
+    issueRepository.deleteAllByTopic(topic);
+    topicRepository.deleteById(topicNo);
+
+    resultMap.put("message", Message.TOPIC_DELETE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 }
