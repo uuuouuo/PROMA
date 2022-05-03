@@ -59,9 +59,29 @@ export const postNewProject = createAsyncThunk(
         },
       })
       .then((res) => {
-        console.log(res);
         alert("An invitation email has been sent to the members.");
         thunkAPI.dispatch(getProjectList());
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//update project api
+export const updateProjectInfo = createAsyncThunk(
+  "PUT/PROJECT",
+  async (newProjectInfo: any, thunkAPI) => {
+    console.log(newProjectInfo);
+
+    return await axios
+      .put(`${BACKEND_URL}/project/change`, newProjectInfo, {
+        headers: {
+          JWT: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log("project is updated", res);
+
+        thunkAPI.dispatch(getProjectInfo(newProjectInfo.projectNo));
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }

@@ -13,7 +13,10 @@ import {
 } from "../../../components/common/Modal";
 
 import { connect } from "react-redux";
-import { getProjectInfo } from "../../../store/modules/project";
+import {
+  getProjectInfo,
+  updateProjectInfo,
+} from "../../../store/modules/project";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
 
@@ -135,46 +138,38 @@ const SprintsBox = styled.div`
 
 const mapStateToProps = (state: RootState) => {
   return {
-    projectInfo: state.projectReducer.projectName,
+    projectName: state.projectReducer.projectName,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
+    updateProjectInfo: (projectNewInfo: any) =>
+      dispatch(updateProjectInfo(projectNewInfo)),
   };
 };
 
 const ProjectSpace = ({
   getProjectInfo,
-  projectInfo,
+  projectName,
+  updateProjectInfo,
 }: {
   getProjectInfo: any;
-  projectInfo: string;
+  projectName: string;
+  updateProjectInfo: any;
 }) => {
-  //DOM 준비되었을 때 렌더링
-  const [isReady, setIsReady] = useState<boolean>(false);
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
-
   const router = useRouter();
-  useEffect(() => {
-    if (!router.isReady) return;
 
-    const projectNo = router.query.projectCode;
-    getProjectInfo(projectNo);
-  }, [router.isReady]);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
-  const [updateTitle, setUpdateTitle] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>("");
+  const [projectNo, setProjectNo] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   const [comment, setComment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
-  useEffect(() => {
-    setProjectName(projectInfo);
-  }, [projectInfo]);
 
+  const [updateTitle, setUpdateTitle] = useState<boolean>(false);
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
   const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
@@ -186,6 +181,39 @@ const ProjectSpace = ({
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningListModal = () => setWarningListModal((cur) => !cur);
   const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
+
+  //DOM 준비되었을 때 렌더링
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const value = router.query.projectCode as string;
+    setProjectNo(value);
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if (!projectNo) return;
+    getProjectInfo(projectNo);
+  }, [projectNo]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    setTitle(projectName);
+  }, [projectName]);
+
+  const onKeyUpProjectName = (e: any) => {
+    if (e.key !== "Enter") return;
+    updateProjectName();
+  };
+  const updateProjectName = () => {
+    updateProjectInfo({
+      projectNo,
+      title,
+    });
+    setUpdateTitle((cur) => !cur);
+  };
 
   //최초 프로젝트 시작 시 생성 => 백로그 생성됨
   const onStartProject = () => {
@@ -207,17 +235,18 @@ const ProjectSpace = ({
             {updateTitle ? (
               <TopBar>
                 <input
-                  onChange={(e) => setProjectName(e.target.value)}
-                  value={projectName}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onKeyUp={onKeyUpProjectName}
+                  value={title}
                   placeholder="Type Project Name"
                   required
                   autoFocus
                 />
-                <FaCheck onClick={() => setUpdateTitle((cur) => !cur)} />
+                <FaCheck onClick={updateProjectName} />
               </TopBar>
             ) : (
               <TopBar>
-                <h1>{projectName}</h1>
+                <h1>{title}</h1>
                 <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
               </TopBar>
             )}
