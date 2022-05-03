@@ -4,7 +4,7 @@ import axios from "axios";
 
 //state type
 export type ProjectState = {
-  projectList: any;
+  projectList: Array<Object>;
 };
 //state
 const initialState: ProjectState = {

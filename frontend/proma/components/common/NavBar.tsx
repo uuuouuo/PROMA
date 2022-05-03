@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import Image from "next/image";
@@ -61,7 +61,7 @@ const NavBar = () => {
 
   const setLogOut = () => {
     setIsLogin(false);
-  };
+  }; 
 
   return (
     <NavBarContainer>
