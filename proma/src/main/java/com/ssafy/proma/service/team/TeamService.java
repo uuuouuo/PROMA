@@ -143,7 +143,7 @@ public class TeamService extends AbstractService {
 
     //탈퇴 회원 필터링 필요
     List<TeamMemberDto> teamMemberDtoList = userTeamList.stream()
-            .filter(member -> !member.getUser().isDeleted())
+            .filter(member -> !member.getUser().getIsDeleted())
             .map(member -> new TeamMemberDto(member.getUser().getNo(), member.getUser().getNickname(), member.getUser().getProfileImage()))
             .collect(Collectors.toList());
 
