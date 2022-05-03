@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import { FaExclamationTriangle } from "react-icons/fa";
 import {
@@ -11,31 +10,20 @@ import {
 } from "./index";
 
 export const WarningModal = ({
-  warningCreateModal,
-  showWarningListModal,
-  showWarningCreateModal,
+  warningModal,
+  showWarningModal,
   comment,
+  deleteFunc,
 }: {
-  warningCreateModal: boolean;
-  showWarningListModal: any;
-  showWarningCreateModal: any;
+  warningModal: boolean;
+  showWarningModal: any;
   comment: string;
+  deleteFunc: any;
 }) => {
-  const cancelCreateTopic = () => {
-    showWarningListModal();
-    showWarningCreateModal();
-  };
-
-  const createNewTopic = () => {
-    //post new topic api
-
-    showWarningCreateModal();
-  };
-
   return (
     <ModalBox
-      open={warningCreateModal}
-      onClose={showWarningCreateModal}
+      open={warningModal}
+      onClose={showWarningModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -54,10 +42,10 @@ export const WarningModal = ({
           </p>
 
           <WarningButtonBox>
-            <MaintainButton onClick={showWarningCreateModal}>
+            <MaintainButton onClick={showWarningModal}>
               아니요 유지할래요!
             </MaintainButton>
-            <DeleteButton>네 삭제할게요</DeleteButton>
+            <DeleteButton onClick={deleteFunc}>네 삭제할게요</DeleteButton>
           </WarningButtonBox>
         </WarningContainer>
       </Box>

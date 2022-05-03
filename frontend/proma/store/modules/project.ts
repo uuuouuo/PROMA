@@ -14,11 +14,6 @@ const initialState: ProjectState = {
   projectName: "",
 };
 
-//dummy token
-// const code = dcf540639e700cd1c876
-const token =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqd3TthqDtgbAiLCJ1c2VyTm8iOiI3R3djUGxwbzNaUGhnVEUiLCJleHAiOjE2NTE1Nzg4OTJ9.4L5Bzg6H_FNFlIo2adOQUDhPCrBe1vsVGaY5njJj5DypZK1PTZoU999kP6Xns2jwEzpsr8TaW0yMA7ibj4t47A";
-
 //get every project api
 export const getProjectList = createAsyncThunk(
   "GET/PROJECTS",
@@ -65,6 +60,7 @@ export const updateProjectInfo = createAsyncThunk(
         console.log("project is updated", res);
 
         thunkAPI.dispatch(getProjectInfo(newProjectInfo.projectNo));
+        thunkAPI.dispatch(getProjectList());
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
@@ -73,13 +69,17 @@ export const updateProjectInfo = createAsyncThunk(
 //delete project api
 export const deleteProject = createAsyncThunk(
   "DELETE/PROJECT",
-  async (_, { rejectWithValue }) => {
+  async (projectNo: string, thunkAPI) => {
+    console.log(projectNo);
     return await api
-      .delete(`/project/change`)
+      .delete(`/project/${projectNo}`)
       .then((res) => {
         console.log("project is deleted", res);
+        
+        window.location.href = "/";
+        thunkAPI.dispatch(getProjectList());
       })
-      .catch((err) => rejectWithValue(err.response.data));
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 

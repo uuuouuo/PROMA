@@ -123,6 +123,7 @@ const mapDispatchToProps = (dispatch: any) => {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
+    deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
   };
 };
 
@@ -130,10 +131,12 @@ const ProjectSpace = ({
   getProjectInfo,
   projectName,
   updateProjectInfo,
+  deleteProject,
 }: {
   getProjectInfo: any;
   projectName: string;
   updateProjectInfo: any;
+  deleteProject: any;
 }) => {
   const router = useRouter();
 
@@ -141,7 +144,7 @@ const ProjectSpace = ({
 
   const [projectNo, setProjectNo] = useState<string>("");
   const [title, setTitle] = useState<string>("");
-  const [comment, setComment] = useState<string>(
+  const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
 
@@ -149,14 +152,12 @@ const ProjectSpace = ({
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
   const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
-  const [warningListModal, setWarningListModal] = useState<boolean>(false);
-  const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
+  const [warningModal, setWarningModal] = useState<boolean>(false);
 
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
-  const showWarningListModal = () => setWarningListModal((cur) => !cur);
-  const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
+  const showWarningModal = () => setWarningModal((cur) => !cur);
 
   //DOM 준비되었을 때 렌더링
   useEffect(() => {
@@ -167,7 +168,7 @@ const ProjectSpace = ({
     if (!router.isReady) return;
     const value = router.query.projectCode as string;
     setProjectNo(value);
-  }, [router.isReady]);
+  }, [router.asPath]);
 
   useEffect(() => {
     if (!projectNo) return;
@@ -191,6 +192,9 @@ const ProjectSpace = ({
     });
     setUpdateTitle((cur) => !cur);
   };
+
+  //delete project
+  const onDeleteProject = () => deleteProject(projectNo);
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
@@ -253,14 +257,12 @@ const ProjectSpace = ({
               ))} */}
               <Sprint sprint={backlog} />
             </SprintsBox>
-            <WarnButton onClick={showWarningCreateModal}>
-              프로젝트 종료
-            </WarnButton>
+            <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
             <WarningModal
-              warningCreateModal={warningCreateModal}
-              showWarningListModal={showWarningListModal}
-              showWarningCreateModal={showWarningCreateModal}
+              warningModal={warningModal}
+              showWarningModal={showWarningModal}
               comment={comment}
+              deleteFunc={onDeleteProject}
             />
           </WorkSpace>
         </DragDropContext>
