@@ -1,11 +1,16 @@
 package com.ssafy.proma.controller;
 
+import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_SUCCESS_MESSAGE;
 
-import com.ssafy.proma.model.dto.chat.PrivateChatRoomDto.PrivateChatRoomRes;
-import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto.ProjectChatRoomRes;
-import com.ssafy.proma.model.dto.chat.TeamChatRoomDto.TeamChatRoomRes;
 import com.ssafy.proma.service.chat.ChatService;
 import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,23 +28,67 @@ public class ChatRoomController {
 
   @ApiOperation(value = "개인 채팅 생성 및 조회", notes = "해당 유저와 개인 채팅방 생성 및 조회")
   @GetMapping("/room/user/{subNo}")
-  public ResponseEntity<PrivateChatRoomRes> getPrivateChatRoom(@PathVariable String subNo) {
-    PrivateChatRoomRes response = chatService.getPrivateChatRoom(subNo);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+  public ResponseEntity<Map<String, Object>> getPrivateChatRoom(@PathVariable String subNo) {
+    Map<String, Object> result = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      result = chatService.getPrivateChatRoom(subNo);
+
+      if(result.get("message").equals(PRIVATE_CHATROOM_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      new IllegalStateException(PRIVATE_CHATROOM_ERROR_MESSAGE);
+
+      result.put("message", PRIVATE_CHATROOM_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity<>(result, status);
   }
 
   @ApiOperation(value = "팀 단위 그룹 채팅 생성 및 조회", notes = "해당 팀 그룹 채팅방 생성 및 조회")
   @GetMapping("/room/team/{teamNo}")
-  public ResponseEntity<TeamChatRoomRes> getTeamChatRoom(@PathVariable Integer teamNo) {
-    TeamChatRoomRes response = chatService.getTeamChatRoom(teamNo);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+  public ResponseEntity<Map<String, Object>> getTeamChatRoom(@PathVariable Integer teamNo) {
+    Map<String, Object> result = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      result = chatService.getTeamChatRoom(teamNo);
+
+      if(result.get("message").equals(TEAM_CHATROOM_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      new IllegalStateException(TEAM_CHATROOM_ERROR_MESSAGE);
+
+      result.put("message", TEAM_CHATROOM_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity<>(result, status);
+
   }
 
   @ApiOperation(value = "프로젝트 단위 그룹 채팅 생성 및 조회", notes = "해당 프로젝트 그룹 채팅방 생성 및 조회")
   @GetMapping("/room/project/{projectNo}")
-  public ResponseEntity<ProjectChatRoomRes> getProjectChatRoom(@PathVariable String projectNo) {
-    ProjectChatRoomRes response = chatService.getProjectChatRoom(projectNo);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+  public ResponseEntity<Map<String, Object>> getProjectChatRoom(@PathVariable String projectNo) {
+    Map<String, Object> result = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      result = chatService.getProjectChatRoom(projectNo);
+
+      if(result.get("message").equals(PROJECT_CHATROOM_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      new IllegalStateException(PROJECT_CHATROOM_ERROR_MESSAGE);
+
+      result.put("message", PROJECT_CHATROOM_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity<>(result, status);
+
   }
 
 }
