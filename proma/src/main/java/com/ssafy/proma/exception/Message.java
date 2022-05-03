@@ -3,7 +3,7 @@ package com.ssafy.proma.exception;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Message2 {
+public class Message {
 
   // chat
   public static final String PRIVATE_CHATROOM_SUCCESS_MESSAGE = "팀 채팅방 생성 성공";

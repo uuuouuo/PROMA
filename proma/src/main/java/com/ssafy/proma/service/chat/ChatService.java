@@ -1,7 +1,7 @@
 package com.ssafy.proma.service.chat;
 
-import static com.ssafy.proma.exception.Message2.PROJECT_CHATROOM_SUCCESS_MESSAGE;
-import static com.ssafy.proma.exception.Message2.TEAM_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_SUCCESS_MESSAGE;
 
 import com.ssafy.proma.model.dto.chat.ChatMessageDto;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;

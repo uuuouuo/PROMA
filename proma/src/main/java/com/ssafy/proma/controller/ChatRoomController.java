@@ -1,11 +1,11 @@
 package com.ssafy.proma.controller;
 
-import static com.ssafy.proma.exception.Message2.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
-import static com.ssafy.proma.exception.Message2.PRIVATE_CHATROOM_ERROR_MESSAGE;
-import static com.ssafy.proma.exception.Message2.PROJECT_CHATROOM_ERROR_MESSAGE;
-import static com.ssafy.proma.exception.Message2.PROJECT_CHATROOM_SUCCESS_MESSAGE;
-import static com.ssafy.proma.exception.Message2.TEAM_CHATROOM_ERROR_MESSAGE;
-import static com.ssafy.proma.exception.Message2.TEAM_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_SUCCESS_MESSAGE;
 
 import com.ssafy.proma.service.chat.ChatService;
 import io.swagger.annotations.ApiOperation;
