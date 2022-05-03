@@ -1,19 +1,24 @@
 package com.ssafy.proma.controller;
 
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
-import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectJoinDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
 import com.ssafy.proma.service.project.ProjectService;
 import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -48,9 +53,9 @@ public class ProjectController {
   }
 
   @ApiOperation(value = "프로젝트 종료", notes = "프로젝트 종료 및 삭제")
-  @DeleteMapping
-  public ResponseEntity deleteProject(@RequestBody ProjectDeleteDto request) {
-    projectService.deleteProject(request);
+  @DeleteMapping("/{projectNo}")
+  public ResponseEntity deleteProject(@PathVariable String projectNo) {
+    projectService.deleteProject(projectNo);
     return ResponseEntity.ok().build();
   }
 

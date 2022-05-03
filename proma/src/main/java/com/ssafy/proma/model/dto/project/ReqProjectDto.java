@@ -43,11 +43,4 @@ public class ReqProjectDto {
     String title;
   }
 
-  @Getter
-  @NoArgsConstructor
-  public static class ProjectDeleteDto{
-
-    String projectNo;
-  }
-
 }
