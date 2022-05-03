@@ -97,7 +97,6 @@ public class ProjectService extends AbstractService {
 
   @Transactional
   public void deleteProject(String projectNo) {
-
     String userNo = securityUtil.getCurrentUserNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
@@ -123,7 +122,7 @@ public class ProjectService extends AbstractService {
     User user = takeOp(userOp);
     List<UserProject> userProjectList = userProjectRepository.findByUser(user);
     List<ProjectNoTitleDto> projectList = userProjectList.stream()
-        .filter(project -> !project.getProject().isDeleted()).map(
+        .filter(project -> !project.getProject().getIsDeleted()).map(
             project -> new ProjectNoTitleDto(project.getProject().getNo(),
                 project.getProject().getName(), project.getRole())).collect(Collectors.toList());
     resultMap.put("projectList", projectList);
