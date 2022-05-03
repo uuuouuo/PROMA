@@ -50,9 +50,10 @@ public class IssueController {
   @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이유 제목을 보낸다")
   public ResponseEntity<List<IssueNoTitleDto>> getSprintTeamIssue(
       @RequestParam(value="sprintNo",required = false) Integer sprintNo,
-      @RequestParam(value="teamNo") Integer teamNo) {
+      @RequestParam(value="teamNo") Integer teamNo,
+      @RequestParam(value="onlyMyIssue",required = false) Boolean onlyMyIssue) {
 
-    List<IssueNoTitleDto> issueList = issueService.getSprintTeamIssue(sprintNo,teamNo);
+    List<IssueNoTitleDto> issueList = issueService.getSprintTeamIssue(sprintNo,teamNo,onlyMyIssue);
 
     return new ResponseEntity<>(issueList, HttpStatus.OK);
 
@@ -63,9 +64,10 @@ public class IssueController {
   public ResponseEntity<List<IssueNoTitleDto>> getStatueIssue(
       @PathVariable Integer teamNo,
       @RequestParam(value="status") String status,
-      @RequestParam(value="sprintNo") Integer sprintNo) {
+      @RequestParam(value="sprintNo") Integer sprintNo,
+      @RequestParam(value="onlyMyIssue",required = false) Boolean onlyMyIssue) {
 
-    List<IssueNoTitleDto> issueList = issueService.getStatueIssue(status,teamNo,sprintNo);
+    List<IssueNoTitleDto> issueList = issueService.getStatueIssue(status,teamNo,sprintNo,onlyMyIssue);
 
     return new ResponseEntity<>(issueList, HttpStatus.OK);
 

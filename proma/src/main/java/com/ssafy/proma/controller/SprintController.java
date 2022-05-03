@@ -3,6 +3,7 @@ package com.ssafy.proma.controller;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto.SprintUpdateDto;
 import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintDto;
+import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintNoTitle;
 import com.ssafy.proma.service.sprint.SprintService;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -51,4 +52,12 @@ public class SprintController {
     List<SprintDto> sprintList = sprintService.getSprintList(projectNo);
     return new ResponseEntity<>(sprintList, HttpStatus.OK);
   }
+
+  @ApiOperation(value = "진행중인 스프린트 조회", notes = "진행중인 스프린트 조회")
+  @GetMapping("/start/{projectNo}")
+  public ResponseEntity<SprintNoTitle> getDoingSprint(@PathVariable String projectNo){
+    SprintNoTitle doingSprint = sprintService.getDoingSprint(projectNo);
+    return new ResponseEntity<>(doingSprint, HttpStatus.OK);
+  }
+
 }

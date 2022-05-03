@@ -95,7 +95,7 @@ public class IssueService extends AbstractService {
 
   }
 
-  public List<IssueNoTitleDto> getSprintTeamIssue(Integer sprintNo, Integer teamNo) {
+  public List<IssueNoTitleDto> getSprintTeamIssue(Integer sprintNo, Integer teamNo,Boolean onlyMyIssue) {
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -111,17 +111,31 @@ public class IssueService extends AbstractService {
 
       issueListOp = issueRepository.findBySprintAndTeam(sprint,team);
     }
+
     List<Issue> issues = takeOp(issueListOp);
 
-    List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo()
-            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
-        .collect(Collectors.toList());
+    List<IssueNoTitleDto> issueList = null;
+    if(onlyMyIssue) {
+      issueList = issues.stream()
+          .map(issue -> new IssueNoTitleDto(issue.getNo()
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+          .collect(Collectors.toList());
+
+    }
+    else {
+
+      String userNo = securityUtil.getCurrentUserNo();
+      issueList = issues.stream()
+          .filter(issue->issue.getUser().getNo().equals(userNo))
+          .map(issue -> new IssueNoTitleDto(issue.getNo()
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+          .collect(Collectors.toList());
+    }
 
     return issueList;
   }
 
-  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo,Integer sprintNo) {
+  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo,Integer sprintNo,Boolean onlyMyIssue) {
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -131,10 +145,24 @@ public class IssueService extends AbstractService {
     Optional<List<Issue>> issueListOp = issueRepository.findByTeamAndSprintAndStatusLike(team,sprint,status);
     List<Issue> issues = takeOp(issueListOp);
 
-    List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo()
-            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
-        .collect(Collectors.toList());
+
+    List<IssueNoTitleDto> issueList = null;
+    if(onlyMyIssue) {
+      issueList = issues.stream()
+          .map(issue -> new IssueNoTitleDto(issue.getNo()
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+          .collect(Collectors.toList());
+
+    }
+    else {
+
+      String userNo = securityUtil.getCurrentUserNo();
+      issueList = issues.stream()
+          .filter(issue->issue.getUser().getNo().equals(userNo))
+          .map(issue -> new IssueNoTitleDto(issue.getNo()
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+          .collect(Collectors.toList());
+    }
 
     return issueList;
   }

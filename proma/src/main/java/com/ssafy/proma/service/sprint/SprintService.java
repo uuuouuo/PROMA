@@ -4,6 +4,7 @@ import com.ssafy.proma.model.dto.sprint.ReqSprintDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto.SprintUpdateDto;
 import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintDto;
+import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintNoTitle;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.repository.project.ProjectRepository;
@@ -74,5 +75,18 @@ public class SprintService extends AbstractService {
         Collectors.toList());
 
     return sprintDtoList;
+  }
+
+  public SprintNoTitle getDoingSprint(String projectNo) {
+
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    Optional<Sprint> sprintOp = sprintRepository.findByProjectAndStatusTrue(project);
+    Sprint sprint = takeOp(sprintOp);
+
+    SprintNoTitle sprintNoTitle = new SprintNoTitle(sprint.getNo(),sprint.getName());
+
+    return sprintNoTitle;
   }
 }
