@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.issue;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
@@ -21,7 +22,10 @@ import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 import com.ssafy.proma.util.SecurityUtil;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -269,5 +273,16 @@ public class IssueService extends AbstractService {
 
     return issueList;
 
+  }
+
+  @Transactional
+  public Map<String, Object> deleteIssue(Integer issueNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
+
+    issueRepository.deleteById(issueNo);
+
+    resultMap.put("message", Message.ISSUE_DELETE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 }

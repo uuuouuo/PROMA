@@ -1,5 +1,6 @@
 package com.ssafy.proma.controller;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
@@ -8,19 +9,18 @@ import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.service.issue.IssueService;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/issue")
@@ -115,6 +115,28 @@ public class IssueController {
 
     return new ResponseEntity<>(issueDetails, HttpStatus.OK);
 
+  }
+
+  @DeleteMapping("{issueNo}")
+  @ApiOperation(value = "이슈 삭제", notes = "해당 이슈를 삭제한다.")
+  public ResponseEntity deleteIssue(@PathVariable Integer issueNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try {
+      resultMap = issueService.deleteIssue(issueNo);
+
+      if (resultMap.get("message").equals(Message.ISSUE_DELETE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch(Exception e){
+      log.error("이슈 삭제 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.ISSUE_DELETE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity(resultMap, status);
   }
 
 //  @GetMapping

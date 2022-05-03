@@ -28,4 +28,7 @@ public class Message {
   //issue
   public static final String ISSUE_FIND_SUCCESS_MESSAGE = "이슈 조회 성공";
   public static final String ISSUE_FIND_ERROR_MESSAGE = "이슈 조회 실패";
+  public static final String ISSUE_DELETE_SUCCESS_MESSAGE = "이슈 삭제 성공";
+  public static final String ISSUE_DELETE_ERROR_MESSAGE = "이슈 삭제 실패";
+
 }
