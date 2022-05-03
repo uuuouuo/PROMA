@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.issue;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueStatusDto;
@@ -21,7 +22,10 @@ import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 import com.ssafy.proma.util.SecurityUtil;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +45,14 @@ public class IssueService extends AbstractService {
   private final SecurityUtil securityUtil;
 
   @Transactional
-  public void createIssue(IssueCreateDto issueCreateDto) {
+  public Map<String, Object> createIssue(IssueCreateDto issueCreateDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Integer sprintNo = issueCreateDto.getSprintNo();
     Integer teamNo = issueCreateDto.getTeamNo();
     Integer topicNo = issueCreateDto.getTopicNo();
 
     String userNo = securityUtil.getCurrentUserNo();
-
-//    String userNo = issueCreateDto.getUserNo();
 
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
@@ -67,20 +70,20 @@ public class IssueService extends AbstractService {
 
     issueRepository.save(issue);
 
+    resultMap.put("message", Message.ISSUE_CREATE_SUCCESS_MESSAGE);
 
+    return resultMap;
   }
 
   @Transactional
-  public void updateIssue(Integer issueNo, IssueUpdateDto issueUpdateDto) {
+  public Map<String, Object> updateIssue(Integer issueNo, IssueUpdateDto issueUpdateDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     String title = issueUpdateDto.getTitle();
     String description = issueUpdateDto.getDescription();
     Integer topicNo = issueUpdateDto.getTopicNo();
 
     String userNo = issueUpdateDto.getUserNo();
-
-//    String userNo = issueUpdateDto.getUserNo();
-
 
     Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
@@ -93,9 +96,13 @@ public class IssueService extends AbstractService {
 
     issue.update(title,description,user,topic);
 
+    resultMap.put("message", Message.ISSUE_UPDATE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public List<IssueNoTitleDto> getSprintTeamIssue(Integer sprintNo, Integer teamNo,Boolean onlyMyIssue) {
+  public Map<String, Object> getSprintTeamIssue(Integer sprintNo, Integer teamNo,Boolean onlyMyIssue) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -132,10 +139,14 @@ public class IssueService extends AbstractService {
           .collect(Collectors.toList());
     }
 
-    return issueList;
+    resultMap.put("issueList", issueList);
+    resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public List<IssueNoTitleDto> getStatueIssue(String status, Integer teamNo,Integer sprintNo,Boolean onlyMyIssue) {
+  public Map<String, Object> getStatueIssue(String status, Integer teamNo,Integer sprintNo,Boolean onlyMyIssue) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -164,11 +175,15 @@ public class IssueService extends AbstractService {
           .collect(Collectors.toList());
     }
 
-    return issueList;
+    resultMap.put("issueList", issueList);
+    resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
   @Transactional
-  public void assignSprintIssue(IssueSprintDto issueSprintDto) {
+  public Map<String, Object> assignSprintIssue(IssueSprintDto issueSprintDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Integer issueNo = issueSprintDto.getIssueNo();
     Integer sprintNo = issueSprintDto.getSprintNo();
@@ -179,12 +194,17 @@ public class IssueService extends AbstractService {
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
+    //존재하지 않는 스프린트라면 에러 없이 null로 등록됨,,
     issue.assignSprint(sprint);
 
+    resultMap.put("message", Message.ISSUE_UPDATE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
   @Transactional
-  public void changeStatusIssue(IssueStatusDto issueStatusDto) {
+  public Map<String, Object> changeStatusIssue(IssueStatusDto issueStatusDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Integer issueNo = issueStatusDto.getIssueNo();
     String status = issueStatusDto.getStatus();
@@ -194,9 +214,13 @@ public class IssueService extends AbstractService {
 
     issue.changeStatus(status);
 
+    resultMap.put("message", Message.ISSUE_UPDATE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public List<IssueNoTitleDto> getUserIssue(Integer teamNo) {
+  public Map<String, Object> getUserIssue(Integer teamNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     String userNo = securityUtil.getCurrentUserNo();
     Optional<User> userByNo = userRepository.findByNo(userNo);
@@ -213,10 +237,14 @@ public class IssueService extends AbstractService {
             , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
         .collect(Collectors.toList());
 
-    return issueList;
+    resultMap.put("issueList", issueList);
+    resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public IssueDetailsDto getDetailsIssue(Integer issueNo) {
+  public Map<String, Object> getDetailsIssue(Integer issueNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Issue> issueOp = issueRepository.findByNo(issueNo);
     Issue issue = takeOp(issueOp);
@@ -240,9 +268,13 @@ public class IssueService extends AbstractService {
         new TeamDto(teamNo, teamName), issueTitle, description, status
             , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname,image));
 
-    return issueDetailsDto;
+    resultMap.put("issueDetail", issueDetailsDto);
+    resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
+  //이건 필요 없는건가???
   public List<IssueNoTitleDto> getIssue(Integer sprintNo, Integer teamNo, String status,
       Boolean onlyMyIssue) {
 
@@ -269,5 +301,16 @@ public class IssueService extends AbstractService {
 
     return issueList;
 
+  }
+
+  @Transactional
+  public Map<String, Object> deleteIssue(Integer issueNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
+
+    issueRepository.deleteById(issueNo);
+
+    resultMap.put("message", Message.ISSUE_DELETE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 }
