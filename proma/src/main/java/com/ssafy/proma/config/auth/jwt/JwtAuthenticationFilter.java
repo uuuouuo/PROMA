@@ -23,34 +23,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-            final String authorizationHeader = request.getHeader("JWT");
+        String path = request.getServletPath();
 
+        if(path.equals("/user/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if(authorizationHeader == null) {
-                request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
-                filterChain.doFilter(request,response);
-            }
+        final String authorizationHeader = request.getHeader(JwtProperties.JWT_HEADER_STRING);
 
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                String jwtToken = authorizationHeader.replace("Bearer ", "");
+        if(authorizationHeader == null) {
+            request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
+            filterChain.doFilter(request,response);
+        }
 
-                try{
-                    if (jwtTokenService.validate(jwtToken)) {
-                        Authentication authentication = jwtTokenService.getAuthentication(jwtToken);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        filterChain.doFilter(request, response);
-                    }
-                } catch(TokenExpiredException e) {
-                    e.printStackTrace();
-                    request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
-                    filterChain.doFilter(request, response);
-                } catch(SignatureVerificationException e) {
-                    e.printStackTrace();
-                    request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
+        if (authorizationHeader != null && authorizationHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
+            String jwtToken = authorizationHeader.replace(JwtProperties.TOKEN_PREFIX, "");
+
+            try{
+                if (jwtTokenService.validate(jwtToken)) {
+                    Authentication authentication = jwtTokenService.getAuthentication(jwtToken);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                     filterChain.doFilter(request, response);
                 }
-
+            } catch(TokenExpiredException e) {
+                e.printStackTrace();
+                request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
+                filterChain.doFilter(request, response);
+            } catch(SignatureVerificationException e) {
+                e.printStackTrace();
+                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
+                filterChain.doFilter(request, response);
             }
+
+        }
 
     }
 }
