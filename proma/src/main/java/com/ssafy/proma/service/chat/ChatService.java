@@ -1,5 +1,8 @@
 package com.ssafy.proma.service.chat;
 
+import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_SUCCESS_MESSAGE;
+
 import com.ssafy.proma.model.dto.chat.ChatMessageDto;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;
 import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageReq;
@@ -30,7 +33,9 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.util.SecurityUtil;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,7 +54,7 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-  public PrivateChatRoomRes getPrivateChatRoom(String subNo) {
+  public Map<String, Object> getPrivateChatRoom(String subNo) {
 
     // user check
     User pub = findUser(SecurityUtil.getCurrentUserNo());
@@ -72,11 +77,17 @@ public class ChatService {
                 , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
-    return new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
+    PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", response);
+    result.put("message", TEAM_CHATROOM_SUCCESS_MESSAGE);
+
+    return result;
 
   }
 
-  public TeamChatRoomRes getTeamChatRoom(Integer teamNo) {
+  public Map<String, Object> getTeamChatRoom(Integer teamNo) {
 
     // team check
     Team team = findTeam(teamNo);
@@ -92,11 +103,17 @@ public class ChatService {
             , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
-    return new TeamChatRoomRes(chatRoom.getNo(), msgList);
+    TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgList);
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", response);
+    result.put("message", TEAM_CHATROOM_SUCCESS_MESSAGE);
+
+    return result;
 
   }
 
-  public ProjectChatRoomRes getProjectChatRoom(String projectNo) {
+  public Map<String, Object> getProjectChatRoom(String projectNo) {
 
     // project check
     Project project = findProject(projectNo);
@@ -112,7 +129,13 @@ public class ChatService {
             , m.getContent(), m.getTime()))
         .collect(Collectors.toList());
 
-    return new ProjectChatRoomRes(chatRoom.getNo(), msgList);
+    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgList);
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", response);
+    result.put("message", PROJECT_CHATROOM_SUCCESS_MESSAGE);
+
+    return result;
 
   }
 
