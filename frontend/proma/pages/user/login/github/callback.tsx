@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { BsChevronCompactLeft } from 'react-icons/bs';
-import { getLogin, getUserInfo } from "../../../../store/modules/member";
+import { getLogin } from "../../../../store/modules/member";
 import { connect } from "react-redux";
 import { RootState } from "../../../../store/modules";
 
@@ -25,7 +24,6 @@ const Callback = ({
     userInfo: any;
 }
 ) => {
-
     useEffect(() => {
         const code = window.location.search.replace("?code=", "");
         localStorage.setItem("code", code);

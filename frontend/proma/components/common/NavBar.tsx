@@ -7,6 +7,8 @@ import Link from "next/link";
 import Toggle from "./Toggle";
 import { LoginModal, JoinModal, UserProfileModal } from "./Modal";
 import { FaRegUserCircle } from "react-icons/fa";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -48,7 +50,17 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const NavBar = () => {
+const mapStateToProps = (state: RootState) => {
+  return {
+      userInfo : state.userReducer.userInfo,
+  };
+}
+  
+const NavBar = ({
+  userInfo,
+}: {
+    userInfo: any;
+}) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
@@ -62,6 +74,8 @@ const NavBar = () => {
   const setLogOut = () => {
     setIsLogin(false);
   }; 
+
+  console.log(userInfo)
 
   return (
     <NavBarContainer>
@@ -106,4 +120,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default  connect(mapStateToProps, null)(NavBar);

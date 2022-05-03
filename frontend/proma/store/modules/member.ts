@@ -20,7 +20,7 @@ export const getUserInfo = createAsyncThunk(
         return await axios
             .get(`http://k6c107.p.ssafy.io:8080/user/data`, {
                 headers: {
-                    JWT: `Bearer ${jwtToken}`
+                    Authorization: `Bearer ${jwtToken}`
                 },
         })
         .then((res) => res.data)
