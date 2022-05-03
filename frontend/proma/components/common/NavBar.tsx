@@ -9,6 +9,7 @@ import { LoginModal, JoinModal, UserProfileModal } from "./Modal";
 import { FaRegUserCircle } from "react-icons/fa";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
+import { getLogout } from "../../store/modules/member";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -72,7 +73,7 @@ const NavBar = ({
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
 
   const setLogOut = () => {
-    setIsLogin(false);
+    getLogout();
   }; 
 
   return (
@@ -84,7 +85,7 @@ const NavBar = ({
       </Link>
 
       <MenuBox>
-        {!userInfo ? (
+        {!isLogin ? (
           <MenuToggleBox>
             <MenuButton onClick={showLoginModal}>Login</MenuButton>
             <LoginModal
@@ -108,7 +109,7 @@ const NavBar = ({
               userProfileModal={userProfileModal}
               showUserProfileModal={showUserProfileModal}
             />
-            <MenuButton onClick={setLogOut}>Logout</MenuButton>
+            <MenuButton onClick={() => setLogOut()}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
