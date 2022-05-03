@@ -48,7 +48,7 @@ public class ProjectController {
   }
 
   @ApiOperation(value = "프로젝트 종료", notes = "프로젝트 종료 및 삭제")
-  @PutMapping("/delete")
+  @DeleteMapping
   public ResponseEntity deleteProject(@RequestBody ProjectDeleteDto request) {
     projectService.deleteProject(request);
     return ResponseEntity.ok().build();
