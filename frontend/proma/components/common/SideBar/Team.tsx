@@ -61,7 +61,13 @@ const MemberBox = styled.div`
   padding: 10px 20px;
 `;
 
-const Team = ({ teamName }: { teamName: string }) => {
+const Team = ({
+  teamInfo,
+  projectNo,
+}: {
+  teamInfo: any;
+  projectNo: string;
+}) => {
   const [showMembers, setShowMembers] = useState<boolean>(false);
   const [joinTeam, setJoinTeam] = useState<boolean>(false);
 
@@ -79,8 +85,8 @@ const Team = ({ teamName }: { teamName: string }) => {
   return (
     <TeamContainer>
       <Header>
-        <Link href="/project/0/team/0">
-          <a>{teamName}</a>
+        <Link href={`/project/${projectNo}/team/${teamInfo.teamNo}`}>
+          <a>{teamInfo.title}</a>
         </Link>
         <div>
           {joinTeam ? (

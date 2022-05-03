@@ -70,12 +70,11 @@ export const updateProjectInfo = createAsyncThunk(
 export const deleteProject = createAsyncThunk(
   "DELETE/PROJECT",
   async (projectNo: string, thunkAPI) => {
-    console.log(projectNo);
     return await api
       .delete(`/project/${projectNo}`)
       .then((res) => {
         console.log("project is deleted", res);
-        
+
         window.location.href = "/";
         thunkAPI.dispatch(getProjectList());
       })

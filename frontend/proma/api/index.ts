@@ -26,7 +26,7 @@ export const apiInstance = () => {
     // 요청을 보내기 전 수행해야 할 일
     (config: AxiosRequestConfig) => {
       // 모든 요청에 헤더 토큰 추가
-      const Authorization = localStorage.getItem("authorization");
+      const Authorization = "Bearer " + localStorage.getItem("Authorization");
       //   const refreshtoken = localStorage.getItem("refreshtoken");
       if (Authorization) {
         const header = config.headers as AxiosRequestHeaders;
