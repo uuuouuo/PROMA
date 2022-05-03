@@ -75,8 +75,6 @@ const NavBar = ({
     setIsLogin(false);
   }; 
 
-  console.log(userInfo)
-
   return (
     <NavBarContainer>
       <Link href="/">
@@ -86,7 +84,7 @@ const NavBar = ({
       </Link>
 
       <MenuBox>
-        {!isLogin ? (
+        {!userInfo ? (
           <MenuToggleBox>
             <MenuButton onClick={showLoginModal}>Login</MenuButton>
             <LoginModal

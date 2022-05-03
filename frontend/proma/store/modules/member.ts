@@ -3,7 +3,7 @@ import { BACKEND_URL } from "../../config";
 import axios from "axios";
 
 export type UserState = {
-    userInfo: Array<Object>;
+    userInfo: any;
     isLogin: boolean;
 };
 
