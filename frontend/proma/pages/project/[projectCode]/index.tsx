@@ -16,21 +16,10 @@ import { connect } from "react-redux";
 import {
   getProjectInfo,
   updateProjectInfo,
+  deleteProject,
 } from "../../../store/modules/project";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
-
-//dummy data
-const sprints: any[] = [
-  //   {
-  //     sprintNo: 1,
-  //     sprintName: "1주차",
-  //   },
-  //   {
-  //     sprintNo: 2,
-  //     sprintName: "2주차",
-  //   },
-];
 
 const backlog = {
   sprintNo: 0,
@@ -111,20 +100,6 @@ const TopBar = styled(FlexBox)`
     }
   }
 `;
-const InitialBox = styled(FlexBox)`
-  /* margin-top: 300px; */
-  justify-content: center;
-  height: inherit;
-  ${Button} {
-    background-color: #a589c7;
-    color: white;
-    border: 1px solid #a589c7;
-    border-radius: 7px;
-    padding: 7px 10px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-`;
 const ButtonBox = styled.div`
   ${UnfilledButton} {
     margin-left: 10px;
@@ -148,6 +123,7 @@ const mapDispatchToProps = (dispatch: any) => {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
+    deleteProject: () => dispatch(deleteProject()),
   };
 };
 
@@ -155,10 +131,12 @@ const ProjectSpace = ({
   getProjectInfo,
   projectName,
   updateProjectInfo,
+  deleteProject,
 }: {
   getProjectInfo: any;
   projectName: string;
   updateProjectInfo: any;
+  deleteProject: any;
 }) => {
   const router = useRouter();
 
@@ -204,6 +182,7 @@ const ProjectSpace = ({
     setTitle(projectName);
   }, [projectName]);
 
+  //update project
   const onKeyUpProjectName = (e: any) => {
     if (e.key !== "Enter") return;
     updateProjectName();
@@ -214,11 +193,6 @@ const ProjectSpace = ({
       title,
     });
     setUpdateTitle((cur) => !cur);
-  };
-
-  //최초 프로젝트 시작 시 생성 => 백로그 생성됨
-  const onStartProject = () => {
-    //백로그라는 스프린트 생성 post api 로직 필요
   };
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
@@ -277,9 +251,9 @@ const ProjectSpace = ({
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {sprints?.map((sprint, index) => (
+              {/* {sprints?.map((sprint, index) => (
                 <Sprint sprint={sprint} key={index} />
-              ))}
+              ))} */}
               <Sprint sprint={backlog} />
             </SprintsBox>
             <WarnButton onClick={showWarningCreateModal}>
