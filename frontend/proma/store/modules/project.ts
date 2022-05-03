@@ -5,10 +5,12 @@ import axios from "axios";
 //state type
 export type ProjectState = {
   projectList: Array<Object>;
+  projectName: string;
 };
 //state
 const initialState: ProjectState = {
   projectList: [],
+  projectName: "",
 };
 
 //dummy token
@@ -18,10 +20,25 @@ const token =
 
 //get every project api
 export const getProjectList = createAsyncThunk(
-  "GET/PROJECT",
+  "GET/PROJECTS",
   async (_, { rejectWithValue }) => {
     return await axios
       .get(`${BACKEND_URL}/project`, {
+        headers: {
+          JWT: `Bearer ${token}`,
+        },
+      })
+      .then((res) => res.data)
+      .catch((err) => rejectWithValue(err.response.data));
+  }
+);
+
+//get one project api
+export const getProjectInfo = createAsyncThunk(
+  "GET/PROJECT",
+  async (projectNo: string, { rejectWithValue }) => {
+    return await axios
+      .get(`${BACKEND_URL}/project/${projectNo}`, {
         headers: {
           JWT: `Bearer ${token}`,
         },
@@ -55,12 +72,13 @@ const projectSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(
-      getProjectList.fulfilled,
-      (state, { payload }: { payload: { projectList: any } }) => {
+    builder
+      .addCase(getProjectList.fulfilled, (state, { payload }) => {
         state.projectList = payload.projectList;
-      }
-    );
+      })
+      .addCase(getProjectInfo.fulfilled, (state, { payload }) => {
+        state.projectName = payload.project.title;
+      });
   },
 });
 

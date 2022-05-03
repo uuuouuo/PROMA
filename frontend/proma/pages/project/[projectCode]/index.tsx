@@ -12,7 +12,10 @@ import {
   WarningModal,
 } from "../../../components/common/Modal";
 
-//해당 프로젝트 내 스프린트 get api 로직 필요
+import { connect } from "react-redux";
+import { getProjectInfo } from "../../../store/modules/project";
+import { RootState } from "../../../store/modules";
+import { useRouter } from "next/router";
 
 //dummy data
 const sprints: any[] = [
@@ -130,23 +133,53 @@ const SprintsBox = styled.div`
   background-color: ${(props: ThemeType) => props.theme.bgColor};
 `;
 
-const ProjectSpace = () => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    projectInfo: state.projectReducer.projectName,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
+  };
+};
+
+const ProjectSpace = ({
+  getProjectInfo,
+  projectInfo,
+}: {
+  getProjectInfo: any;
+  projectInfo: string;
+}) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
     setIsReady(true);
   }, []);
 
+  const router = useRouter();
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const projectNo = router.query.projectCode;
+    getProjectInfo(projectNo);
+  }, [router.isReady]);
+
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>("Project Name");
-  const [comment, setComment] = useState<string>("프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?")
-  
+  const [projectName, setProjectName] = useState<string>("");
+  const [comment, setComment] = useState<string>(
+    "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
+  );
+  useEffect(() => {
+    setProjectName(projectInfo);
+  }, [projectInfo]);
+
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
   const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
   const [warningListModal, setWarningListModal] = useState<boolean>(false);
   const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-
 
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
@@ -191,7 +224,9 @@ const ProjectSpace = () => {
             <FlexBox>
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
-                <FilledButton onClick={showSprintCreateModal}>Create Sprint</FilledButton>
+                <FilledButton onClick={showSprintCreateModal}>
+                  Create Sprint
+                </FilledButton>
                 <SprintCreateModal
                   sprintCreateModal={sprintCreateModal}
                   showSprintCreateModal={showSprintCreateModal}
@@ -238,4 +273,4 @@ const ProjectSpace = () => {
   );
 };
 
-export default ProjectSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectSpace);
