@@ -1,11 +1,9 @@
 package com.ssafy.proma.service.project;
 
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
-import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
-import com.ssafy.proma.model.dto.project.ResProjectDto;
-import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectDetailDto;
+import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.user.User;
@@ -13,14 +11,12 @@ import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
-
 import com.ssafy.proma.util.SecurityUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -100,10 +96,8 @@ public class ProjectService extends AbstractService {
   }
 
   @Transactional
-  public void deleteProject(ProjectDeleteDto request) {
-
+  public void deleteProject(String projectNo) {
     String userNo = securityUtil.getCurrentUserNo();
-    String projectNo = request.getProjectNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
@@ -128,7 +122,7 @@ public class ProjectService extends AbstractService {
     User user = takeOp(userOp);
     List<UserProject> userProjectList = userProjectRepository.findByUser(user);
     List<ProjectNoTitleDto> projectList = userProjectList.stream()
-        .filter(project -> !project.getProject().isDeleted()).map(
+        .filter(project -> !project.getProject().getIsDeleted()).map(
             project -> new ProjectNoTitleDto(project.getProject().getNo(),
                 project.getProject().getName(), project.getRole())).collect(Collectors.toList());
     resultMap.put("projectList", projectList);
