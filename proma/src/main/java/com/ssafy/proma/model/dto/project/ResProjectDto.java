@@ -30,7 +30,7 @@ public class ResProjectDto {
 
     String projectNo;
     String title;
-    List<TeamMembersDto> teamMembersDtos;
+    List<TeamMembersDto> teamList;
   }
 
   @Getter
@@ -45,7 +45,8 @@ public class ResProjectDto {
 
     Integer teamNo;
     String title;
-    List<UserDto> userDtos;
+    Boolean isInMember;
+    List<UserDto> memberList;
 
   }
 }
