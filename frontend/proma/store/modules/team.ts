@@ -83,7 +83,9 @@ export const outTeam = createAsyncThunk(
   async (teamInfo: any, thunkAPI) => {
     return await api
       .post(`/team/exit`, { teamNo: teamInfo.teamNo })
-      .then((res) => res.data)
+      .then((res) => {
+        thunkAPI.dispatch(getProjectList());
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );

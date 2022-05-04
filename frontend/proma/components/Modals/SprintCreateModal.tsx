@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import {
   style,
@@ -12,32 +12,39 @@ import {
 } from "./index";
 
 import { connect } from "react-redux";
-import { createNewTeam } from "../../store/modules/team";
+import { createNewSprint } from "../../store/modules/sprint";
+import { useRouter } from "next/router";
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    createNewTeam: (newProjectInfo: any) =>
-      dispatch(createNewTeam(newProjectInfo)),
+    createNewSprint: (newSprintInfo: any) =>
+      dispatch(createNewSprint(newSprintInfo)),
   };
 };
 
 const SprintCreateModal = ({
   sprintCreateModal,
   showSprintCreateModal,
+  createNewSprint,
 }: {
   sprintCreateModal: boolean;
   showSprintCreateModal: any;
+  createNewSprint?: any;
 }) => {
+  const router = useRouter();
+
   interface sprintType {
     title: string;
     startDate: string;
     endDate: string;
+    projectNo: string;
   }
 
   const [newSprintInfo, setNewSprintInfo] = useState<sprintType>({
     title: "",
     startDate: "",
     endDate: "",
+    projectNo: "",
   });
 
   const onChangeSprintName = (e: any) => {
@@ -61,7 +68,7 @@ const SprintCreateModal = ({
     if (new Date(newSprintInfo.startDate) >= new Date(value)) {
       e.target.value = "";
       alert(
-        "The end date must be later than the start date. Please choose again"
+        "The end date must be later than the start date. Please choose again."
       );
     }
 
@@ -72,7 +79,7 @@ const SprintCreateModal = ({
     showSprintCreateModal();
   };
 
-  const createNewSprint = () => {
+  const addNewSprint = () => {
     if (!newSprintInfo.title) {
       alert("Please type sprint title");
       return;
@@ -87,9 +94,18 @@ const SprintCreateModal = ({
     }
 
     //post new sprint api
+    createNewSprint(newSprintInfo);
 
     showSprintCreateModal();
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    setNewSprintInfo((cur) => ({
+      ...cur,
+      projectNo: router.query.projectCode as string,
+    }));
+  }, [router.asPath]);
 
   return (
     <ModalBox
@@ -116,7 +132,7 @@ const SprintCreateModal = ({
           </InputArea>
           <ButtonBox>
             <CancelButton onClick={cancelCreateSprint}>Cancel</CancelButton>
-            <CreateButton onClick={createNewSprint}>Create</CreateButton>
+            <CreateButton onClick={addNewSprint}>Create</CreateButton>
           </ButtonBox>
         </BodyContainer>
       </Box>
