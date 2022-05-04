@@ -83,17 +83,6 @@ const NavBar = ({
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
 
-  // const setLogOut = () => {
-  //   getLogout();
-  // }; 
-
-  // useEffect(() => {
-
-  // }, [isLogin])
-
-  console.log(userInfo)
-  console.log(isLogin)
-
   return (
     <NavBarContainer>
       <Link href="/">
@@ -125,7 +114,8 @@ const NavBar = ({
             </MenuIconButton>
             <UserProfileModal
               userProfileModal={userProfileModal}
-              showUserProfileModal={showUserProfileModal}
+                showUserProfileModal={showUserProfileModal}
+                userInfo={userInfo}
             />
             <MenuButton onClick={() => getLogout()}>Logout</MenuButton>
           </MenuToggleBox>
