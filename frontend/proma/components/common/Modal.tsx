@@ -160,6 +160,15 @@ export const DeleteButton = styled(Button)`
   width: inherit;
   margin-top: 10px;
 `;
+export const WithdrawBox = styled.div`
+  text-align: -webkit-center;
+`;
+export const WithdrawButton = styled(Button)`
+  color: white;
+  background: red;
+  width: 90px;
+  font-weight: bold;
+`;
 export const MemberBox = styled.div`
   display: flex;
   align-items: center;
@@ -187,7 +196,7 @@ export const SocialLoginButton = styled.button`
   }
 `;
 export const UserProfileBox = styled(InputArea)`
-  height: 350px;
+  height: 310px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -737,10 +746,16 @@ export const UserProfileModal = ({
                   placeholder="Type your name."
                   onChange={(e) => setUserName(e.target.value)}
                   autoFocus
-                />
+                  />
               </div>
             )}
           </UserProfileBox>
+          <WithdrawBox>
+            {
+              !updateStatus ? null : <WithdrawButton>Account Withdraw</WithdrawButton>
+            }
+          </WithdrawBox>
+          
         </BodyContainer>
       </Box>
     </ModalBox>
