@@ -30,13 +30,14 @@ public class ResProjectDto {
 
     String projectNo;
     String title;
-    List<TeamMembersDto> teamMembersDtos;
+    List<TeamMembersDto> teamList;
   }
 
   @Getter
   @AllArgsConstructor
   public static class ProjectDetailDto{
     String title;
+    String role;
   }
 
   @Getter
@@ -45,7 +46,8 @@ public class ResProjectDto {
 
     Integer teamNo;
     String title;
-    List<UserDto> userDtos;
+    Boolean isInMember;
+    List<UserDto> memberList;
 
   }
 }

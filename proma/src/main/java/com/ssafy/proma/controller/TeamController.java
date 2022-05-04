@@ -1,20 +1,30 @@
 package com.ssafy.proma.controller;
 
 
-import com.ssafy.proma.exception.Message;
+import static com.ssafy.proma.exception.Message.MEMBER_FIND_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.MEMBER_FIND_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CREATE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_CREATE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_DELETE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_DELETE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_EXIT_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_EXIT_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_FIND_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_FIND_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_JOIN_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_JOIN_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_UPDATE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.TEAM_UPDATE_SUCCESS_MESSAGE;
+
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
-import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
-import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.service.team.TeamService;
 import io.swagger.annotations.ApiOperation;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeamController {
 
   private final TeamService teamService;
-  private final TeamRepository teamRepository;
 
   @ApiOperation(value = "팀 생성", notes = "팀을 생성한다.")
   @PostMapping
@@ -47,13 +56,13 @@ public class TeamController {
     try{
       resultMap = teamService.createTeam(teamDto);
 
-      if(resultMap.get("message").equals(Message.TEAM_CREATE_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_CREATE_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 생성 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_CREATE_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_CREATE_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -70,13 +79,13 @@ public class TeamController {
     try{
       resultMap = teamService.joinTeam(teamDto);
 
-      if(resultMap.get("message").equals(Message.TEAM_JOIN_SUCCESS_MESSAGE)) {
+      if(Objects.equals(resultMap.get("message"), TEAM_JOIN_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 조인 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_JOIN_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_JOIN_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -93,13 +102,13 @@ public class TeamController {
     try{
       resultMap = teamService.exitTeam(teamDto);
 
-      if(resultMap.get("message").equals(Message.TEAM_EXIT_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_EXIT_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 탈퇴 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_EXIT_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_EXIT_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -116,13 +125,13 @@ public class TeamController {
     try{
       resultMap = teamService.deleteTeam(teamNo);
 
-      if(resultMap.get("message").equals(Message.TEAM_DELETE_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_DELETE_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 삭제 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_DELETE_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_DELETE_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -139,13 +148,13 @@ public class TeamController {
     try{
       resultMap = teamService.updateTeam(teamUpdateDto);
 
-      if(resultMap.get("message").equals(Message.TEAM_UPDATE_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_UPDATE_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 정보 수정 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_UPDATE_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_UPDATE_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -162,13 +171,13 @@ public class TeamController {
     try{
       resultMap = teamService.getTeamList(projectNo);
 
-      if(resultMap.get("message").equals(Message.TEAM_FIND_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_FIND_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -185,13 +194,13 @@ public class TeamController {
     try{
       resultMap = teamService.getUserTeamList(teamNo);
 
-      if(resultMap.get("message").equals(Message.MEMBER_FIND_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(MEMBER_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀원 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.MEMBER_FIND_ERROR_MESSAGE);
+      resultMap.put("message", MEMBER_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -208,13 +217,13 @@ public class TeamController {
     try{
       resultMap = teamService.getTeam(teamNo);
 
-      if(resultMap.get("message").equals(Message.TEAM_FIND_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(TEAM_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TEAM_FIND_ERROR_MESSAGE);
+      resultMap.put("message", TEAM_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
