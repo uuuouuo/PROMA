@@ -5,8 +5,8 @@ import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamUpdateDto;
-import com.ssafy.proma.model.dto.team.ResTeamDto.TeamMemberDto;
 import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamMemberDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.team.Team;
 import com.ssafy.proma.model.entity.team.UserTeam;
@@ -18,8 +18,11 @@ import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 import com.ssafy.proma.util.SecurityUtil;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -135,6 +138,7 @@ public class TeamService extends AbstractService {
 
   public Map<String, Object> getTeamList(String projectNo) {
 
+
     Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
@@ -143,8 +147,23 @@ public class TeamService extends AbstractService {
     Optional<List<Team>> teamListOp = teamRepository.findByProject(project);
     List<Team> teams = takeOp(teamListOp);
 
-    List<TeamDto> teamDtoList = teams.stream().map(team -> new TeamDto(team))
-        .collect(Collectors.toList());
+    // 유저가 속한 팀 확인
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+    User user = takeOp(userOp);
+
+    UserTeam userTeam = userTeamRepository.findByUser(user);
+
+    List<TeamDto> teamDtoList = new ArrayList<>();
+    teams.forEach(t -> {
+      if(userTeam.getTeam() == t) {
+        TeamDto teamDto = new TeamDto(t.getNo(), t.getName(), true);
+        teamDtoList.add(teamDto);
+      } else {
+        TeamDto teamDto = new TeamDto(t.getNo(), t.getName(), false);
+        teamDtoList.add(teamDto);
+      }
+    });
 
     resultMap.put("teamList", teamDtoList);
     resultMap.put("message", Message.TEAM_FIND_SUCCESS_MESSAGE);
@@ -180,8 +199,20 @@ public class TeamService extends AbstractService {
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    TeamDto teamDto = new TeamDto(teamNo, team.getName());
-    
+    // 유저가 속한 팀 확인
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+    User user = takeOp(userOp);
+
+    UserTeam userTeam = userTeamRepository.findByUser(user);
+
+    TeamDto teamDto;
+    if(userTeam.getTeam() == team) {
+      teamDto = new TeamDto(teamNo, team.getName(), true);
+    } else {
+      teamDto = new TeamDto(teamNo, team.getName(), false);
+    }
+
     resultMap.put("team", teamDto);
     resultMap.put("message", Message.TEAM_FIND_SUCCESS_MESSAGE);
     return resultMap;

@@ -12,6 +12,7 @@ public interface UserTeamRepository extends JpaRepository<UserTeam,Integer> {
   void deleteByUserAndTeam(User user, Team team);
   void deleteAllByTeam(Team team);
   Optional<List<UserTeam>> findByTeam(Team team);
+  UserTeam findByUser(User user);
 
   Optional<UserTeam> findByUserAndTeam(User user, Team team);
 }

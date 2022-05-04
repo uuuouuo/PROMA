@@ -13,10 +13,12 @@ public class ResTeamDto {
 
     Integer teamNo;
     String title;
+    Boolean isMember;
 
-    public TeamDto(Integer teamNo, String title) {
+    public TeamDto(Integer teamNo, String title, Boolean isMember) {
       this.teamNo = teamNo;
       this.title = title;
+      this.isMember = isMember;
     }
 
     public TeamDto(Team team){
