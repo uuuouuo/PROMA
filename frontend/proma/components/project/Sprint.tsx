@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { ThemeType } from "../../interfaces/style";
 
+import SprintUpdateModal from "../../components/Modals/SprintUpdateModal";
+
 //styled-components
 const Title = styled.h2`
   color: black;
@@ -12,7 +14,6 @@ const Title = styled.h2`
   margin: 0;
   margin-bottom: 10px;
 `;
-
 const SprintBox = styled.div`
   margin-top: 15px;
   border-radius: 3px;
@@ -33,19 +34,39 @@ const FlexBox = styled.div`
 `;
 const FilledButton = styled.button`
   font-size: 15px;
-  &:hover {
-    cursor: pointer;
-  }
   padding: 5px 10px;
   background-color: ${(props: ThemeType) => props.theme.mainColor};
   color: white;
   border: none;
   border-radius: 3px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const OptionBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: black;
+  margin-top: 10px;
+  ${FilledButton} {
+    font-size: 12px;
+    margin-left: 10px;
+  }
 `;
 
 const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
-  const [inProgress, setInProgress] = useState<boolean>(false);
-  const [teams, setTeams] = useState([]);
+  const [inProgress, setInProgress] = useState<boolean>(sprint.status);
+  const [teams, setTeams] = useState<Array<Object>>([]);
+  const [sprintUpdateModal, setSprintUpdateModal] = useState<boolean>(false);
+
+  const showSprintUpdateModal = () => setSprintUpdateModal((cur) => !cur);
+  const onDeleteSprint = () => {
+    let deleteConfirm = confirm("Are you sure you want to delete the sprint?");
+    //   if(deleteConfirm){
+
+    //   }
+  };
 
   useEffect(() => {
     if (!teamList) return;
@@ -57,6 +78,11 @@ const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
     <SprintBox>
       <FlexBox>
         <Title>{sprint.title}</Title>
+        <SprintUpdateModal
+          sprintUpdateModal={sprintUpdateModal}
+          showSprintUpdateModal={showSprintUpdateModal}
+          sprintInfo={sprint}
+        />
         <FilledButton onClick={() => setInProgress((cur) => !cur)}>
           {inProgress ? "Finish Sprint" : "Start Sprint"}
         </FilledButton>
@@ -68,6 +94,14 @@ const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
             ))
           : null}
       </TeamBox>
+      {sprint.sprintNo ? (
+        <OptionBox>
+          <FilledButton onClick={showSprintUpdateModal}>
+            Update Sprint
+          </FilledButton>
+          <FilledButton onClick={onDeleteSprint}>Delete Sprint</FilledButton>
+        </OptionBox>
+      ) : null}
     </SprintBox>
   );
 };

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
 import Box from "@mui/material/Box";
 import {
   style,
@@ -12,24 +14,24 @@ import {
 } from "./index";
 
 import { connect } from "react-redux";
-import { createNewSprint } from "../../store/modules/sprint";
-import { useRouter } from "next/router";
+import { updateSprint } from "../../store/modules/sprint";
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    createNewSprint: (newSprintInfo: any) =>
-      dispatch(createNewSprint(newSprintInfo)),
+    updateSprint: (sprintObj: any) => dispatch(updateSprint(sprintObj)),
   };
 };
 
-const SprintCreateModal = ({
-  sprintCreateModal,
-  showSprintCreateModal,
-  createNewSprint,
+const SprintUpdateModal = ({
+  sprintUpdateModal,
+  showSprintUpdateModal,
+  sprintInfo,
+  updateSprint,
 }: {
-  sprintCreateModal: boolean;
-  showSprintCreateModal: any;
-  createNewSprint?: any;
+  sprintUpdateModal: boolean;
+  showSprintUpdateModal: any;
+  sprintInfo: any;
+  updateSprint?: any;
 }) => {
   const router = useRouter();
 
@@ -41,10 +43,10 @@ const SprintCreateModal = ({
   }
 
   const [newSprintInfo, setNewSprintInfo] = useState<sprintType>({
-    title: "",
-    startDate: "",
-    endDate: "",
-    projectNo: "",
+    title: sprintInfo.title,
+    startDate: sprintInfo.startDate,
+    endDate: sprintInfo.endDate,
+    projectNo: sprintInfo.projectNo,
   });
 
   const onChangeSprintName = (e: any) => {
@@ -59,7 +61,7 @@ const SprintCreateModal = ({
         alert(
           "The start date must be faster than the end date. Please choose again."
         );
-        e.target.value = "";
+        setNewSprintInfo((cur) => ({ ...cur, startDate: "" }));
         return;
       }
     }
@@ -79,14 +81,15 @@ const SprintCreateModal = ({
       alert(
         "The end date must be later than the start date. Please choose again."
       );
+      return;
     }
 
     setNewSprintInfo((cur) => ({ ...cur, endDate: value }));
   };
 
-  const cancelCreateSprint = () => showSprintCreateModal();
+  const cancelUpdateSprint = () => showSprintUpdateModal();
 
-  const addNewSprint = () => {
+  const updateSprintInfo = () => {
     if (!newSprintInfo.title) {
       alert("Please type sprint title");
       return;
@@ -100,10 +103,13 @@ const SprintCreateModal = ({
       return;
     }
 
-    //post new sprint api
-    createNewSprint(newSprintInfo);
+    const sprintObj = {
+      sprintNo: sprintInfo.sprintNo,
+      sprintInfo: newSprintInfo,
+    };
+    updateSprint(sprintObj);
 
-    showSprintCreateModal();
+    showSprintUpdateModal();
   };
 
   useEffect(() => {
@@ -116,13 +122,13 @@ const SprintCreateModal = ({
 
   return (
     <ModalBox
-      open={sprintCreateModal}
-      onClose={showSprintCreateModal}
+      open={sprintUpdateModal}
+      onClose={showSprintUpdateModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Header>Create Sprint</Header>
+        <Header>Update Sprint</Header>
         <BodyContainer>
           <InputArea>
             <p>Title</p>
@@ -133,13 +139,23 @@ const SprintCreateModal = ({
               onChange={onChangeSprintName}
             />
             <p>Start Date</p>
-            <input type="date" lang="en" onChange={onSelectStartDate} />
+            <input
+              type="date"
+              lang="en"
+              onChange={onSelectStartDate}
+              value={newSprintInfo.startDate}
+            />
             <p>End Date</p>
-            <input type="date" lang="en" onChange={onSelectEndDate} />
+            <input
+              type="date"
+              lang="en"
+              onChange={onSelectEndDate}
+              value={newSprintInfo.endDate}
+            />
           </InputArea>
           <ButtonBox>
-            <CancelButton onClick={cancelCreateSprint}>Cancel</CancelButton>
-            <CreateButton onClick={addNewSprint}>Create</CreateButton>
+            <CancelButton onClick={cancelUpdateSprint}>Cancel</CancelButton>
+            <CreateButton onClick={updateSprintInfo}>Update</CreateButton>
           </ButtonBox>
         </BodyContainer>
       </Box>
@@ -147,4 +163,4 @@ const SprintCreateModal = ({
   );
 };
 
-export default connect(null, mapDispatchToProps)(SprintCreateModal);
+export default connect(null, mapDispatchToProps)(SprintUpdateModal);

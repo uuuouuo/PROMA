@@ -37,6 +37,20 @@ export const createNewSprint = createAsyncThunk(
   }
 );
 
+//update sprint api
+export const updateSprint = createAsyncThunk(
+  "PUT/SPRINT",
+  async (sprintObj: any, thunkAPI) => {
+    return await api
+      .put(`/sprint/${sprintObj.sprintNo}`, sprintObj.sprintInfo)
+      .then((res) => {
+        thunkAPI.dispatch(getSprintList(sprintObj.sprintInfo.projectNo));
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const sprintSlice = createSlice({
   name: "sprint",
   initialState,
