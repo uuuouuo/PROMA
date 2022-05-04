@@ -51,6 +51,22 @@ export const updateSprint = createAsyncThunk(
   }
 );
 
+//delete sprint api
+export const deleteSprint = createAsyncThunk(
+  "DELETE/SPRINT",
+  async (sprintInfo: any, thunkAPI) => {
+    console.log(sprintInfo);
+
+    return await api
+      .delete(`/sprint/${sprintInfo.sprintNo}`)
+      .then((res) => {
+        thunkAPI.dispatch(getSprintList(sprintInfo.projectNo));
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const sprintSlice = createSlice({
   name: "sprint",
   initialState,

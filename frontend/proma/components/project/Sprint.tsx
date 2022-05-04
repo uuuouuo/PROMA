@@ -6,6 +6,11 @@ import { ThemeType } from "../../interfaces/style";
 
 import SprintUpdateModal from "../../components/Modals/SprintUpdateModal";
 
+import { connect } from "react-redux";
+import { deleteSprint } from "../../store/modules/sprint";
+import { useRouter } from "next/router";
+import { is } from "immer/dist/internal";
+
 //styled-components
 const Title = styled.h2`
   color: black;
@@ -55,18 +60,44 @@ const OptionBox = styled.div`
   }
 `;
 
-const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    deleteSprint: (sprintInfo: any) => dispatch(deleteSprint(sprintInfo)),
+  };
+};
+
+const Sprint = ({
+  sprint,
+  teamList,
+  deleteSprint,
+}: {
+  sprint: any;
+  teamList: any;
+  deleteSprint?: any;
+}) => {
+  const router = useRouter();
+
   const [inProgress, setInProgress] = useState<boolean>(sprint.status);
   const [teams, setTeams] = useState<Array<Object>>([]);
   const [sprintUpdateModal, setSprintUpdateModal] = useState<boolean>(false);
+  const [projectNo, setProjectNo] = useState<string>("");
 
   const showSprintUpdateModal = () => setSprintUpdateModal((cur) => !cur);
   const onDeleteSprint = () => {
     let deleteConfirm = confirm("Are you sure you want to delete the sprint?");
-    //   if(deleteConfirm){
-
-    //   }
+    if (deleteConfirm) {
+      deleteSprint({
+        sprintNo: sprint.sprintNo,
+        projectNo,
+      });
+    }
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    setProjectNo(router.query.projectCode as string);
+  }, [router.asPath]);
 
   useEffect(() => {
     if (!teamList) return;
@@ -106,4 +137,4 @@ const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
   );
 };
 
-export default Sprint;
+export default connect(null, mapDispatchToProps)(Sprint);
