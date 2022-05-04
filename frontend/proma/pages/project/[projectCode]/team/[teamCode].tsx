@@ -5,13 +5,16 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
-import {
-  IssueCreateModal,
-  WarningModal,
-} from "../../../../components/common/Modal";
+
+import WarningModal from "../../../../components/Modals/WarningModal";
+import { IssueCreateModal } from "../../../../components/common/Modal";
 
 import { connect } from "react-redux";
-import { getTeamInfo, updateTeamInfo } from "../../../../store/modules/team";
+import {
+  getTeamInfo,
+  updateTeamInfo,
+  deleteTeam,
+} from "../../../../store/modules/team";
 import { RootState } from "../../../../store/modules";
 
 //team info get api 필요
@@ -220,6 +223,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     getTeamInfo: (teamNo: string) => dispatch(getTeamInfo(teamNo)),
     updateTeamInfo: (teamInfo: any) => dispatch(updateTeamInfo(teamInfo)),
+    deleteTeam: (teamInfo: any) => dispatch(deleteTeam(teamInfo)),
   };
 };
 
@@ -227,39 +231,40 @@ const TeamSpace = ({
   getTeamInfo,
   teamInfo,
   updateTeamInfo,
+  deleteTeam,
 }: {
   getTeamInfo: any;
   teamInfo: any;
   updateTeamInfo: any;
+  deleteTeam: any;
 }) => {
-  //DOM 준비되었을 때 렌더링
-  const [isReady, setIsReady] = useState<boolean>(false);
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
-
   const router = useRouter();
 
+  const [isReady, setIsReady] = useState<boolean>(false);
+
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
+  const [projectNo, setProejctNo] = useState<string>("");
   const [teamNo, setTeamNo] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("Team Name");
   const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
   const [sprintName, setSprintName] = useState<string>("Sprint Name");
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
+  const [warningTeamOutModal, setWarningTeamOutModal] =
+    useState<boolean>(false);
+  const [warningTeamDeleteModal, setWarningTeamDeleteModal] =
+    useState<boolean>(false);
+  const [teamOutComment] = useState<string>(
+    "팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?"
+  );
+  const [teamDeleteComment] = useState<string>(
+    "팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?"
+  );
 
-    const projectCode = router.query.projectCode as string;
-    const teamCode = router.query.teamCode as string;
-
-    setTeamNo(teamCode);
-
-    getTeamInfo(teamCode);
-  }, [router.isReady]);
-
-  useEffect(() => {
-    setTeamName(teamInfo.title);
-  }, [teamInfo]);
+  const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
+  const showWarningTeamOutModal = () => setWarningTeamOutModal((cur) => !cur);
+  const showWarningTeamDeleteModal = () =>
+    setWarningTeamDeleteModal((cur) => !cur);
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
@@ -279,26 +284,29 @@ const TeamSpace = ({
     setUpdateTitle((cur) => !cur);
   };
 
-  //issue create modal
-  const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
-  const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
+  const onOutTeam = () => {};
+  const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
-  // 팀 나가기 / 삭제하기
-  const [warningListModal, setWarningListModal] = useState<boolean>(false);
-  const [warningListModal2, setWarningListModal2] = useState<boolean>(false);
-  const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-  const [warningCreateModal2, setWarningCreateModal2] =
-    useState<boolean>(false);
-  const showWarningListModal = () => setWarningListModal((cur) => !cur);
-  const showWarningListModal2 = () => setWarningListModal2((cur) => !cur);
-  const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
-  const showWarningCreateModal2 = () => setWarningCreateModal2((cur) => !cur);
-  const [comment, setComment] = useState<string>(
-    "팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?"
-  );
-  const [comment2, setComment2] = useState<string>(
-    "팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?"
-  );
+  //DOM 준비되었을 때 렌더링
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const projectCode = router.query.projectCode as string;
+    const teamCode = router.query.teamCode as string;
+
+    setProejctNo(projectCode);
+    setTeamNo(teamCode);
+
+    getTeamInfo(teamCode);
+  }, [router.isReady]);
+
+  useEffect(() => {
+    setTeamName(teamInfo.title);
+  }, [teamInfo]);
 
   return (
     <TeamSpaceContainer>
@@ -486,20 +494,20 @@ const TeamSpace = ({
         </DragDropContext>
       ) : null}
       <WarnButtonBox>
-        <button onClick={showWarningCreateModal}>팀 나가기</button>
-        <button onClick={showWarningCreateModal2}>팀 삭제</button>
+        <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+        <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
 
         <WarningModal
-          warningCreateModal={warningCreateModal}
-          showWarningListModal={showWarningListModal}
-          showWarningCreateModal={showWarningCreateModal}
-          comment={comment}
+          warningModal={warningTeamOutModal}
+          showWarningModal={showWarningTeamOutModal}
+          comment={teamOutComment}
+          deleteFunc={onOutTeam}
         />
         <WarningModal
-          warningCreateModal={warningCreateModal2}
-          showWarningListModal={showWarningListModal2}
-          showWarningCreateModal={showWarningCreateModal2}
-          comment={comment2}
+          warningModal={warningTeamDeleteModal}
+          showWarningModal={showWarningTeamDeleteModal}
+          comment={teamDeleteComment}
+          deleteFunc={onDeleteTeam}
         />
       </WarnButtonBox>
     </TeamSpaceContainer>

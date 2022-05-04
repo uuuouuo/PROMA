@@ -9,7 +9,7 @@ import {
   DeleteButton,
 } from "./index";
 
-export const WarningModal = ({
+const WarningModal = ({
   warningModal,
   showWarningModal,
   comment,
@@ -20,6 +20,11 @@ export const WarningModal = ({
   comment: string;
   deleteFunc: any;
 }) => {
+  const onDelete = () => {
+    deleteFunc();
+    showWarningModal();
+  };
+  
   return (
     <ModalBox
       open={warningModal}
@@ -45,10 +50,12 @@ export const WarningModal = ({
             <MaintainButton onClick={showWarningModal}>
               아니요 유지할래요!
             </MaintainButton>
-            <DeleteButton onClick={deleteFunc}>네 삭제할게요</DeleteButton>
+            <DeleteButton onClick={onDelete}>네 삭제할게요</DeleteButton>
           </WarningButtonBox>
         </WarningContainer>
       </Box>
     </ModalBox>
   );
 };
+
+export default WarningModal;

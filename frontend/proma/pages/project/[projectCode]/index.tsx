@@ -10,7 +10,7 @@ import {
   TopicListModal,
   TopicCreateModal,
 } from "../../../components/common/Modal";
-import { WarningModal } from "../../../components/Modals/WarningModal";
+import WarningModal from "../../../components/Modals/WarningModal";
 
 import { connect } from "react-redux";
 import {
