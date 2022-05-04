@@ -187,7 +187,10 @@ public class ProjectService extends AbstractService {
                 , userTeam.getUser().getNickname()
                 , userTeam.getUser().getProfileImage()))
             .collect(Collectors.toList());
-        teamMembersDtos.add(new TeamMembersDto(team.getNo(),team.getName(),userDtos));
+        Optional<UserTeam> byUserAndTeam = userTeamRepository.findByUserAndTeam(user, team);
+        UserTeam userTeamIn = takeOp(byUserAndTeam);
+        Boolean isIn = userTeamIn == null ? false : true;
+        teamMembersDtos.add(new TeamMembersDto(team.getNo(),team.getName(),isIn,userDtos));
       });
       projectTeamUserDtos.add(new ProjectTeamUserDto(project.getNo(), project.getName(),teamMembersDtos));
     });
@@ -203,7 +206,13 @@ public class ProjectService extends AbstractService {
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    ProjectDetailDto projectDetailDto = new ProjectDetailDto(project.getName());
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+
+    User user = takeOp(userOp);
+    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+    ProjectDetailDto projectDetailDto = new ProjectDetailDto(project.getName(), userProject.getRole());
 
     resultMap.put("project", projectDetailDto);
     resultMap.put("message", "프로젝트 조회 성공");

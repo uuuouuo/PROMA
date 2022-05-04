@@ -1,7 +1,7 @@
 package com.ssafy.proma.model.dto.issue;
 
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
-import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamIssueDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,14 +27,14 @@ public class ResIssueDto {
   public static class IssueDetailsDto{
 
     Integer issueNo;
-    TeamDto team;
+    TeamIssueDto team;
     String issueTitle;
     String description;
     String status;
     TopicDto topic;
     UserDto assignee;
 
-    public IssueDetailsDto(Integer issueNo, TeamDto team, String issueTitle, String description,
+    public IssueDetailsDto(Integer issueNo, TeamIssueDto team, String issueTitle, String description,
         String status, TopicDto topic, UserDto assignee) {
       this.issueNo = issueNo;
       this.team = team;

@@ -7,9 +7,11 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@Async
 @AllArgsConstructor
 public class MailService {
 

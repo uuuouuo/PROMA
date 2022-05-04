@@ -9,7 +9,7 @@ import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.TopicDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
-import com.ssafy.proma.model.dto.team.ResTeamDto.TeamDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamIssueDto;
 import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.team.Team;
@@ -265,42 +265,13 @@ public class IssueService extends AbstractService {
     String topicTitle = topic.getTitle();
 
     IssueDetailsDto issueDetailsDto = new IssueDetailsDto(issueNo,
-        new TeamDto(teamNo, teamName), issueTitle, description, status
+        new TeamIssueDto(teamNo, teamName), issueTitle, description, status
             , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname,image));
 
     resultMap.put("issueDetail", issueDetailsDto);
     resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
 
     return resultMap;
-  }
-
-  //이건 필요 없는건가???
-  public List<IssueNoTitleDto> getIssue(Integer sprintNo, Integer teamNo, String status,
-      Boolean onlyMyIssue) {
-
-    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
-    Team team = takeOp(teamOp);
-
-    Optional<List<Issue>> issueListOp = null;
-
-    if(sprintNo == null ){
-      issueListOp = issueRepository.findByTeamAndSprintNull(team);
-    }
-    else{
-      Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
-      Sprint sprint = takeOp(sprintOp);
-
-      issueListOp = issueRepository.findBySprintAndTeam(sprint,team);
-    }
-    List<Issue> issues = takeOp(issueListOp);
-
-    List<IssueNoTitleDto> issueList = issues.stream()
-        .map(issue -> new IssueNoTitleDto(issue.getNo()
-            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
-        .collect(Collectors.toList());
-
-    return issueList;
-
   }
 
   @Transactional
