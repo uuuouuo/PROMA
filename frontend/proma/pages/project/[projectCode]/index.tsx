@@ -117,7 +117,7 @@ const SprintsBox = styled.div`
 
 const mapStateToProps = (state: RootState) => {
   return {
-    projectName: state.projectReducer.projectName,
+    projectInfo: state.projectReducer.projectInfo,
     teamList: state.teamReducer.teamList,
     isLogin: state.userReducer.isLogin,
   };
@@ -138,7 +138,7 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const ProjectSpace = ({
   getProjectInfo,
-  projectName,
+  projectInfo,
   updateProjectInfo,
   deleteProject,
   getProjectJoinStatus,
@@ -148,7 +148,7 @@ const ProjectSpace = ({
   teamList,
 }: {
   getProjectInfo: any;
-  projectName: string;
+  projectInfo: any;
   updateProjectInfo: any;
   deleteProject: any;
   getProjectJoinStatus: any;
@@ -162,6 +162,7 @@ const ProjectSpace = ({
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const [projectNo, setProjectNo] = useState<string>("");
+  const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [teams, setTeams] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
@@ -233,9 +234,11 @@ const ProjectSpace = ({
   }, [projectNo]);
 
   useEffect(() => {
-    if (!projectName) return;
-    setTitle(projectName);
-  }, [projectName]);
+    if (!projectInfo) return;
+    setTitle(projectInfo.title);
+    if (projectInfo.role === "MANAGER") setIsManager(true);
+    else setIsManager(false);
+  }, [projectInfo]);
 
   useEffect(() => {
     if (!teamList) return;
@@ -262,7 +265,9 @@ const ProjectSpace = ({
             ) : (
               <TopBar>
                 <h1>{title}</h1>
-                <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                {isManager ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
               </TopBar>
             )}
             <FlexBox>
@@ -296,7 +301,9 @@ const ProjectSpace = ({
               ))} */}
               <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
-            <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
+            {isManager ? (
+              <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
+            ) : null}
             <WarningModal
               warningModal={warningModal}
               showWarningModal={showWarningModal}

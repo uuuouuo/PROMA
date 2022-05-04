@@ -6,12 +6,12 @@ const api = apiInstance();
 //state type
 export type ProjectState = {
   projectList: Array<Object>;
-  projectName: string;
+  projectInfo: Object;
 };
 //state
 const initialState: ProjectState = {
   projectList: [],
-  projectName: "",
+  projectInfo: {},
 };
 
 //get every project api
@@ -111,7 +111,7 @@ const projectSlice = createSlice({
         state.projectList = payload.projectList;
       })
       .addCase(getProjectInfo.fulfilled, (state, { payload }) => {
-        state.projectName = payload.project.title;
+        state.projectInfo = payload.project;
       });
   },
 });
