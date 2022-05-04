@@ -106,6 +106,7 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
 
   useEffect(() => {
     getTeamList(projectInfo.projectNo);
+    setTeams(projectInfo.teamList);
   }, [projectInfo]);
 
   return (
@@ -124,7 +125,7 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
       </Header>
       {showTeams ? (
         <TeamBox>
-          {teams.length > 0
+          {teams === !undefined
             ? teams.map((team: any, index: any) => (
                 <Team
                   teamInfo={team}
