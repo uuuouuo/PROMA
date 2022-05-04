@@ -206,7 +206,13 @@ public class ProjectService extends AbstractService {
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    ProjectDetailDto projectDetailDto = new ProjectDetailDto(project.getName());
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+
+    User user = takeOp(userOp);
+    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+    ProjectDetailDto projectDetailDto = new ProjectDetailDto(project.getName(), userProject.getRole());
 
     resultMap.put("project", projectDetailDto);
     resultMap.put("message", "프로젝트 조회 성공");

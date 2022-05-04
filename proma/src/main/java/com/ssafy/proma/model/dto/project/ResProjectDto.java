@@ -37,6 +37,7 @@ public class ResProjectDto {
   @AllArgsConstructor
   public static class ProjectDetailDto{
     String title;
+    String role;
   }
 
   @Getter
