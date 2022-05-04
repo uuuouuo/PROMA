@@ -105,6 +105,7 @@ const Project = ({
 }) => {
   const [showTeams, setShowTeams] = useState<boolean>(true);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
+  const [teams, setTeams] = useState(teamList);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
   // 채팅창 띄우기
@@ -114,6 +115,10 @@ const Project = ({
   useEffect(() => {
     getTeamList(projectInfo.projectNo);
   }, [projectInfo]);
+
+  useEffect(() => {
+    setTeams(teamList);
+  }, [teamList]);
 
   return (
     <ProjectContainer>
@@ -131,13 +136,15 @@ const Project = ({
       </Header>
       {showTeams ? (
         <TeamBox>
-          {teamList?.map((team: any, index: any) => (
-            <Team
-              teamInfo={team}
-              projectNo={projectInfo.projectNo}
-              key={index}
-            />
-          ))}
+          {teams.length > 0
+            ? teams.map((team: any, index: any) => (
+                <Team
+                  teamInfo={team}
+                  projectNo={projectInfo.projectNo}
+                  key={index}
+                />
+              ))
+            : null}
           <AddTeamButton onClick={showTeamCreateModal}>
             + Add Team
           </AddTeamButton>

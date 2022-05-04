@@ -11,7 +11,7 @@ import {
 } from "../../../../components/common/Modal";
 
 import { connect } from "react-redux";
-import { getTeamInfo } from "../../../../store/modules/team";
+import { getTeamInfo, updateTeamInfo } from "../../../../store/modules/team";
 import { RootState } from "../../../../store/modules";
 
 //team info get api 필요
@@ -219,15 +219,18 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getTeamInfo: (teamNo: string) => dispatch(getTeamInfo(teamNo)),
+    updateTeamInfo: (teamInfo: any) => dispatch(updateTeamInfo(teamInfo)),
   };
 };
 
 const TeamSpace = ({
   getTeamInfo,
   teamInfo,
+  updateTeamInfo,
 }: {
   getTeamInfo: any;
   teamInfo: any;
+  updateTeamInfo: any;
 }) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -237,7 +240,8 @@ const TeamSpace = ({
 
   const router = useRouter();
 
-  const [updateTeamName, setUpdateTeamName] = useState<boolean>(false);
+  const [updateTitle, setUpdateTitle] = useState<boolean>(false);
+  const [teamNo, setTeamNo] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("Team Name");
   const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
   const [sprintName, setSprintName] = useState<string>("Sprint Name");
@@ -245,10 +249,12 @@ const TeamSpace = ({
   useEffect(() => {
     if (!router.isReady) return;
 
-    const project_code = router.query.projectCode;
-    const team_code = router.query.teamCode;
+    const projectCode = router.query.projectCode as string;
+    const teamCode = router.query.teamCode as string;
 
-    getTeamInfo(team_code);
+    setTeamNo(teamCode);
+
+    getTeamInfo(teamCode);
   }, [router.isReady]);
 
   useEffect(() => {
@@ -258,6 +264,19 @@ const TeamSpace = ({
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
     console.log(args);
+  };
+
+  //update team
+  const onKeyUpTeamName = (e: any) => {
+    if (e.key !== "Enter") return;
+    updateTeamInfo();
+  };
+  const updateTeamName = () => {
+    updateTeamInfo({
+      teamNo,
+      title: teamName,
+    });
+    setUpdateTitle((cur) => !cur);
   };
 
   //issue create modal
@@ -284,21 +303,22 @@ const TeamSpace = ({
   return (
     <TeamSpaceContainer>
       <TopBar>
-        {updateTeamName ? (
+        {updateTitle ? (
           <FlexBox>
             <input
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
+              onKeyUp={onKeyUpTeamName}
               placeholder="Type Team Name"
               required
               autoFocus
             />
-            <FaCheck onClick={() => setUpdateTeamName((cur) => !cur)} />
+            <FaCheck onClick={() => updateTeamName} />
           </FlexBox>
         ) : (
           <FlexBox>
             <h1>{teamName}</h1>
-            <FaPen onClick={() => setUpdateTeamName((cur) => !cur)} />
+            <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
           </FlexBox>
         )}
       </TopBar>

@@ -51,6 +51,17 @@ export const createNewTeam = createAsyncThunk(
   }
 );
 
+//update team info api
+export const updateTeamInfo = createAsyncThunk(
+  "PUT/TEAM",
+  async (teamInfo: any, thunkAPI) => {
+    return await api
+      .put(`/team`, teamInfo)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const teamSlice = createSlice({
   name: "team",
   initialState,
