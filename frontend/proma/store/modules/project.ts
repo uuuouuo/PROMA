@@ -73,11 +73,30 @@ export const deleteProject = createAsyncThunk(
     return await api
       .delete(`/project/${projectNo}`)
       .then((res) => {
-        console.log("project is deleted", res);
-
-        window.location.href = "/";
         thunkAPI.dispatch(getProjectList());
       })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//project join status api
+export const getProjectJoinStatus = createAsyncThunk(
+  "GET/JOINSTATUS",
+  async (projectNo: string, thunkAPI) => {
+    return await api
+      .get(`/project/user/${projectNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//join project api
+export const joinProject = createAsyncThunk(
+  "POST/JOINPROJECT",
+  async (projectInfo: any, thunkAPI) => {
+    return await api
+      .post(`/project/join/`, projectInfo)
+      .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );

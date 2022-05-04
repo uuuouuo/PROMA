@@ -17,6 +17,8 @@ import {
   getProjectInfo,
   updateProjectInfo,
   deleteProject,
+  getProjectJoinStatus,
+  joinProject,
 } from "../../../store/modules/project";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
@@ -115,6 +117,7 @@ const SprintsBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     projectName: state.projectReducer.projectName,
+    isLogin: state.userReducer.isLogin,
   };
 };
 
@@ -124,6 +127,9 @@ const mapDispatchToProps = (dispatch: any) => {
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
     deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
+    getProjectJoinStatus: (projectNo: string) =>
+      dispatch(getProjectJoinStatus(projectNo)),
+    joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
   };
 };
 
@@ -132,11 +138,17 @@ const ProjectSpace = ({
   projectName,
   updateProjectInfo,
   deleteProject,
+  getProjectJoinStatus,
+  isLogin,
+  joinProject,
 }: {
   getProjectInfo: any;
   projectName: string;
   updateProjectInfo: any;
   deleteProject: any;
+  getProjectJoinStatus: any;
+  isLogin: boolean;
+  joinProject: any;
 }) => {
   const router = useRouter();
 
@@ -159,15 +171,27 @@ const ProjectSpace = ({
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningModal = () => setWarningModal((cur) => !cur);
 
-  //DOM 준비되었을 때 렌더링
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
-
+  //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
   useEffect(() => {
     if (!router.isReady) return;
+
     const value = router.query.projectCode as string;
     setProjectNo(value);
+
+    if (isLogin) {
+      getProjectJoinStatus(value).then((res: any) => {
+        if (!res.payload) {
+          joinProject({ projectNo: value }).then((res: any) =>
+            setIsReady(true)
+          );
+        } else {
+          setIsReady(true);
+        }
+      });
+    } else {
+      alert("Please login first");
+      router.push("/");
+    }
   }, [router.asPath]);
 
   useEffect(() => {
@@ -194,7 +218,8 @@ const ProjectSpace = ({
   };
 
   //delete project
-  const onDeleteProject = () => deleteProject(projectNo);
+  const onDeleteProject = () =>
+    deleteProject(projectNo).then((res: any) => router.push("/"));
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {

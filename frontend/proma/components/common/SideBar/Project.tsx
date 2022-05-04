@@ -84,28 +84,20 @@ const TeamBox = styled.div`
 
 const mapStateToProps = (state: RootState) => {
   return {
-    teamList: state.teamReducer.teamList,
+    // teamList: state.teamReducer.teamList,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
+    // getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
   };
 };
 
-const Project = ({
-  projectInfo,
-  getTeamList,
-  teamList,
-}: {
-  projectInfo: any;
-  getTeamList?: any;
-  teamList?: any;
-}) => {
+const Project = ({ projectInfo }: { projectInfo: any }) => {
   const [showTeams, setShowTeams] = useState<boolean>(true);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
-  const [teams, setTeams] = useState(teamList);
+  const [teams, setTeams] = useState(projectInfo.teamMembersDtos);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
   // 채팅창 띄우기
@@ -115,10 +107,6 @@ const Project = ({
   useEffect(() => {
     getTeamList(projectInfo.projectNo);
   }, [projectInfo]);
-
-  useEffect(() => {
-    setTeams(teamList);
-  }, [teamList]);
 
   return (
     <ProjectContainer>
