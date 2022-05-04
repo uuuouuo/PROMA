@@ -116,7 +116,7 @@ public class TopicService extends AbstractService {
         .collect(Collectors.toList());
 
     resultMap.put("topicList", topicNoNameList);
-    resultMap.put("message", Message.TOPIC_LIST_FIND_SUCCESS_MESSAGE);
+    resultMap.put("message", Message.TOPIC_FIND_SUCCESS_MESSAGE);
 
     return resultMap;
   }
