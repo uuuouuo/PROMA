@@ -16,6 +16,7 @@ import Image from "next/image";
 import { postNewProject } from "../../store/modules/project";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
+import { RootState } from "../../store/modules";
 
 //styling
 export const style = {
@@ -694,13 +695,16 @@ export const JoinModal = ({
 export const UserProfileModal = ({
   userProfileModal,
   showUserProfileModal,
+  userInfo,
 }: {
   userProfileModal: boolean;
-  showUserProfileModal: any;
+    showUserProfileModal: any;
+    userInfo: any;
 }) => {
-  const [userName, setUserName] = useState<string>("sue");
+  const [userName, setUserName] = useState<string>(`${userInfo.nickname}`);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
 
+  console.log(userInfo);
   return (
     <ModalBox
       open={userProfileModal}
@@ -717,7 +721,11 @@ export const UserProfileModal = ({
             </button>
             {!updateStatus ? (
               <div>
-                <Image src="/profileimg.png" width={180} height={180} />
+                {
+                  userInfo.profileImage == null ?
+                    <Image src="/profileimg.png" width={180} height={180} /> 
+                    : <Image src={`${userInfo.profileImage}`} width={180} height={180} /> 
+                }
                 <p>{userName}</p>
               </div>
             ) : (
