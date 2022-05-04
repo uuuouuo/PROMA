@@ -52,12 +52,13 @@ public class ChatRoomController {
 
   @ApiOperation(value = "팀 단위 그룹 채팅 생성 및 조회", notes = "해당 팀 그룹 채팅방 생성 및 조회")
   @GetMapping("/room/team/{teamNo}")
-  public ResponseEntity<Map<String, Object>> getTeamChatRoom(@PathVariable Integer teamNo) {
+  public ResponseEntity<Map<String, Object>> getTeamChatRoom(@PathVariable Integer teamNo
+      ,@PageableDefault(page = 0, size = 10) Pageable pageable) {
     Map<String, Object> result = new HashMap<>();
     HttpStatus status = HttpStatus.ACCEPTED;
 
     try{
-      result = chatService.getTeamChatRoom(teamNo);
+      result = chatService.getTeamChatRoom(teamNo, pageable);
 
       if(result.get("message").equals(TEAM_CHATROOM_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
@@ -74,12 +75,13 @@ public class ChatRoomController {
 
   @ApiOperation(value = "프로젝트 단위 그룹 채팅 생성 및 조회", notes = "해당 프로젝트 그룹 채팅방 생성 및 조회")
   @GetMapping("/room/project/{projectNo}")
-  public ResponseEntity<Map<String, Object>> getProjectChatRoom(@PathVariable String projectNo) {
+  public ResponseEntity<Map<String, Object>> getProjectChatRoom(@PathVariable String projectNo
+      ,@PageableDefault(page = 0, size = 10) Pageable pageable) {
     Map<String, Object> result = new HashMap<>();
     HttpStatus status = HttpStatus.ACCEPTED;
 
     try{
-      result = chatService.getProjectChatRoom(projectNo);
+      result = chatService.getProjectChatRoom(projectNo, pageable);
 
       if(result.get("message").equals(PROJECT_CHATROOM_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
