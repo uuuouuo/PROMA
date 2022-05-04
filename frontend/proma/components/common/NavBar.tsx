@@ -54,20 +54,23 @@ const MenuToggleBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
       userInfo : state.userReducer.userInfo,
+      isLogin : state.userReducer.isLogin,
   };
 }
   
 const NavBar = ({
   userInfo,
+  isLogin,
 }: {
     userInfo: any;
+    isLogin: boolean;
 }) => {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  // const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
   const [userProfileModal, setUserProfileModal] = useState<boolean>(false);
 
-  const toggleLoginStatus = () => setIsLogin((cur) => !cur);
+  // const toggleLoginStatus = () => setIsLogin((cur) => !cur);
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
@@ -75,6 +78,13 @@ const NavBar = ({
   const setLogOut = () => {
     getLogout();
   }; 
+
+  useEffect(() => {
+
+  }, [isLogin])
+
+  console.log(userInfo)
+  console.log(isLogin)
 
   return (
     <NavBarContainer>
@@ -92,12 +102,12 @@ const NavBar = ({
               loginModal={loginModal}
               showLoginModal={showLoginModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
             <JoinModal
               joinModal={joinModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
           </MenuToggleBox>
         ) : (
