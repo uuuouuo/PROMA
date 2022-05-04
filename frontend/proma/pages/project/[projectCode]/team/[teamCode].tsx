@@ -252,6 +252,7 @@ const TeamSpace = ({
   const [teamName, setTeamName] = useState<string>("Team Name");
   const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
   const [sprintName, setSprintName] = useState<string>("Sprint Name");
+  const [isMember, setIsMember] = useState<boolean>(false);
 
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
   const [warningTeamOutModal, setWarningTeamOutModal] =
@@ -288,7 +289,10 @@ const TeamSpace = ({
     setUpdateTitle((cur) => !cur);
   };
 
-  const onOutTeam = () => outTeam({ teamNo, projectNo });
+  const onOutTeam = () =>
+    outTeam({ teamNo, projectNo }).then((res: any) =>
+      router.push(`/project/${projectNo}`)
+    );
   const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
   //DOM 준비되었을 때 렌더링
@@ -310,6 +314,7 @@ const TeamSpace = ({
 
   useEffect(() => {
     setTeamName(teamInfo.title);
+    setIsMember(teamInfo.isMember);
   }, [teamInfo]);
 
   return (
@@ -330,7 +335,9 @@ const TeamSpace = ({
         ) : (
           <FlexBox>
             <h1>{teamName}</h1>
-            <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+            {isMember ? (
+              <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+            ) : null}
           </FlexBox>
         )}
       </TopBar>
@@ -352,17 +359,21 @@ const TeamSpace = ({
           <FlexBox>
             <span>Active: </span>
             <h2>{sprintName}</h2>
-            <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
+            {isMember ? (
+              <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
+            ) : null}
           </FlexBox>
         )}
-        <ButtonBox>
-          <button>Only My Issue</button>
-          <button onClick={showIssueCreateModal}>+ Add Issue</button>
-          <IssueCreateModal
-            issueCreateModal={issueCreateModal}
-            showIssueCreateModal={showIssueCreateModal}
-          />
-        </ButtonBox>
+        {isMember ? (
+          <ButtonBox>
+            <button>Only My Issue</button>
+            <button onClick={showIssueCreateModal}>+ Add Issue</button>
+            <IssueCreateModal
+              issueCreateModal={issueCreateModal}
+              showIssueCreateModal={showIssueCreateModal}
+            />
+          </ButtonBox>
+        ) : null}
       </SubTopBar>
 
       {isReady ? (
@@ -497,23 +508,25 @@ const TeamSpace = ({
           </WorkSpace>
         </DragDropContext>
       ) : null}
-      <WarnButtonBox>
-        <button onClick={showWarningTeamOutModal}>팀 나가기</button>
-        <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
+      {isMember ? (
+        <WarnButtonBox>
+          <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+          <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
 
-        <WarningModal
-          warningModal={warningTeamOutModal}
-          showWarningModal={showWarningTeamOutModal}
-          comment={teamOutComment}
-          deleteFunc={onOutTeam}
-        />
-        <WarningModal
-          warningModal={warningTeamDeleteModal}
-          showWarningModal={showWarningTeamDeleteModal}
-          comment={teamDeleteComment}
-          deleteFunc={onDeleteTeam}
-        />
-      </WarnButtonBox>
+          <WarningModal
+            warningModal={warningTeamOutModal}
+            showWarningModal={showWarningTeamOutModal}
+            comment={teamOutComment}
+            deleteFunc={onOutTeam}
+          />
+          <WarningModal
+            warningModal={warningTeamDeleteModal}
+            showWarningModal={showWarningTeamDeleteModal}
+            comment={teamDeleteComment}
+            deleteFunc={onDeleteTeam}
+          />
+        </WarnButtonBox>
+      ) : null}
     </TeamSpaceContainer>
   );
 };

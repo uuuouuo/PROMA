@@ -6,11 +6,11 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
 import {
-  SprintCreateModal,
   TopicListModal,
   TopicCreateModal,
 } from "../../../components/common/Modal";
 import WarningModal from "../../../components/Modals/WarningModal";
+import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
 
 import { connect } from "react-redux";
 import {
@@ -20,6 +20,7 @@ import {
   getProjectJoinStatus,
   joinProject,
 } from "../../../store/modules/project";
+import { getTeamList } from "../../../store/modules/team";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
 
@@ -117,6 +118,7 @@ const SprintsBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     projectName: state.projectReducer.projectName,
+    teamList: state.teamReducer.teamList,
     isLogin: state.userReducer.isLogin,
   };
 };
@@ -124,12 +126,13 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
+    deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
+    joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
+    getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
-    deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
     getProjectJoinStatus: (projectNo: string) =>
       dispatch(getProjectJoinStatus(projectNo)),
-    joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
   };
 };
 
@@ -141,6 +144,8 @@ const ProjectSpace = ({
   getProjectJoinStatus,
   isLogin,
   joinProject,
+  getTeamList,
+  teamList,
 }: {
   getProjectInfo: any;
   projectName: string;
@@ -149,6 +154,8 @@ const ProjectSpace = ({
   getProjectJoinStatus: any;
   isLogin: boolean;
   joinProject: any;
+  getTeamList: any;
+  teamList: Array<Object>;
 }) => {
   const router = useRouter();
 
@@ -156,6 +163,7 @@ const ProjectSpace = ({
 
   const [projectNo, setProjectNo] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+  const [teams, setTeams] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
@@ -170,6 +178,30 @@ const ProjectSpace = ({
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningModal = () => setWarningModal((cur) => !cur);
+
+  //update project
+  const onKeyUpProjectName = (e: any) => {
+    if (e.key !== "Enter") return;
+    updateProjectName();
+  };
+  const updateProjectName = () => {
+    updateProjectInfo({
+      projectNo,
+      title,
+    });
+    setUpdateTitle((cur) => !cur);
+  };
+
+  //delete project
+  const onDeleteProject = () =>
+    deleteProject(projectNo).then((res: any) => router.push("/"));
+
+  //유저가 드래그를 끝낸 시점에 불리는 함수
+  const onDragEnd = (args: any) => {
+    console.log(args);
+    //이슈 옮겨졌을 때 이슈 수정 post api 로직 필요
+    //그 후 재렌더링 로직 필요
+  };
 
   //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
   useEffect(() => {
@@ -197,6 +229,7 @@ const ProjectSpace = ({
   useEffect(() => {
     if (!projectNo) return;
     getProjectInfo(projectNo);
+    getTeamList(projectNo);
   }, [projectNo]);
 
   useEffect(() => {
@@ -204,29 +237,10 @@ const ProjectSpace = ({
     setTitle(projectName);
   }, [projectName]);
 
-  //update project
-  const onKeyUpProjectName = (e: any) => {
-    if (e.key !== "Enter") return;
-    updateProjectName();
-  };
-  const updateProjectName = () => {
-    updateProjectInfo({
-      projectNo,
-      title,
-    });
-    setUpdateTitle((cur) => !cur);
-  };
-
-  //delete project
-  const onDeleteProject = () =>
-    deleteProject(projectNo).then((res: any) => router.push("/"));
-
-  //유저가 드래그를 끝낸 시점에 불리는 함수
-  const onDragEnd = (args: any) => {
-    console.log(args);
-    //이슈 옮겨졌을 때 이슈 수정 post api 로직 필요
-    //그 후 재렌더링 로직 필요
-  };
+  useEffect(() => {
+    if (!teamList) return;
+    setTeams(teamList);
+  }, [teamList]);
 
   return (
     <>
@@ -280,7 +294,7 @@ const ProjectSpace = ({
               {/* {sprints?.map((sprint, index) => (
                 <Sprint sprint={sprint} key={index} />
               ))} */}
-              <Sprint sprint={backlog} />
+              <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
             <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
             <WarningModal

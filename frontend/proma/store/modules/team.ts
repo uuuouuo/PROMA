@@ -83,9 +83,7 @@ export const outTeam = createAsyncThunk(
   async (teamInfo: any, thunkAPI) => {
     return await api
       .post(`/team/exit`, { teamNo: teamInfo.teamNo })
-      .then((res) => {
-        // window.location.href = `/project/${teamInfo.projectNo}`;
-      })
+      .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -121,7 +119,7 @@ const teamSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getTeamList.fulfilled, (state, { payload }) => {
-        state.teamList = payload;
+        state.teamList = payload.teamList;
       })
       .addCase(getTeamInfo.fulfilled, (state, { payload }) => {
         state.teamInfo = payload.team;

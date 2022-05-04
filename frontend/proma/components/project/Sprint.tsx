@@ -4,30 +4,6 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { ThemeType } from "../../interfaces/style";
 
-//더미 데이터
-const teamData = [
-  {
-    teamNo: 0,
-    teamName: "frontend",
-    projectNo: 10,
-  },
-  {
-    teamNo: 1,
-    teamName: "backend",
-    projectNo: 10,
-  },
-  {
-    teamNo: 2,
-    teamName: "db",
-    projectNo: 10,
-  },
-  {
-    teamNo: 3,
-    teamName: "deploy",
-    projectNo: 10,
-  },
-];
-
 //styled-components
 const Title = styled.h2`
   color: black;
@@ -67,13 +43,15 @@ const FilledButton = styled.button`
   border-radius: 3px;
 `;
 
-interface SprintType {
-  sprintNo: number;
-  sprintName: string;
-}
-
-const Sprint = ({ sprint }: { sprint: SprintType }) => {
+const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
   const [inProgress, setInProgress] = useState<boolean>(false);
+  const [teams, setTeams] = useState([]);
+
+  useEffect(() => {
+    if (!teamList) return;
+
+    setTeams(teamList);
+  }, [teamList]);
 
   return (
     <SprintBox>
@@ -84,9 +62,11 @@ const Sprint = ({ sprint }: { sprint: SprintType }) => {
         </FilledButton>
       </FlexBox>
       <TeamBox>
-        {teamData.map((team, index) => (
-          <Team team={team} key={index} sprintName={sprint.sprintName} />
-        ))}
+        {teams
+          ? teams?.map((team, index) => (
+              <Team team={team} key={index} sprintName={sprint.sprintName} />
+            ))
+          : null}
       </TeamBox>
     </SprintBox>
   );

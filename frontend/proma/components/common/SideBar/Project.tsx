@@ -5,7 +5,7 @@ import Team from "./Team";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
-import TeamCreateModal from "../../Modals/CreateTeam";
+import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
 
 //styled-components
