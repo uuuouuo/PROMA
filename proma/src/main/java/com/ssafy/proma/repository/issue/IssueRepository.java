@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface IssueRepository extends JpaRepository<Issue,Integer> {
 
   void deleteAllByTeam(Team team);
+  void deleteAllByTopic(Topic topic);
   Optional<List<Issue>> findByTopic(Topic topic);
   Optional<Issue> findByNo(Integer issueNo);
   Optional<List<Issue>> findBySprintAndTeam(Sprint sprint, Team team);

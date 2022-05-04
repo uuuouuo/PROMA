@@ -1,6 +1,7 @@
 package com.ssafy.proma.controller;
 
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
@@ -40,49 +41,138 @@ public class TeamController {
   @PostMapping
   public ResponseEntity createTeam(@RequestBody TeamCreateDto teamDto){
 
-    teamService.createTeam(teamDto);
-    return ResponseEntity.ok().build();
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
 
+    try{
+      resultMap = teamService.createTeam(teamDto);
+
+      if(resultMap.get("message").equals(Message.TEAM_CREATE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 생성 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_CREATE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "팀 참여", notes = "유저가 팀에 참여한다.")
   @PostMapping("/join")
   public ResponseEntity joinTeam(@RequestBody TeamJoinDto teamDto){
 
-    teamService.joinTeam(teamDto);
-    return ResponseEntity.ok().build();
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.joinTeam(teamDto);
+
+      if(resultMap.get("message").equals(Message.TEAM_JOIN_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 조인 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_JOIN_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "팀 나가기", notes = "유저가 팀을 나갈 수 있다.")
   @PostMapping("/exit")
   public ResponseEntity exitTeam(@RequestBody TeamExitDto teamDto){
 
-    teamService.exitTeam(teamDto);
-    return ResponseEntity.ok().build();
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.exitTeam(teamDto);
+
+      if(resultMap.get("message").equals(Message.TEAM_EXIT_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 탈퇴 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_EXIT_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "팀 삭제", notes = "팀을 삭제한다.")
   @DeleteMapping("/{teamNo}")
   public ResponseEntity deleteTeam(@PathVariable Integer teamNo){
 
-    teamService.deleteTeam(teamNo);
-    return ResponseEntity.ok().build();
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.deleteTeam(teamNo);
+
+      if(resultMap.get("message").equals(Message.TEAM_DELETE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 삭제 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_DELETE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "팀 수정", notes = "팀 이름을 수정한다.")
   @PutMapping
   public ResponseEntity updateTeam(@RequestBody TeamUpdateDto teamUpdateDto){
 
-    teamService.updateTeam(teamUpdateDto);
-    return ResponseEntity.ok().build();
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.updateTeam(teamUpdateDto);
+
+      if(resultMap.get("message").equals(Message.TEAM_UPDATE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 정보 수정 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_UPDATE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "모든 팀 조회", notes = "프로젝트에 포함된 모든 팀을 조회한다.")
   @GetMapping("/{projectNo}")
-  public ResponseEntity<List<TeamDto>> getTeamList(@PathVariable String projectNo){
+  public ResponseEntity getTeamList(@PathVariable String projectNo){
 
-    List<TeamDto> teamDtoList = teamService.getTeamList(projectNo);
-    return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try{
+      resultMap = teamService.getTeamList(projectNo);
+
+      if(resultMap.get("message").equals(Message.TEAM_FIND_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+      log.error("팀 조회 실패 : {}", e.getMessage());
+
+      resultMap.put("message", Message.TEAM_FIND_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "팀원 조회", notes = "팀에 속해있는 모든 유저를 조회한다.")
@@ -95,13 +185,13 @@ public class TeamController {
     try{
       resultMap = teamService.getUserTeamList(teamNo);
 
-      if(resultMap.get("message").equals("팀원 조회 성공")) {
+      if(resultMap.get("message").equals(Message.MEMBER_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀원 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", "팀원 조회 실패");
+      resultMap.put("message", Message.MEMBER_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
@@ -118,13 +208,13 @@ public class TeamController {
     try{
       resultMap = teamService.getTeam(teamNo);
 
-      if(resultMap.get("message").equals("팀 조회 성공")) {
+      if(resultMap.get("message").equals(Message.TEAM_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e) {
       log.error("팀 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", "팀 조회 실패");
+      resultMap.put("message", Message.TEAM_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 

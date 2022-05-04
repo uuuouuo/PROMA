@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.topic;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
 import com.ssafy.proma.model.dto.topic.ReqTopicDto.TopicCreateDto;
@@ -13,7 +14,10 @@ import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.service.AbstractService;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +34,27 @@ public class TopicService extends AbstractService {
   private final IssueRepository issueRepository;
 
   @Transactional
-  public void createTopic(TopicCreateDto topicDto){
+  public Map<String, Object> createTopic(TopicCreateDto topicDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     String projectNo = topicDto.getProjectNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
+    //존재하지 않는 프로젝트 예외 처리?
+
     Topic topic = topicDto.toEntity(project);
     topicRepository.save(topic);
 
+    resultMap.put("message", Message.TOPIC_CREATE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
   @Transactional
-  public void updateTopic(Integer topicNo, TopicUpdateDto topicDto) {
+  public Map<String, Object> updateTopic(Integer topicNo, TopicUpdateDto topicDto) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     String title = topicDto.getTitle();
     String description = topicDto.getDescription();
@@ -51,9 +62,14 @@ public class TopicService extends AbstractService {
     Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
     topic.update(title,description);
+
+    resultMap.put("message", Message.TOPIC_UPDATE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public List<IssueNoTitleDto> getIssueList(Integer topicNo) {
+  public Map<String, Object> getIssueList(Integer topicNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
@@ -66,20 +82,28 @@ public class TopicService extends AbstractService {
             , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
         .collect(Collectors.toList());
 
-    return issueDtoList;
+    resultMap.put("issueList", issueDtoList);
+    resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public TopicDetailDto getTopicDetail(Integer topicNo) {
+  public Map<String, Object> getTopicDetail(Integer topicNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
     Topic topic = takeOp(topicOp);
 
     TopicDetailDto topicDetailDto = new TopicDetailDto(topicNo,topic.getTitle(),topic.getDescription());
 
-    return topicDetailDto;
+    resultMap.put("topicDetail", topicDetailDto);
+    resultMap.put("message", Message.TOPIC_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 
-  public List<TopicNoNameDto> getTopicList(String projectNo) {
+  public Map<String, Object> getTopicList(String projectNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
@@ -91,6 +115,24 @@ public class TopicService extends AbstractService {
         .map(topic -> new TopicNoNameDto(topic.getNo(), topic.getTitle()))
         .collect(Collectors.toList());
 
-    return topicNoNameList;
+    resultMap.put("topicList", topicNoNameList);
+    resultMap.put("message", Message.TOPIC_FIND_SUCCESS_MESSAGE);
+
+    return resultMap;
+  }
+
+  @Transactional
+  public Map<String, Object> deleteTopic(Integer topicNo) throws Exception {
+    Map<String, Object> resultMap = new HashMap<>();
+
+    Optional<Topic> topicOp = topicRepository.findByNo(topicNo);
+    Topic topic = takeOp(topicOp);
+
+    issueRepository.deleteAllByTopic(topic);
+    topicRepository.deleteById(topicNo);
+
+    resultMap.put("message", Message.TOPIC_DELETE_SUCCESS_MESSAGE);
+
+    return resultMap;
   }
 }

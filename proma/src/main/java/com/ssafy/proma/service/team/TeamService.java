@@ -1,5 +1,6 @@
 package com.ssafy.proma.service.team;
 
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamCreateDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamExitDto;
 import com.ssafy.proma.model.dto.team.ReqTeamDto.TeamJoinDto;
@@ -37,10 +38,11 @@ public class TeamService extends AbstractService {
   private final SecurityUtil securityUtil;
 
   @Transactional
-  public void createTeam(TeamCreateDto teamDto){
+  public Map<String, Object> createTeam(TeamCreateDto teamDto){
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String projectNo = teamDto.getProjectNo();
-//    String userNo = teamDto.getUserNo();
     String userNo = securityUtil.getCurrentUserNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
@@ -48,19 +50,21 @@ public class TeamService extends AbstractService {
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
 
-
     Team team = teamDto.toEntity(project);
     UserTeam userTeam = teamDto.toEntity(team, user);
     teamRepository.save(team);
     userTeamRepository.save(userTeam);
 
+    resultMap.put("message", Message.TEAM_CREATE_SUCCESS_MESSAGE);
+    return resultMap;
   }
 
   @Transactional
-  public void joinTeam(TeamJoinDto teamDto) {
+  public Map<String, Object> joinTeam(TeamJoinDto teamDto) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     int teamNo = teamDto.getTeamNo();
-//    String userNo = teamDto.getUserNo();
     String userNo = securityUtil.getCurrentUserNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
@@ -72,13 +76,16 @@ public class TeamService extends AbstractService {
     UserTeam userTeam = teamDto.toEntity(team, user);
     userTeamRepository.save(userTeam);
 
+    resultMap.put("message", Message.TEAM_JOIN_SUCCESS_MESSAGE);
+    return resultMap;
   }
 
   @Transactional
-  public void exitTeam(TeamExitDto teamDto) {
+  public Map<String, Object> exitTeam(TeamExitDto teamDto) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     int teamNo = teamDto.getTeamNo();
-//    String userNo = teamDto.getUserNo();
     String userNo = securityUtil.getCurrentUserNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
@@ -87,12 +94,16 @@ public class TeamService extends AbstractService {
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
 
-    userTeamRepository.deleteByUserAndTeam(user,team);
+    userTeamRepository.deleteByUserAndTeam(user,team); //존재하지 않는 팀이어도 에러 없음
 
+    resultMap.put("message", Message.TEAM_EXIT_SUCCESS_MESSAGE);
+    return resultMap;
   }
 
   @Transactional
-  public void deleteTeam(Integer teamNo) {
+  public Map<String, Object> deleteTeam(Integer teamNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Team> teamOp = teamRepository.findByNo(teamNo);
     Team team = takeOp(teamOp);
@@ -101,10 +112,14 @@ public class TeamService extends AbstractService {
     userTeamRepository.deleteAllByTeam(team);
     teamRepository.deleteByNo(teamNo);
 
+    resultMap.put("message", Message.TEAM_DELETE_SUCCESS_MESSAGE);
+    return resultMap;
   }
 
   @Transactional
-  public void updateTeam(TeamUpdateDto teamDto) {
+  public Map<String, Object> updateTeam(TeamUpdateDto teamDto) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Integer teamNo = teamDto.getTeamNo();
     String name = teamDto.getTitle();
@@ -114,9 +129,13 @@ public class TeamService extends AbstractService {
 
     team.update(name);
 
+    resultMap.put("message", Message.TEAM_UPDATE_SUCCESS_MESSAGE);
+    return resultMap;
   }
 
-  public List<TeamDto> getTeamList(String projectNo) {
+  public Map<String, Object> getTeamList(String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
@@ -127,7 +146,9 @@ public class TeamService extends AbstractService {
     List<TeamDto> teamDtoList = teams.stream().map(team -> new TeamDto(team))
         .collect(Collectors.toList());
 
-    return teamDtoList;
+    resultMap.put("teamList", teamDtoList);
+    resultMap.put("message", Message.TEAM_FIND_SUCCESS_MESSAGE);
+    return resultMap;
 
   }
 
@@ -149,7 +170,7 @@ public class TeamService extends AbstractService {
 
 
     resultMap.put("memberList", teamMemberDtoList);
-    resultMap.put("message", "팀원 조회 성공");
+    resultMap.put("message", Message.MEMBER_FIND_SUCCESS_MESSAGE);
     return resultMap;
   }
 
@@ -162,7 +183,7 @@ public class TeamService extends AbstractService {
     TeamDto teamDto = new TeamDto(teamNo, team.getName());
     
     resultMap.put("team", teamDto);
-    resultMap.put("message", "팀 조회 성공");
+    resultMap.put("message", Message.TEAM_FIND_SUCCESS_MESSAGE);
     return resultMap;
   }
 }

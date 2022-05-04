@@ -10,13 +10,12 @@ import static com.ssafy.proma.exception.Message.PROJECT_JOIN_SUCCESS_MESSAGE;
 import com.ssafy.proma.model.dto.issue.ResIssueDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
-import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
-import com.ssafy.proma.model.dto.project.ResProjectDto;
-import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectDetailDto;
+
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectTeamUserDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.TeamMembersDto;
+
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.team.Team;
@@ -28,7 +27,6 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
-
 import com.ssafy.proma.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;

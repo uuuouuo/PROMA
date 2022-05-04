@@ -33,11 +33,13 @@ import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.util.SecurityUtil;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,7 +56,7 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-  public Map<String, Object> getPrivateChatRoom(String subNo) {
+  public Map<String, Object> getPrivateChatRoom(String subNo, Pageable pageable) {
 
     // user check
     User pub = findUser(SecurityUtil.getCurrentUserNo());
@@ -71,11 +73,18 @@ public class ChatService {
     }
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgResList =
-        privateChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-                , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<PrivateChatMessage> msgList = new ArrayList<>();
+    msgList = privateChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new PrivateChatMessage()).collect(Collectors.toList());
+
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
 
     PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
 
@@ -87,7 +96,7 @@ public class ChatService {
 
   }
 
-  public Map<String, Object> getTeamChatRoom(Integer teamNo) {
+  public Map<String, Object> getTeamChatRoom(Integer teamNo, Pageable pageable) {
 
     // team check
     Team team = findTeam(teamNo);
@@ -97,13 +106,20 @@ public class ChatService {
         .orElseGet(() -> creatTeamChatRoom(team));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgList =
-        teamChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-            , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<TeamChatMessage> msgList = new ArrayList<>();
+    msgList = teamChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new TeamChatMessage()).collect(Collectors.toList());
 
-    TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgList);
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
+
+    TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgResList);
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);
@@ -113,7 +129,7 @@ public class ChatService {
 
   }
 
-  public Map<String, Object> getProjectChatRoom(String projectNo) {
+  public Map<String, Object> getProjectChatRoom(String projectNo, Pageable pageable) {
 
     // project check
     Project project = findProject(projectNo);
@@ -123,13 +139,20 @@ public class ChatService {
         .orElseGet(() -> creatProjectChatRoom(project));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgList
-        = projectChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-            , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<ProjectChatMessage> msgList
+        = projectChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new ProjectChatMessage()).collect(Collectors.toList());
 
-    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgList);
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
+
+    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgResList);
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);
