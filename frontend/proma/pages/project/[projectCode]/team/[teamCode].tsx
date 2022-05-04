@@ -10,6 +10,10 @@ import {
   WarningModal,
 } from "../../../../components/common/Modal";
 
+import { connect } from "react-redux";
+import { getTeamInfo } from "../../../../store/modules/team";
+import { RootState } from "../../../../store/modules";
+
 //team info get api 필요
 
 //styled-components
@@ -206,7 +210,25 @@ const issueData = [
   },
 ];
 
-const TeamSpace = () => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    teamInfo: state.teamReducer.teamInfo,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getTeamInfo: (teamNo: string) => dispatch(getTeamInfo(teamNo)),
+  };
+};
+
+const TeamSpace = ({
+  getTeamInfo,
+  teamInfo,
+}: {
+  getTeamInfo: any;
+  teamInfo: any;
+}) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
@@ -225,14 +247,18 @@ const TeamSpace = () => {
 
     const project_code = router.query.projectCode;
     const team_code = router.query.teamCode;
+
+    getTeamInfo(team_code);
   }, [router.isReady]);
+
+  useEffect(() => {
+    setTeamName(teamInfo.title);
+  }, [teamInfo]);
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
     console.log(args);
   };
-
-  //팀 별 이슈 get api 로직 필요
 
   //issue create modal
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
@@ -460,4 +486,4 @@ const TeamSpace = () => {
   );
 };
 
-export default TeamSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(TeamSpace);

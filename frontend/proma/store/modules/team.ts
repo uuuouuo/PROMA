@@ -8,10 +8,12 @@ const api = apiInstance();
 //state type
 export type TeamState = {
   teamList: Array<Object>;
+  teamInfo: any;
 };
 //state
 const initialState: TeamState = {
   teamList: [],
+  teamInfo: {},
 };
 
 //get team list api
@@ -28,9 +30,9 @@ export const getTeamList = createAsyncThunk(
 //get team info api
 export const getTeamInfo = createAsyncThunk(
   "GET/TEAM",
-  async (projectNo: string, thunkAPI) => {
+  async (teamNo: string, thunkAPI) => {
     return await api
-      .get(`/team/${projectNo}`)
+      .get(`/team/info/${teamNo}`)
       .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
@@ -54,9 +56,13 @@ const teamSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getTeamList.fulfilled, (state, { payload }) => {
-      state.teamList = payload;
-    });
+    builder
+      .addCase(getTeamList.fulfilled, (state, { payload }) => {
+        state.teamList = payload;
+      })
+      .addCase(getTeamInfo.fulfilled, (state, { payload }) => {
+        state.teamInfo = payload.team;
+      });
   },
 });
 

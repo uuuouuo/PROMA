@@ -15,16 +15,15 @@ const TeamContainer = styled.div`
   flex-direction: column;
   margin: 10px 0;
 `;
-
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: inherit;
-  padding: 0 10px;
+  padding: 0 5px;
   margin-bottom: 10px;
   a {
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
     color: black;
   }
@@ -33,7 +32,6 @@ const Header = styled.div`
     align-items: center;
   }
 `;
-
 const ChatJoinButton = styled.button`
   border: 2px solid ${(props: ThemeType) => props.theme.mainColor};
   border-radius: 3px;
@@ -47,7 +45,6 @@ const ChatJoinButton = styled.button`
     cursor: pointer;
   }
 `;
-
 const ArrowButton = styled.button`
   background-color: inherit;
   border: none;
@@ -56,7 +53,6 @@ const ArrowButton = styled.button`
   display: flex;
   align-items: center;
 `;
-
 const MemberBox = styled.div`
   padding: 10px 20px;
 `;
