@@ -20,8 +20,6 @@ public class Message {
   public static final String TOPIC_UPDATE_ERROR_MESSAGE = "토픽 수정 실패";
   public static final String TOPIC_FIND_SUCCESS_MESSAGE = "토픽 조회 성공";
   public static final String TOPIC_FIND_ERROR_MESSAGE = "토픽 조회 실패";
-  public static final String TOPIC_LIST_FIND_SUCCESS_MESSAGE = "토픽 목록 조회 성공";
-  public static final String TOPIC_LIST_FIND_ERROR_MESSAGE = "토픽 목록 조회 실패";
   public static final String TOPIC_DELETE_SUCCESS_MESSAGE = "토픽 삭제 성공";
   public static final String TOPIC_DELETE_ERROR_MESSAGE = "토픽 삭제 실패";
 
