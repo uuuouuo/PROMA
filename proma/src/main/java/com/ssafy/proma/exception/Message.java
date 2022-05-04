@@ -35,4 +35,19 @@ public class Message {
   public static final String ISSUE_DELETE_SUCCESS_MESSAGE = "이슈 삭제 성공";
   public static final String ISSUE_DELETE_ERROR_MESSAGE = "이슈 삭제 실패";
 
+  //team
+  public static final String TEAM_CREATE_SUCCESS_MESSAGE = "팀 생성 성공";
+  public static final String TEAM_CREATE_ERROR_MESSAGE = "팀 생성 실패";
+  public static final String TEAM_JOIN_SUCCESS_MESSAGE = "팀 조인 성공";
+  public static final String TEAM_JOIN_ERROR_MESSAGE = "팀 조인 실패";
+  public static final String TEAM_EXIT_SUCCESS_MESSAGE = "팀 탈퇴 성공";
+  public static final String TEAM_EXIT_ERROR_MESSAGE = "팀 탈퇴 실패";
+  public static final String TEAM_UPDATE_SUCCESS_MESSAGE = "팀 수정 성공";
+  public static final String TEAM_UPDATE_ERROR_MESSAGE = "팀 수정 실패";
+  public static final String TEAM_FIND_SUCCESS_MESSAGE = "팀 조회 성공";
+  public static final String TEAM_FIND_ERROR_MESSAGE = "팀 조회 실패";
+  public static final String MEMBER_FIND_SUCCESS_MESSAGE = "팀원 조회 성공";
+  public static final String MEMBER_FIND_ERROR_MESSAGE = "팀원 조회 실패";
+  public static final String TEAM_DELETE_SUCCESS_MESSAGE = "팀 삭제 성공";
+  public static final String TEAM_DELETE_ERROR_MESSAGE = "팀 삭제 실패";
 }
