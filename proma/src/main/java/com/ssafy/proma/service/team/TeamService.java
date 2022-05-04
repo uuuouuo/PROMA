@@ -152,11 +152,11 @@ public class TeamService extends AbstractService {
       Optional<UserTeam> userTeamOp = userTeamRepository.findByUserAndTeam(user, team);
       UserTeam userTeam = takeOp(userTeamOp);
 
-      if(userTeam.getTeam() == team) {
-        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), true);
+      if(userTeam == null) {
+        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), false);
         teamDtoList.add(teamDto);
       } else {
-        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), false);
+        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), true);
         teamDtoList.add(teamDto);
       }
     });
@@ -204,10 +204,10 @@ public class TeamService extends AbstractService {
     UserTeam userTeam = takeOp(userTeamOp);
 
     TeamDto teamDto;
-    if(userTeam.getTeam() == team) {
-      teamDto = new TeamDto(teamNo, team.getName(), true);
-    } else {
+    if(userTeam == null) {
       teamDto = new TeamDto(teamNo, team.getName(), false);
+    } else {
+      teamDto = new TeamDto(teamNo, team.getName(), true);
     }
 
     resultMap.put("team", teamDto);
