@@ -14,6 +14,7 @@ import {
   getTeamInfo,
   updateTeamInfo,
   deleteTeam,
+  outTeam,
 } from "../../../../store/modules/team";
 import { RootState } from "../../../../store/modules";
 
@@ -224,6 +225,7 @@ const mapDispatchToProps = (dispatch: any) => {
     getTeamInfo: (teamNo: string) => dispatch(getTeamInfo(teamNo)),
     updateTeamInfo: (teamInfo: any) => dispatch(updateTeamInfo(teamInfo)),
     deleteTeam: (teamInfo: any) => dispatch(deleteTeam(teamInfo)),
+    outTeam: (teamInfo: any) => dispatch(outTeam(teamInfo)),
   };
 };
 
@@ -232,11 +234,13 @@ const TeamSpace = ({
   teamInfo,
   updateTeamInfo,
   deleteTeam,
+  outTeam,
 }: {
   getTeamInfo: any;
   teamInfo: any;
   updateTeamInfo: any;
   deleteTeam: any;
+  outTeam: any;
 }) => {
   const router = useRouter();
 
@@ -284,7 +288,7 @@ const TeamSpace = ({
     setUpdateTitle((cur) => !cur);
   };
 
-  const onOutTeam = () => {};
+  const onOutTeam = () => outTeam({ teamNo, projectNo });
   const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
   //DOM 준비되었을 때 렌더링

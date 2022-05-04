@@ -24,7 +24,7 @@ const WarningModal = ({
     deleteFunc();
     showWarningModal();
   };
-  
+
   return (
     <ModalBox
       open={warningModal}
@@ -50,7 +50,7 @@ const WarningModal = ({
             <MaintainButton onClick={showWarningModal}>
               아니요 유지할래요!
             </MaintainButton>
-            <DeleteButton onClick={onDelete}>네 삭제할게요</DeleteButton>
+            <DeleteButton onClick={onDelete}>네</DeleteButton>
           </WarningButtonBox>
         </WarningContainer>
       </Box>

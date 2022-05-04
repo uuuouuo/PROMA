@@ -77,6 +77,19 @@ export const deleteTeam = createAsyncThunk(
   }
 );
 
+//out team api
+export const outTeam = createAsyncThunk(
+  "POST/OUTTEAM",
+  async (teamInfo: any, thunkAPI) => {
+    return await api
+      .post(`/team/exit`, { teamNo: teamInfo.teamNo })
+      .then((res) => {
+        // window.location.href = `/project/${teamInfo.projectNo}`;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const teamSlice = createSlice({
   name: "team",
   initialState,
