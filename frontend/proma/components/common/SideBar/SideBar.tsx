@@ -45,6 +45,7 @@ const AddProjectButton = styled.button`
 const mapStateToProps = (state: RootState) => {
   return {
     projectList: state.projectReducer.projectList,
+    isLogin: state.userReducer.isLogin,
   };
 };
 
@@ -60,10 +61,12 @@ const SideBar = ({
   projectList,
   getProjects,
   postNewProject,
+  isLogin,
 }: {
   projectList: any;
   getProjects: any;
   postNewProject: any;
+  isLogin: boolean;
 }) => {
   const [projectCreateModal, setProjectCreateModal] = useState<boolean>(false);
   const showProjectCreateModal = () => setProjectCreateModal((cur) => !cur);
@@ -75,19 +78,23 @@ const SideBar = ({
   return (
     <SideBarContainer>
       <H4>My Projects</H4>
-      <ProjectsContainer>
-        {projectList?.map((project: any, index: any) => (
-          <Project projectInfo={project} key={index} />
-        ))}
-        <AddProjectButton onClick={showProjectCreateModal}>
-          + Create New Project
-        </AddProjectButton>
-        <ProjectCreateModal
-          projectCreateModal={projectCreateModal}
-          showProjectCreateModal={showProjectCreateModal}
-          postNewProject={postNewProject}
-        />
-      </ProjectsContainer>
+      {isLogin ? (
+        <ProjectsContainer>
+          {projectList?.map((project: any, index: any) => (
+            <Project projectInfo={project} key={index} />
+          ))}
+          <AddProjectButton onClick={showProjectCreateModal}>
+            + Create New Project
+          </AddProjectButton>
+          <ProjectCreateModal
+            projectCreateModal={projectCreateModal}
+            showProjectCreateModal={showProjectCreateModal}
+            postNewProject={postNewProject}
+          />
+        </ProjectsContainer>
+      ) : (
+        <H4>Please login first.</H4>
+      )}
     </SideBarContainer>
   );
 };
