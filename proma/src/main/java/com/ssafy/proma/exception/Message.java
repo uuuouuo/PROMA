@@ -48,4 +48,25 @@ public class Message {
   public static final String MEMBER_FIND_ERROR_MESSAGE = "팀원 조회 실패";
   public static final String TEAM_DELETE_SUCCESS_MESSAGE = "팀 삭제 성공";
   public static final String TEAM_DELETE_ERROR_MESSAGE = "팀 삭제 실패";
+
+  // project
+  public static final String PROJECT_CREATE_SUCCESS_MESSAGE = "프로젝트 생성 성공";
+  public static final String PROJECT_JOIN_SUCCESS_MESSAGE = "프로젝트 참여 성공";
+  public static final String PROJECT_JOIN_ERROR_MESSAGE = "프로젝트 참여 실패";
+  public static final String PROJECT_CHANGE_SUCCESS_MESSAGE = "프로젝트 이름 수정 성공";
+  public static final String PROJECT_CHANGE_ERROR_MESSAGE = "프로젝트 이름 수정  실패";
+  public static final String PROJECT_DELETE_SUCCESS_MESSAGE = "프로젝트 삭제 성공";
+  public static final String PROJECT_DELETE_ERROR_MESSAGE = "프로젝트 삭제 실패";
+
+
+  //sprint
+  public static final String SPRINT_DELETE_SUCCESS_MESSAGE = "스프린트 삭제 성공";
+  public static final String SPRINT_DELETE_ERROR_MESSAGE = "스프린트 삭제 실패";
+  public static final String SPRINT_GET_SUCCESS_MESSAGE = "스프린트 조회 성공";
+  public static final String SPRINT_GET_ERROR_MESSAGE = "스프린트 조회 실패";
+  public static final String SPRINT_UPDATE_SUCCESS_MESSAGE = "스프린트 수정 성공";
+  public static final String SPRINT_UPDATE_ERROR_MESSAGE = "스프린트 수정 실패";
+  public static final String SPRINT_CREATE_SUCCESS_MESSAGE = "스프린트 생성 성공";
+  public static final String SPRINT_CREATE_ERROR_MESSAGE = "스프린트 생성 실패";
+
 }

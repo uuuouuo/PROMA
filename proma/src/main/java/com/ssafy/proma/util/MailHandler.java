@@ -1,5 +1,6 @@
 package com.ssafy.proma.util;
 
+import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,8 +21,8 @@ public class MailHandler {
   }
 
   // 보내는 사람 이메일
-  public void setFrom(String fromAddress) throws MessagingException {
-    messageHelper.setFrom(fromAddress);
+  public void setFrom(String fromAddress) throws MessagingException, UnsupportedEncodingException {
+    messageHelper.setFrom(fromAddress,"Proma");
   }
 
   // 받는 사람 이메일
