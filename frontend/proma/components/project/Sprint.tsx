@@ -1,15 +1,15 @@
 //스프린트 컴포넌트
 import Team from "./Team";
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { ThemeType } from "../../interfaces/style";
-
 import SprintUpdateModal from "../../components/Modals/SprintUpdateModal";
 
-import { connect } from "react-redux";
-import { deleteSprint } from "../../store/modules/sprint";
+import styled from "styled-components";
+import { ThemeType } from "../../interfaces/style";
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { is } from "immer/dist/internal";
+
+import { connect } from "react-redux";
+import { deleteSprint, updateSprintStatus } from "../../store/modules/sprint";
 
 //styled-components
 const Title = styled.h2`
@@ -62,6 +62,8 @@ const OptionBox = styled.div`
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    updateSprintStatus: (sprintInfo: any) =>
+      dispatch(updateSprintStatus(sprintInfo)),
     deleteSprint: (sprintInfo: any) => dispatch(deleteSprint(sprintInfo)),
   };
 };
@@ -70,10 +72,12 @@ const Sprint = ({
   sprint,
   teamList,
   deleteSprint,
+  updateSprintStatus,
 }: {
   sprint: any;
   teamList: any;
   deleteSprint?: any;
+  updateSprintStatus?: any;
 }) => {
   const router = useRouter();
 
@@ -83,6 +87,7 @@ const Sprint = ({
   const [projectNo, setProjectNo] = useState<string>("");
 
   const showSprintUpdateModal = () => setSprintUpdateModal((cur) => !cur);
+
   const onDeleteSprint = () => {
     let deleteConfirm = confirm("Are you sure you want to delete the sprint?");
     if (deleteConfirm) {
@@ -91,6 +96,16 @@ const Sprint = ({
         projectNo,
       });
     }
+  };
+
+  const onToggleSprintStatus = () => {
+    updateSprintStatus({
+      sprintNo: sprint.sprintNo,
+      projectNo,
+    }).then((res: any) => {
+      alert(inProgress ? "Sprint is finished" : "Sprint is started");
+      setInProgress((cur) => !cur);
+    });
   };
 
   useEffect(() => {
@@ -114,7 +129,7 @@ const Sprint = ({
           showSprintUpdateModal={showSprintUpdateModal}
           sprintInfo={sprint}
         />
-        <FilledButton onClick={() => setInProgress((cur) => !cur)}>
+        <FilledButton onClick={onToggleSprintStatus}>
           {inProgress ? "Finish Sprint" : "Start Sprint"}
         </FilledButton>
       </FlexBox>
