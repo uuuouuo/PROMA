@@ -319,50 +319,6 @@ export const SprintCreateModal = ({
   );
 };
 
-export const TeamCreateModal = ({
-  teamCreateModal,
-  showTeamCreateModal,
-}: {
-  teamCreateModal: boolean;
-  showTeamCreateModal: any;
-}) => {
-  const [teamName, setTeamName] = useState<string>("");
-
-  const createNewTeam = () => {
-    //post team api
-
-    showTeamCreateModal();
-  };
-  return (
-    <ModalBox
-      open={teamCreateModal}
-      onClose={showTeamCreateModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Header>Create Team</Header>
-        <BodyContainer>
-          <InputArea>
-            <p>Team</p>
-            <input
-              type="text"
-              value={teamName}
-              placeholder="Please type team name."
-              onChange={(e) => setTeamName(e.target.value)}
-            />
-          </InputArea>
-
-          <ButtonBox>
-            <CancelButton onClick={showTeamCreateModal}>Cancel</CancelButton>
-            <CreateButton onClick={createNewTeam}>Create</CreateButton>
-          </ButtonBox>
-        </BodyContainer>
-      </Box>
-    </ModalBox>
-  );
-};
-
 export const TopicListModal = ({
   topicListModal,
   showTopicListModal,

@@ -5,7 +5,7 @@ import Team from "./Team";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
-import { TeamCreateModal } from "../Modal";
+import TeamCreateModal from "../../Modals/CreateTeam";
 
 import { connect } from "react-redux";
 import { getTeamList } from "../../../store/modules/team";
@@ -103,7 +103,7 @@ const Project = ({
   getTeamList?: any;
   teamList?: any;
 }) => {
-  const [showTeams, setShowTeams] = useState<boolean>(false);
+  const [showTeams, setShowTeams] = useState<boolean>(true);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
@@ -143,6 +143,7 @@ const Project = ({
           </AddTeamButton>
           <TeamCreateModal
             teamCreateModal={teamCreateModal}
+            projectNo={projectInfo.projectNo}
             showTeamCreateModal={showTeamCreateModal}
           />
         </TeamBox>

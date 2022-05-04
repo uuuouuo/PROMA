@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+import { getProjectList } from "./project";
+
 import { apiInstance } from "../../api";
 const api = apiInstance();
 
@@ -30,6 +32,19 @@ export const getTeamInfo = createAsyncThunk(
     return await api
       .get(`/team/${projectNo}`)
       .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//post new team api
+export const createNewTeam = createAsyncThunk(
+  "POST/TEAM",
+  async (newTeamInfo: any, thunkAPI) => {
+    return await api
+      .post(`/team`, newTeamInfo)
+      .then((res) => {
+        thunkAPI.dispatch(getProjectList());
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
