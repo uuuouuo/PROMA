@@ -6,10 +6,14 @@ const api = apiInstance();
 //state type
 export type SprintState = {
   sprintList: Array<Object>;
+  isInProgress: boolean;
+  inProgressSprintInfo: Object;
 };
 //state
 const initialState: SprintState = {
   sprintList: [],
+  isInProgress: false,
+  inProgressSprintInfo: {},
 };
 
 //get sprint list api
@@ -19,6 +23,20 @@ export const getSprintList = createAsyncThunk(
     return await api
       .get(`/sprint/list/${projectNo}`)
       .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//get in progress sprint api
+export const getInProgressSprint = createAsyncThunk(
+  "GET/SPRINTINPROGRESS",
+  async (projectNo: string, thunkAPI) => {
+    return await api
+      .get(`/sprint/start/${projectNo}`)
+      .then((res) => {
+        thunkAPI.dispatch(getSprintList(projectNo));
+        return res.data;
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -58,7 +76,7 @@ export const updateSprintStatus = createAsyncThunk(
     return await api
       .put(`/sprint/status/${sprintInfo.sprintNo}`)
       .then((res) => {
-        thunkAPI.dispatch(getSprintList(sprintInfo.projectNo));
+        thunkAPI.dispatch(getInProgressSprint(sprintInfo.projectNo));
         return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -84,9 +102,18 @@ const sprintSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getSprintList.fulfilled, (state, { payload }) => {
-      state.sprintList = payload.sprint;
-    });
+    builder
+      .addCase(getSprintList.fulfilled, (state, { payload }) => {
+        state.sprintList = payload.sprint;
+      })
+      .addCase(getInProgressSprint.fulfilled, (state, { payload }) => {
+        state.isInProgress = true;
+        state.inProgressSprintInfo = payload.sprint;
+      })
+      .addCase(getInProgressSprint.rejected, (state) => {
+        state.isInProgress = false;
+        state.inProgressSprintInfo = {};
+      });
   },
 });
 

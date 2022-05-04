@@ -21,7 +21,10 @@ import {
   joinProject,
 } from "../../../store/modules/project";
 import { getTeamList } from "../../../store/modules/team";
-import { getSprintList } from "../../../store/modules/sprint";
+import {
+  getSprintList,
+  getInProgressSprint,
+} from "../../../store/modules/sprint";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
 
@@ -136,6 +139,8 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(updateProjectInfo(projectNewInfo)),
     getProjectJoinStatus: (projectNo: string) =>
       dispatch(getProjectJoinStatus(projectNo)),
+    getInProgressSprint: (projectNo: string) =>
+      dispatch(getInProgressSprint(projectNo)),
   };
 };
 
@@ -151,6 +156,7 @@ const ProjectSpace = ({
   teamList,
   sprintList,
   getSprintList,
+  getInProgressSprint,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -163,6 +169,7 @@ const ProjectSpace = ({
   sprintList: any;
   teamList: any;
   getSprintList: any;
+  getInProgressSprint: any;
 }) => {
   const router = useRouter();
 
@@ -241,6 +248,7 @@ const ProjectSpace = ({
     getProjectInfo(projectNo);
     getSprintList(projectNo);
     getTeamList(projectNo);
+    getInProgressSprint(projectNo);
   }, [projectNo]);
 
   useEffect(() => {

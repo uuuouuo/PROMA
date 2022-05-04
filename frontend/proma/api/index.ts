@@ -70,7 +70,7 @@ export const apiInstance = () => {
       } else {
         console.log(`Error ${error.message}`);
       }
-      Promise.reject(error);
+    //   Promise.reject(error);
     }
   );
   return instance;

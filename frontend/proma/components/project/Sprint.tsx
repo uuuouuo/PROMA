@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 
 import { connect } from "react-redux";
 import { deleteSprint, updateSprintStatus } from "../../store/modules/sprint";
+import { RootState } from "../../store/modules";
 
 //styled-components
 const Title = styled.h2`
@@ -60,11 +61,18 @@ const OptionBox = styled.div`
   }
 `;
 
+const mapStateToProps = (state: RootState) => {
+  return {
+    isInProgress: state.sprintReducer.isInProgress,
+    inProgressSprintInfo: state.sprintReducer.inProgressSprintInfo,
+  };
+};
+
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    deleteSprint: (sprintInfo: any) => dispatch(deleteSprint(sprintInfo)),
     updateSprintStatus: (sprintInfo: any) =>
       dispatch(updateSprintStatus(sprintInfo)),
-    deleteSprint: (sprintInfo: any) => dispatch(deleteSprint(sprintInfo)),
   };
 };
 
@@ -73,11 +81,15 @@ const Sprint = ({
   teamList,
   deleteSprint,
   updateSprintStatus,
+  isInProgress,
+  inProgressSprintInfo,
 }: {
   sprint: any;
   teamList: any;
   deleteSprint?: any;
   updateSprintStatus?: any;
+  isInProgress?: boolean;
+  inProgressSprintInfo?: Object;
 }) => {
   const router = useRouter();
 
@@ -110,13 +122,12 @@ const Sprint = ({
 
   useEffect(() => {
     if (!router.isReady) return;
-
-    setProjectNo(router.query.projectCode as string);
+    const projectNo = router.query.projectCode as string;
+    setProjectNo(projectNo);
   }, [router.asPath]);
 
   useEffect(() => {
     if (!teamList) return;
-
     setTeams(teamList);
   }, [teamList]);
 
@@ -129,9 +140,15 @@ const Sprint = ({
           showSprintUpdateModal={showSprintUpdateModal}
           sprintInfo={sprint}
         />
-        <FilledButton onClick={onToggleSprintStatus}>
-          {inProgress ? "Finish Sprint" : "Start Sprint"}
-        </FilledButton>
+        {!isInProgress ? (
+          <FilledButton onClick={onToggleSprintStatus}>
+            Start Sprint
+          </FilledButton>
+        ) : sprint.status ? (
+          <FilledButton onClick={onToggleSprintStatus}>
+            Finish Sprint
+          </FilledButton>
+        ) : null}
       </FlexBox>
       <TeamBox>
         {teams
@@ -140,7 +157,7 @@ const Sprint = ({
             ))
           : null}
       </TeamBox>
-      {sprint.sprintNo ? (
+      {sprint.sprintNo && !sprint.status ? (
         <OptionBox>
           <FilledButton onClick={showSprintUpdateModal}>
             Update Sprint
@@ -152,4 +169,4 @@ const Sprint = ({
   );
 };
 
-export default connect(null, mapDispatchToProps)(Sprint);
+export default connect(mapStateToProps, mapDispatchToProps)(Sprint);
