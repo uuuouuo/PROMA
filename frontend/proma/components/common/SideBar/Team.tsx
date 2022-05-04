@@ -3,11 +3,8 @@ import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
-
-//dummy data
-const members = ["kim", "Park", "Choi", "Seo", "Jang"];
 
 //styled-components
 const TeamContainer = styled.div`
@@ -54,26 +51,31 @@ const ArrowButton = styled.button`
   align-items: center;
 `;
 const MemberBox = styled.div`
-  padding: 10px 20px;
+  padding: 10px 20px 10px 10px;
 `;
 
 const Team = ({
   teamInfo,
   projectNo,
+  currentTeam,
 }: {
   teamInfo: any;
   projectNo: string;
+  currentTeam: boolean;
 }) => {
-  const [showMembers, setShowMembers] = useState<boolean>(false);
-  const [joinTeam, setJoinTeam] = useState<boolean>(false);
+  const [showMembers, setShowMembers] = useState<boolean>(currentTeam);
+  const [members, setMembers] = useState<Array<Object>>([]);
 
   // 채팅창 띄우기
   const [state, setState] = useState(false);
   const showChat = () => setState((cur) => !cur);
 
+  useEffect(() => {
+    setMembers(teamInfo.memberList);
+  }, [teamInfo]);
+
   const onJoinTeam = () => {
-    //join 하겠냐는 모달창 띄우고 거기서
-    setJoinTeam(true);
+    //join 하겠냐는 모달창 띄우고 거기서(추후 제작)
   };
 
   const onShowChat = () => {};
@@ -85,7 +87,7 @@ const Team = ({
           <a>{teamInfo.title}</a>
         </Link>
         <div>
-          {joinTeam ? (
+          {teamInfo.isInMember ? (
             <>
               <ChatJoinButton onClick={() => setState(true)}>
                 Chat
@@ -102,9 +104,11 @@ const Team = ({
       </Header>
       {showMembers ? (
         <MemberBox>
-          {members.map((member, index) => (
-            <Member memberName={member} key={index} />
-          ))}
+          {members
+            ? members.map((member, index) => (
+                <Member memberInfo={member} key={index} />
+              ))
+            : null}
         </MemberBox>
       ) : null}
     </TeamContainer>

@@ -6,10 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 import TeamCreateModal from "../../Modals/CreateTeam";
-
-import { connect } from "react-redux";
-import { getTeamList } from "../../../store/modules/team";
-import { RootState } from "../../../store/modules";
+import { useRouter } from "next/router";
 
 //styled-components
 const ProjectContainer = styled.div`
@@ -74,7 +71,7 @@ const AddTeamButton = styled.button`
 const TeamBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 10px 5px 0 10px;
   ${AddTeamButton} {
     align-self: flex-start;
     padding: 10px;
@@ -82,22 +79,12 @@ const TeamBox = styled.div`
   }
 `;
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    // teamList: state.teamReducer.teamList,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    // getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
-  };
-};
-
 const Project = ({ projectInfo }: { projectInfo: any }) => {
-  const [showTeams, setShowTeams] = useState<boolean>(true);
+  const router = useRouter();
+
+  const [showTeams, setShowTeams] = useState<boolean>(false);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
-  const [teams, setTeams] = useState(projectInfo.teamMembersDtos);
+  const [teams, setTeams] = useState<Array<Object>>([]);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
   // 채팅창 띄우기
@@ -105,9 +92,16 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
   const showChat = () => setState((cur) => !cur);
 
   useEffect(() => {
-    getTeamList(projectInfo.projectNo);
     setTeams(projectInfo.teamList);
   }, [projectInfo]);
+
+  useEffect(() => {
+    if (router.query.projectCode) {
+      if (router.query.projectCode === projectInfo.projectNo)
+        setShowTeams(true);
+      else setShowTeams(false);
+    }
+  }, [router.asPath]);
 
   return (
     <ProjectContainer>
@@ -125,11 +119,12 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
       </Header>
       {showTeams ? (
         <TeamBox>
-          {teams === !undefined
+          {teams
             ? teams.map((team: any, index: any) => (
                 <Team
                   teamInfo={team}
                   projectNo={projectInfo.projectNo}
+                  currentTeam={showTeams}
                   key={index}
                 />
               ))
@@ -148,4 +143,4 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Project);
+export default Project;

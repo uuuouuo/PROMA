@@ -12,7 +12,7 @@ import { RootState } from "../../../store/modules";
 //styled-components
 const SideBarContainer = styled.div`
   width: 20vw;
-  min-width: 200px;
+  min-width: 250px;
   height: 100%;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   position: relative;
