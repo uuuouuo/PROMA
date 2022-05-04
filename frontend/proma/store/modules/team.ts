@@ -45,8 +45,6 @@ export const createNewTeam = createAsyncThunk(
     return await api
       .post(`/team`, newTeamInfo)
       .then((res) => {
-        console.log(res.data);
-
         thunkAPI.dispatch(getProjectList());
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -92,12 +90,12 @@ export const outTeam = createAsyncThunk(
 
 //join team api
 export const joinTeam = createAsyncThunk(
-  "POST/OUTTEAM",
+  "POST/JOINTEAM",
   async (teamInfo: any, thunkAPI) => {
     return await api
-      .post(`/team/exit`, { teamNo: teamInfo.teamNo })
+      .post(`/team/join`, teamInfo)
       .then((res) => {
-        // window.location.href = `/project/${teamInfo.projectNo}`;
+        thunkAPI.dispatch(getProjectList());
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }

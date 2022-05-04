@@ -6,6 +6,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 
+import { connect } from "react-redux";
+import { joinTeam } from "../../../store/modules/team";
+import { RootState } from "../../../store/modules";
+
 //styled-components
 const TeamContainer = styled.div`
   display: flex;
@@ -54,14 +58,22 @@ const MemberBox = styled.div`
   padding: 10px 20px 10px 10px;
 `;
 
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    joinTeam: (teamInfo: any) => dispatch(joinTeam(teamInfo)),
+  };
+};
+
 const Team = ({
   teamInfo,
   projectNo,
   currentTeam,
+  joinTeam,
 }: {
   teamInfo: any;
   projectNo: string;
   currentTeam: boolean;
+  joinTeam?: any;
 }) => {
   const [showMembers, setShowMembers] = useState<boolean>(currentTeam);
   const [members, setMembers] = useState<Array<Object>>([]);
@@ -75,7 +87,12 @@ const Team = ({
   }, [teamInfo]);
 
   const onJoinTeam = () => {
-    //join 하겠냐는 모달창 띄우고 거기서(추후 제작)
+    let joinConfirm = confirm("Would you like to join the team?");
+    if (joinConfirm) {
+      joinTeam({ teamNo: teamInfo.teamNo }).then((res: any) =>
+        alert("Team registration is complete.")
+      );
+    }
   };
 
   const onShowChat = () => {};
@@ -115,4 +132,4 @@ const Team = ({
   );
 };
 
-export default Team;
+export default connect(null, mapDispatchToProps)(Team);
