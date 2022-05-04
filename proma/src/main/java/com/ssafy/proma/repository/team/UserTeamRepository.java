@@ -14,4 +14,5 @@ public interface UserTeamRepository extends JpaRepository<UserTeam,Integer> {
   Optional<List<UserTeam>> findByTeam(Team team);
   UserTeam findByUser(User user);
 
+  Optional<UserTeam> findByUserAndTeam(User user, Team team);
 }

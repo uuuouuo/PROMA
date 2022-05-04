@@ -187,7 +187,10 @@ public class ProjectService extends AbstractService {
                 , userTeam.getUser().getNickname()
                 , userTeam.getUser().getProfileImage()))
             .collect(Collectors.toList());
-        teamMembersDtos.add(new TeamMembersDto(team.getNo(),team.getName(),userDtos));
+        Optional<UserTeam> byUserAndTeam = userTeamRepository.findByUserAndTeam(user, team);
+        UserTeam userTeamIn = takeOp(byUserAndTeam);
+        Boolean isIn = userTeamIn == null ? false : true;
+        teamMembersDtos.add(new TeamMembersDto(team.getNo(),team.getName(),isIn,userDtos));
       });
       projectTeamUserDtos.add(new ProjectTeamUserDto(project.getNo(), project.getName(),teamMembersDtos));
     });
