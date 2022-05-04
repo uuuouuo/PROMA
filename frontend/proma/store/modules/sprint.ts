@@ -4,9 +4,24 @@ import { apiInstance } from "../../api";
 const api = apiInstance();
 
 //state type
-export type SprintState = {};
+export type SprintState = {
+  sprintList: Array<Object>;
+};
 //state
-const initialState: SprintState = {};
+const initialState: SprintState = {
+  sprintList: [],
+};
+
+//get sprint list api
+export const getSprintList = createAsyncThunk(
+  "GET/SPRINTS",
+  async (projectNo: string, thunkAPI) => {
+    return await api
+      .get(`/sprint/list/${projectNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
 
 //post new sprint api
 export const createNewSprint = createAsyncThunk(
@@ -14,7 +29,10 @@ export const createNewSprint = createAsyncThunk(
   async (newSprintInfo: any, thunkAPI) => {
     return await api
       .post(`/sprint`, newSprintInfo)
-      .then((res) => res.data)
+      .then((res) => {
+        thunkAPI.dispatch(getSprintList(newSprintInfo.projectNo));
+        return res.data;
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -23,11 +41,11 @@ const sprintSlice = createSlice({
   name: "sprint",
   initialState,
   reducers: {},
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(.fulfilled, (state, { payload }) => {
-  //     });
-  // },
+  extraReducers: (builder) => {
+    builder.addCase(getSprintList.fulfilled, (state, { payload }) => {
+      state.sprintList = payload.sprint;
+    });
+  },
 });
 
 export default sprintSlice.reducer;

@@ -56,7 +56,7 @@ const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
   return (
     <SprintBox>
       <FlexBox>
-        <Title>{sprint.sprintName}</Title>
+        <Title>{sprint.title}</Title>
         <FilledButton onClick={() => setInProgress((cur) => !cur)}>
           {inProgress ? "Finish Sprint" : "Start Sprint"}
         </FilledButton>
@@ -64,7 +64,7 @@ const Sprint = ({ sprint, teamList }: { sprint: any; teamList: any }) => {
       <TeamBox>
         {teams
           ? teams?.map((team, index) => (
-              <Team team={team} key={index} sprintName={sprint.sprintName} />
+              <Team team={team} key={index} sprintName={sprint.title} />
             ))
           : null}
       </TeamBox>

@@ -21,12 +21,13 @@ import {
   joinProject,
 } from "../../../store/modules/project";
 import { getTeamList } from "../../../store/modules/team";
+import { getSprintList } from "../../../store/modules/sprint";
 import { RootState } from "../../../store/modules";
 import { useRouter } from "next/router";
 
 const backlog = {
-  sprintNo: 0,
-  sprintName: "Backlog",
+  sprintNo: null,
+  title: "Backlog",
 };
 
 //styled-components
@@ -119,6 +120,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     projectInfo: state.projectReducer.projectInfo,
     teamList: state.teamReducer.teamList,
+    sprintList: state.sprintReducer.sprintList,
     isLogin: state.userReducer.isLogin,
   };
 };
@@ -129,6 +131,7 @@ const mapDispatchToProps = (dispatch: any) => {
     deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
     joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
     getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
+    getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
     getProjectJoinStatus: (projectNo: string) =>
@@ -146,6 +149,8 @@ const ProjectSpace = ({
   joinProject,
   getTeamList,
   teamList,
+  sprintList,
+  getSprintList,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -155,7 +160,9 @@ const ProjectSpace = ({
   isLogin: boolean;
   joinProject: any;
   getTeamList: any;
-  teamList: Array<Object>;
+  sprintList: any;
+  teamList: any;
+  getSprintList: any;
 }) => {
   const router = useRouter();
 
@@ -165,6 +172,7 @@ const ProjectSpace = ({
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [teams, setTeams] = useState<Array<Object>>([]);
+  const [sprints, setSprints] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
@@ -229,21 +237,32 @@ const ProjectSpace = ({
 
   useEffect(() => {
     if (!projectNo) return;
+
     getProjectInfo(projectNo);
+    getSprintList(projectNo);
     getTeamList(projectNo);
   }, [projectNo]);
 
   useEffect(() => {
     if (!projectInfo) return;
+
     setTitle(projectInfo.title);
+
     if (projectInfo.role === "MANAGER") setIsManager(true);
     else setIsManager(false);
   }, [projectInfo]);
 
   useEffect(() => {
     if (!teamList) return;
+
     setTeams(teamList);
   }, [teamList]);
+
+  useEffect(() => {
+    if (!sprintList) return;
+
+    setSprints(sprintList);
+  }, [sprintList]);
 
   return (
     <>
@@ -296,9 +315,9 @@ const ProjectSpace = ({
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {/* {sprints?.map((sprint, index) => (
-                <Sprint sprint={sprint} key={index} />
-              ))} */}
+              {sprints?.map((sprint, index) => (
+                <Sprint sprint={sprint} key={index} teamList={teams} />
+              ))}
               <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
             {isManager ? (
