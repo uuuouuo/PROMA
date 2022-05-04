@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
+import { apiInstance } from "../../api";
+const api = apiInstance();
 
 export type UserState = {
     userInfo: any;
@@ -11,6 +13,21 @@ const initialState: UserState = {
     userInfo: [],
     isLogin: false,
 }
+
+export const getLogin = createAsyncThunk(
+    "USER/LOGIN/GITHUB",
+    async (_, thunkAPI) => {
+        const code = localStorage.getItem("code");
+        
+        return await axios
+            .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
+            .then((res) => {
+                localStorage.setItem("Authorization", res.data.jwtToken);
+                thunkAPI.dispatch(getUserInfo());
+    })
+        .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+    }
+);
 
 export const getUserInfo = createAsyncThunk(
     "USER/DATA",
@@ -28,33 +45,14 @@ export const getUserInfo = createAsyncThunk(
     }
 );
 
-export const getLogin = createAsyncThunk(
-    "USER/LOGIN/GITHUB",
-    async (_, thunkAPI) => {
-        const code = localStorage.getItem("code");
-        return await axios
-            .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
-            .then((res) => {
-                localStorage.setItem("Authorization", res.data.jwtToken);
-                thunkAPI.dispatch(getUserInfo());
-    })
-        .catch((err) => thunkAPI.rejectWithValue(err.response.data));
-    }
-);
-
 export const getLogout = createAsyncThunk(
     "USER/LOGOUT",
     async (_, { rejectWithValue }) => {
-        const Authorization = localStorage.getItem("Authorization");
-        return await axios
-            .get(`http://k6c107.p.ssafy.io:8080/user/logout`, {
-                headers: {
-                    Authorization: `Bearer ${Authorization}`
-                },
-        })
-        .then((res) => res.data)
-        .catch((err) => rejectWithValue(err.response.data));
-    }
+        return await api
+            .get(`/user/logout`)
+            .then((res) => res.data)
+            .catch((err) => rejectWithValue(err.response.data));
+        }
 );
 
 const memberSlice = createSlice({
@@ -70,11 +68,12 @@ const memberSlice = createSlice({
         ).addCase(
             getLogin.fulfilled, (state) => {
                 state.isLogin = true;
+                window.location.href = "/";
             }
         ).addCase(
-            getLogout.fulfilled,
-            (state, { payload }: { payload: { userInfo: any } }) => {
-                state.userInfo = "";
+            getLogout.fulfilled, (state) => {
+                console.log("로그아웃");
+                state.isLogin = false;
             }
         )
     },

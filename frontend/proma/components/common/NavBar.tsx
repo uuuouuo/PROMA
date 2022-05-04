@@ -51,30 +51,48 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getLogout: () => dispatch(getLogout())
+  }
+}
+
 const mapStateToProps = (state: RootState) => {
   return {
       userInfo : state.userReducer.userInfo,
+      isLogin : state.userReducer.isLogin,
   };
 }
   
 const NavBar = ({
   userInfo,
+  isLogin,
+  getLogout,
 }: {
     userInfo: any;
+    isLogin: boolean;
+    getLogout: any;
 }) => {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  // const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
   const [userProfileModal, setUserProfileModal] = useState<boolean>(false);
 
-  const toggleLoginStatus = () => setIsLogin((cur) => !cur);
+  // const toggleLoginStatus = () => setIsLogin((cur) => !cur);
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
 
-  const setLogOut = () => {
-    getLogout();
-  }; 
+  // const setLogOut = () => {
+  //   getLogout();
+  // }; 
+
+  // useEffect(() => {
+
+  // }, [isLogin])
+
+  console.log(userInfo)
+  console.log(isLogin)
 
   return (
     <NavBarContainer>
@@ -92,12 +110,12 @@ const NavBar = ({
               loginModal={loginModal}
               showLoginModal={showLoginModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
             <JoinModal
               joinModal={joinModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
           </MenuToggleBox>
         ) : (
@@ -109,7 +127,7 @@ const NavBar = ({
               userProfileModal={userProfileModal}
               showUserProfileModal={showUserProfileModal}
             />
-            <MenuButton onClick={() => setLogOut()}>Logout</MenuButton>
+            <MenuButton onClick={() => getLogout()}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
@@ -119,4 +137,4 @@ const NavBar = ({
   );
 };
 
-export default  connect(mapStateToProps, null)(NavBar);
+export default  connect(mapStateToProps, mapDispatchToProps)(NavBar);
