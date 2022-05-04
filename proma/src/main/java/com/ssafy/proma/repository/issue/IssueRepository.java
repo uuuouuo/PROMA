@@ -20,5 +20,7 @@ public interface IssueRepository extends JpaRepository<Issue,Integer> {
   Optional<List<Issue>> findByUserAndTeam(User user, Team team);
 
   Optional<List<Issue>> findByTeamAndSprintAndStatusLike(Team team, Sprint sprint, String status);
+
+  Optional<List<Issue>> findBySprint(Sprint sprint);
 }
 

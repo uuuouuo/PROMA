@@ -72,6 +72,10 @@ public class Issue {
         this.sprint = sprint;
     }
 
+    public void deassignSprint() {
+        this.sprint = null;
+    }
+
     public void changeStatus(String status){
         this.status = status;
     }

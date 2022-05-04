@@ -1,5 +1,13 @@
 package com.ssafy.proma.controller;
 
+
+import static com.ssafy.proma.exception.Message.PROJECT_CHANGE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHANGE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_DELETE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_DELETE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_JOIN_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_JOIN_SUCCESS_MESSAGE;
+
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectJoinDto;
@@ -34,24 +42,63 @@ public class ProjectController {
   @PostMapping("/join")
   public ResponseEntity joinProject(@RequestBody ProjectJoinDto projectJoinDto){
 
-    String projectNo = projectJoinDto.getProjectNo();
-    projectService.joinProject(projectNo);
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
 
-    return ResponseEntity.ok().build();
+    String projectNo = projectJoinDto.getProjectNo();
+    try{
+      resultMap = projectService.joinProject(projectNo);
+      if(resultMap.get("message").equals(PROJECT_JOIN_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+
+      resultMap.put("message", PROJECT_JOIN_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "프로젝트 수정", notes = "프로젝트 이름 수정")
   @PutMapping("/change")
   public ResponseEntity updateProject(@RequestBody ProjectUpdateDto request) {
-    projectService.changeProjectName(request);
-    return ResponseEntity.ok().build();
+
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try {
+      resultMap = projectService.changeProjectName(request);
+      if(resultMap.get("message").equals(PROJECT_CHANGE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+
+      resultMap.put("message", PROJECT_CHANGE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity(resultMap, status);
   }
 
   @ApiOperation(value = "프로젝트 종료", notes = "프로젝트 종료 및 삭제")
-  @DeleteMapping
-  public ResponseEntity deleteProject(@RequestBody ProjectDeleteDto request) {
-    projectService.deleteProject(request);
-    return ResponseEntity.ok().build();
+  @DeleteMapping("/{projectNo}")
+  public ResponseEntity deleteProject(@PathVariable String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
+    HttpStatus status = HttpStatus.ACCEPTED;
+
+    try {
+      resultMap = projectService.deleteProject(projectNo);
+      if(resultMap.get("message").equals(PROJECT_DELETE_SUCCESS_MESSAGE)) {
+        status = HttpStatus.OK;
+      }
+    } catch (Exception e) {
+
+      resultMap.put("message", PROJECT_DELETE_ERROR_MESSAGE);
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+    return new ResponseEntity(resultMap, status);
+
   }
 
   @GetMapping
@@ -98,6 +145,13 @@ public class ProjectController {
     }
 
     return new ResponseEntity(resultMap, status);
+  }
+
+  @GetMapping("/user/{projectNo}")
+  @ApiOperation(value = "프로젝트 참여여부 조회", notes = "프로젝트 참여여부 조회")
+  public ResponseEntity getUserInProject(@PathVariable String projectNo){
+    Boolean isIn = projectService.getUserInProject(projectNo);
+    return new ResponseEntity(isIn, HttpStatus.OK);
   }
 
 }

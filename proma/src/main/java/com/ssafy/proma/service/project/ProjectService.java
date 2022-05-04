@@ -1,20 +1,36 @@
 package com.ssafy.proma.service.project;
 
+import static com.ssafy.proma.exception.Message.PROJECT_CHANGE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_CHANGE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_DELETE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_DELETE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_JOIN_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.PROJECT_JOIN_SUCCESS_MESSAGE;
+
+import com.ssafy.proma.model.dto.issue.ResIssueDto;
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectCreateDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectDeleteDto;
 import com.ssafy.proma.model.dto.project.ReqProjectDto.ProjectUpdateDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectNoTitleDto;
 import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectDetailDto;
+import com.ssafy.proma.model.dto.project.ResProjectDto.ProjectTeamUserDto;
+import com.ssafy.proma.model.dto.project.ResProjectDto.TeamMembersDto;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.project.UserProject;
+import com.ssafy.proma.model.entity.team.Team;
+import com.ssafy.proma.model.entity.team.UserTeam;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
+import com.ssafy.proma.repository.team.TeamRepository;
+import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 
 import com.ssafy.proma.util.SecurityUtil;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +50,8 @@ public class ProjectService extends AbstractService {
   private final UserRepository userRepository;
   private final ProjectRepository projectRepository;
   private final UserProjectRepository userProjectRepository;
+  private final TeamRepository teamRepository;
+  private final UserTeamRepository userTeamRepository;
   private final MailService mailService;
   private final SecurityUtil securityUtil;
 
@@ -49,7 +67,6 @@ public class ProjectService extends AbstractService {
     String projectNo = RandomStringUtils.randomAlphanumeric(15);
 
     Project project = projectDto.toEntity(projectNo);
-
     UserProject userProject = UserProject.builder().user(user).project(project).role("MANAGER")
         .build();
 
@@ -61,7 +78,9 @@ public class ProjectService extends AbstractService {
   }
 
   @Transactional
-  public void joinProject(String projectNo) {
+  public Map<String, Object> joinProject(String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String userNo = securityUtil.getCurrentUserNo();
     Optional<User> userOp = userRepository.findByNo(userNo);
@@ -70,15 +89,23 @@ public class ProjectService extends AbstractService {
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    UserProject userProject = UserProject.builder().user(user).project(project).role("MEMBER")
-        .build();
+    if(project==null) {
+      new IllegalStateException(PROJECT_JOIN_ERROR_MESSAGE);
+    }
+    else {
+      UserProject userProject = UserProject.builder().user(user).project(project).role("MEMBER")
+          .build();
+      userProjectRepository.save(userProject);
 
-    userProjectRepository.save(userProject);
-
+      resultMap.put("message",PROJECT_JOIN_SUCCESS_MESSAGE);
+    }
+    return resultMap;
   }
 
   @Transactional
-  public void changeProjectName(ProjectUpdateDto request) {
+  public Map<String, Object> changeProjectName(ProjectUpdateDto request) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String userNo = securityUtil.getCurrentUserNo();
 
@@ -90,20 +117,29 @@ public class ProjectService extends AbstractService {
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
-
-    if (userProject.getRole().equals("MANAGER")) {
-      project.update(name);
-    } else {
-      new IllegalStateException("이름 변경은 매니저만 가능합니다.");
+    if(user==null || user.getIsDeleted() || project == null) {
+      new IllegalStateException(PROJECT_CHANGE_ERROR_MESSAGE);
     }
+    else {
+      UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+      if (userProject.getRole().equals("MANAGER")) {
+        project.update(name);
+        resultMap.put("message",PROJECT_CHANGE_SUCCESS_MESSAGE);
+
+      } else {
+        new IllegalStateException(PROJECT_CHANGE_ERROR_MESSAGE);
+      }
+    }
+    return resultMap;
   }
 
   @Transactional
-  public void deleteProject(ProjectDeleteDto request) {
+  public Map<String, Object> deleteProject(String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String userNo = securityUtil.getCurrentUserNo();
-    String projectNo = request.getProjectNo();
 
     Optional<User> userOp = userRepository.findByNo(userNo);
     User user = takeOp(userOp);
@@ -112,11 +148,14 @@ public class ProjectService extends AbstractService {
 
     UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
 
+    if(project == null) new IllegalStateException(PROJECT_DELETE_ERROR_MESSAGE);
     if (userProject.getRole().equals("MANAGER")) {
       project.delete(true);
+      resultMap.put("message",PROJECT_DELETE_SUCCESS_MESSAGE);
     } else {
-      new IllegalStateException("프로젝트 삭제는 매니저만 가능합니다.");
+      new IllegalStateException(PROJECT_DELETE_ERROR_MESSAGE);
     }
+    return resultMap;
   }
 
   public Map<String, Object> getProjectList() throws Exception {
@@ -127,11 +166,36 @@ public class ProjectService extends AbstractService {
 
     User user = takeOp(userOp);
     List<UserProject> userProjectList = userProjectRepository.findByUser(user);
-    List<ProjectNoTitleDto> projectList = userProjectList.stream()
-        .filter(project -> !project.getProject().isDeleted()).map(
-            project -> new ProjectNoTitleDto(project.getProject().getNo(),
-                project.getProject().getName(), project.getRole())).collect(Collectors.toList());
-    resultMap.put("projectList", projectList);
+
+    List<Project> projects = userProjectList.stream()
+        .filter(project -> !project.getProject().getIsDeleted()).map(
+            project -> project.getProject()).collect(Collectors.toList());
+
+    List<ProjectTeamUserDto> projectTeamUserDtos = new ArrayList<>();
+
+    projects.forEach(project -> {
+
+      Optional<List<Team>> projectOp = teamRepository.findByProject(project);
+      List<Team> teams = takeOp(projectOp);
+
+      List<TeamMembersDto> teamMembersDtos = new ArrayList<>();
+
+      teams.forEach(team -> {
+        Optional<List<UserTeam>> userTeamOp = userTeamRepository.findByTeam(team);
+        List<UserTeam> userTeams = takeOp(userTeamOp);
+        List<UserDto> userDtos = userTeams.stream()
+            .filter(userTeam -> !userTeam.getUser().getIsDeleted())
+            .map(userTeam -> new UserDto(
+                userTeam.getUser().getNo()
+                , userTeam.getUser().getNickname()
+                , userTeam.getUser().getProfileImage()))
+            .collect(Collectors.toList());
+        teamMembersDtos.add(new TeamMembersDto(team.getNo(),team.getName(),userDtos));
+      });
+      projectTeamUserDtos.add(new ProjectTeamUserDto(project.getNo(), project.getName(),teamMembersDtos));
+    });
+
+    resultMap.put("projectList", projectTeamUserDtos);
     resultMap.put("message", "프로젝트 조회 성공");
     return resultMap;
   }
@@ -147,5 +211,25 @@ public class ProjectService extends AbstractService {
     resultMap.put("project", projectDetailDto);
     resultMap.put("message", "프로젝트 조회 성공");
     return resultMap;
+  }
+
+  public Boolean getUserInProject(String projectNo) {
+
+    String userNo = securityUtil.getCurrentUserNo();
+
+    Optional<User> userOp = userRepository.findByNo(userNo);
+    User user = takeOp(userOp);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
+    Project project = takeOp(projectOp);
+
+    UserProject userProject = userProjectRepository.findByProjectAndUser(project, user);
+
+    if(userProject==null) {
+      return false;
+    }
+    else {
+      return true;
+    }
+
   }
 }

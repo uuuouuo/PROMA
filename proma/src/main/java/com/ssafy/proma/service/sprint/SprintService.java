@@ -1,16 +1,29 @@
 package com.ssafy.proma.service.sprint;
 
+import static com.ssafy.proma.exception.Message.SPRINT_CREATE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_CREATE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_DELETE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_DELETE_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_GET_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_GET_SUCCESS_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_UPDATE_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_UPDATE_SUCCESS_MESSAGE;
+
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto.SprintUpdateDto;
 import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintDto;
 import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintNoTitle;
+import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.sprint.Sprint;
+import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.sprint.SprintRepository;
 import com.ssafy.proma.service.AbstractService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,31 +37,52 @@ public class SprintService extends AbstractService {
 
   private final SprintRepository sprintRepository;
   private final ProjectRepository projectRepository;
+  private final IssueRepository issueRepository;
 
   @Transactional
-  public void createSprint(SprintCreateDto sprintCreateDto) {
+  public Map<String, Object> createSprint(SprintCreateDto sprintCreateDto) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String projectNo = sprintCreateDto.getProjectNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    Sprint sprint = sprintCreateDto.toEntity(project);
-    sprintRepository.save(sprint);
+    if(project == null) {
+      new IllegalStateException(SPRINT_CREATE_ERROR_MESSAGE);
+    }
+    else {
+      Sprint sprint = sprintCreateDto.toEntity(project);
+      sprintRepository.save(sprint);
+      resultMap.put("message",SPRINT_CREATE_SUCCESS_MESSAGE);
 
+    }
+    return resultMap;
   }
 
   @Transactional
-  public void startSprint(Integer sprintNo) {
+  public Map<String, Object> startSprint(Integer sprintNo) {
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
-    sprint.toggleStatus();
+    if(sprint==null) {
+      new IllegalStateException(SPRINT_GET_ERROR_MESSAGE);
+    }
+    else {
+      sprint.toggleStatus();
+      resultMap.put("message",SPRINT_GET_SUCCESS_MESSAGE);
+
+    }
+    return resultMap;
   }
 
   @Transactional
-  public void updateSprint(Integer sprintNo, SprintUpdateDto sprintUpdateDto) {
+  public Map<String, Object> updateSprint(Integer sprintNo, SprintUpdateDto sprintUpdateDto) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     String name = sprintUpdateDto.getTitle();
     String startDate = sprintUpdateDto.getStartDate();
@@ -57,36 +91,82 @@ public class SprintService extends AbstractService {
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
-    sprint.update(name,startDate,endDate);
-
+    if(sprint==null) {
+      new IllegalStateException(SPRINT_UPDATE_ERROR_MESSAGE);
+    }
+    else {
+      sprint.update(name,startDate,endDate);
+      resultMap.put("message",SPRINT_UPDATE_SUCCESS_MESSAGE);
+    }
+    return resultMap;
   }
 
-  public List<SprintDto> getSprintList(String projectNo) {
+  public Map<String, Object> getSprintList(String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    Optional<List<Sprint>> projectListOp = sprintRepository.findAllByProject(project);
-    List<Sprint> sprintList = takeOp(projectListOp);
+    if(project == null) {
+      new IllegalStateException(SPRINT_GET_ERROR_MESSAGE);
+    }
+    else {
+      Optional<List<Sprint>> projectListOp = sprintRepository.findAllByProject(project);
+      List<Sprint> sprintList = takeOp(projectListOp);
 
-    List<SprintDto> sprintDtoList = sprintList.stream().map(
-        sprint -> new SprintDto(sprint.getNo(), sprint.getName(), sprint.getStartDate().toString(),
-            sprint.getEndDate().toString(), sprint.isStatus())).collect(
-        Collectors.toList());
+      List<SprintDto> sprintDtoList = sprintList.stream().map(
+          sprint -> new SprintDto(sprint.getNo(), sprint.getName(),
+              sprint.getStartDate().toString(),
+              sprint.getEndDate().toString(), sprint.isStatus())).collect(
+          Collectors.toList());
 
-    return sprintDtoList;
+      resultMap.put("sprint", sprintDtoList);
+      resultMap.put("message",SPRINT_GET_SUCCESS_MESSAGE);
+    }
+    return resultMap;
   }
 
-  public SprintNoTitle getDoingSprint(String projectNo) {
+  public Map<String, Object> getDoingSprint(String projectNo) {
+
+    Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
 
-    Optional<Sprint> sprintOp = sprintRepository.findByProjectAndStatusTrue(project);
+    if(project == null) {
+      new IllegalStateException(SPRINT_GET_ERROR_MESSAGE);
+    }
+    else {
+      Optional<Sprint> sprintOp = sprintRepository.findByProjectAndStatusTrue(project);
+      Sprint sprint = takeOp(sprintOp);
+
+      SprintNoTitle sprintNoTitle = new SprintNoTitle(sprint.getNo(),sprint.getName());
+
+      resultMap.put("sprint", sprintNoTitle);
+      resultMap.put("message",SPRINT_GET_SUCCESS_MESSAGE);
+    }
+
+    return resultMap;
+  }
+
+  public Map<String, Object> getDeleteSprint(Integer sprintNo){
+
+    Map<String, Object> resultMap = new HashMap<>();
+    Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
 
-    SprintNoTitle sprintNoTitle = new SprintNoTitle(sprint.getNo(),sprint.getName());
+    if(sprint==null) {
+      new IllegalStateException(SPRINT_DELETE_ERROR_MESSAGE);
+    }
+    else {
+      Optional<List<Issue>> issueListOp = issueRepository.findBySprint(sprint);
+      List<Issue> issues = takeOp(issueListOp);
 
-    return sprintNoTitle;
+      issues.forEach(issue->issue.deassignSprint());
+      resultMap.put("message",SPRINT_DELETE_SUCCESS_MESSAGE);
+    }
+
+    return resultMap;
   }
 }
