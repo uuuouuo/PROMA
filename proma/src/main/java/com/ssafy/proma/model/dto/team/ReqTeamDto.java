@@ -31,12 +31,7 @@ public class ReqTeamDto {
   public static class TeamJoinDto{
 
     Integer teamNo;
-    String userNo;
 
-    public TeamJoinDto(Integer teamNo, String userNo) {
-      this.teamNo = teamNo;
-      this.userNo = userNo;
-    }
     public UserTeam toEntity(Team team, User user) {
       return UserTeam.builder().team(team).user(user).build();
     }

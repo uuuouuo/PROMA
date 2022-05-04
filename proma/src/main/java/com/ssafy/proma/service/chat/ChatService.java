@@ -56,39 +56,6 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-//  public Map<String, Object> getPrivateChatRoom(String subNo) {
-//
-//    // user check
-//    User pub = findUser(SecurityUtil.getCurrentUserNo());
-//    User sub = findUser(subNo);
-//
-//    // chatroom check
-//    PrivateChatRoom chatRoom = null;
-//    if(pub.getNo().compareTo(sub.getNo()) > 0) {
-//      chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(pub, sub)
-//          .orElseGet(() -> createPrivateChatRoom(pub, sub));
-//    } else {
-//      chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(sub, pub)
-//          .orElseGet(() -> createPrivateChatRoom(sub, pub));
-//    }
-//
-//    // 해당 chatroom 의 messageList 가져오기
-//    List<ChatMessageListRes> msgResList =
-//        privateChatMessageRepository.findAllByChatRoom(chatRoom)
-//            .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-//                , m.getContent(), m.getTime()))
-//            .collect(Collectors.toList());
-//
-//    PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
-//
-//    Map<String, Object> result = new HashMap<>();
-//    result.put("response", response);
-//    result.put("message", TEAM_CHATROOM_SUCCESS_MESSAGE);
-//
-//    return result;
-//
-//  }
-
   public Map<String, Object> getPrivateChatRoom(String subNo, Pageable pageable) {
 
     // user check
@@ -111,11 +78,13 @@ public class ChatService {
         .stream().map(m -> new PrivateChatMessage()).collect(Collectors.toList());
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
-    msgList.forEach(m -> {
-      ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
-          m.getUser().getNickname(), m.getContent(), m.getTime());
-      msgResList.add(chatMsgListRes);
-    });
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
 
     PrivateChatRoomRes response = new PrivateChatRoomRes(chatRoom.getNo(), msgResList);
 
@@ -127,7 +96,7 @@ public class ChatService {
 
   }
 
-  public Map<String, Object> getTeamChatRoom(Integer teamNo) {
+  public Map<String, Object> getTeamChatRoom(Integer teamNo, Pageable pageable) {
 
     // team check
     Team team = findTeam(teamNo);
@@ -137,24 +106,20 @@ public class ChatService {
         .orElseGet(() -> creatTeamChatRoom(team));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgList =
-        teamChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-            , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<TeamChatMessage> msgList = new ArrayList<>();
+    msgList = teamChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new TeamChatMessage()).collect(Collectors.toList());
 
-//    List<PrivateChatMessage> msgList = new ArrayList<>();
-//    msgList = privateChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
-//        .stream().map(m -> new PrivateChatMessage()).collect(Collectors.toList());
-//
-//    List<ChatMessageListRes> msgResList = new ArrayList<>();
-//    msgList.forEach(m -> {
-//      ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
-//          m.getUser().getNickname(), m.getContent(), m.getTime());
-//      msgResList.add(chatMsgListRes);
-//    });
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
 
-    TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgList);
+    TeamChatRoomRes response = new TeamChatRoomRes(chatRoom.getNo(), msgResList);
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);
@@ -164,7 +129,7 @@ public class ChatService {
 
   }
 
-  public Map<String, Object> getProjectChatRoom(String projectNo) {
+  public Map<String, Object> getProjectChatRoom(String projectNo, Pageable pageable) {
 
     // project check
     Project project = findProject(projectNo);
@@ -174,13 +139,20 @@ public class ChatService {
         .orElseGet(() -> creatProjectChatRoom(project));
 
     // 해당 chatroom 의 messageList 가져오기
-    List<ChatMessageListRes> msgList
-        = projectChatMessageRepository.findAllByChatRoom(chatRoom)
-        .stream().map(m -> new ChatMessageListRes(m.getUser().getNo(), m.getUser().getNickname()
-            , m.getContent(), m.getTime()))
-        .collect(Collectors.toList());
+    List<ProjectChatMessage> msgList
+        = projectChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable)
+        .stream().map(m -> new ProjectChatMessage()).collect(Collectors.toList());
 
-    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgList);
+    List<ChatMessageListRes> msgResList = new ArrayList<>();
+    if(msgList.size() != 0) {
+      msgList.forEach(m -> {
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
+            m.getUser().getNickname(), m.getContent(), m.getTime());
+        msgResList.add(chatMsgListRes);
+      });
+    }
+
+    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgResList);
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);

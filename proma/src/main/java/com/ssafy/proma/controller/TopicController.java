@@ -125,13 +125,13 @@ public class TopicController {
     try{
       resultMap = topicService.getTopicList(projectNo);
 
-      if(resultMap.get("message").equals(Message.TOPIC_LIST_FIND_SUCCESS_MESSAGE)) {
+      if(resultMap.get("message").equals(Message.TOPIC_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
       }
     } catch (Exception e){
       log.error("토픽 목록 조회 실패 : {}", e.getMessage());
 
-      resultMap.put("message", Message.TOPIC_LIST_FIND_ERROR_MESSAGE);
+      resultMap.put("message", Message.TOPIC_FIND_ERROR_MESSAGE);
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return new ResponseEntity(resultMap, status);
