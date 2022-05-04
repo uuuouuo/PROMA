@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
+import { apiInstance } from "../../api";
+const api = apiInstance();
 
 export type UserState = {
     userInfo: any;
@@ -16,6 +18,7 @@ export const getLogin = createAsyncThunk(
     "USER/LOGIN/GITHUB",
     async (_, thunkAPI) => {
         const code = localStorage.getItem("code");
+        
         return await axios
             .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
             .then((res) => {
@@ -42,50 +45,15 @@ export const getUserInfo = createAsyncThunk(
     }
 );
 
-// export const getLogout = createAsyncThunk(
-//     "USER/LOGOUT",
-//     async (_, thunkAPI) => {
-//         const Authorization = localStorage.getItem("Authorization");
-//         return await axios
-//             .get(`http://k6c107.p.ssafy.io:8080/user/logout`, {
-//                 headers: {
-//                     Authorization: `Bearer ${Authorization}`
-//                 },
-//             })
-//             .then((res) => {
-//                 console.log("로그아웃");
-//         })
-//         .catch((err) => thunkAPI.rejectWithValue(err.response.data));
-//     }
-// );
-
 export const getLogout = createAsyncThunk(
     "USER/LOGOUT",
     async (_, { rejectWithValue }) => {
-        const Authorization = localStorage.getItem("Authorization");
-        return await axios
-            .get(`http://k6c107.p.ssafy.io:8080/user/logout`, {
-                headers: {
-                    Authorization: `Bearer ${Authorization}`
-                },
-        })
-            .then((state) => {
-                console.log("눌림");
-        })
-        .catch((err) => rejectWithValue(err.response.data));
-    }
+        return await api
+            .get(`/user/logout`)
+            .then((res) => res.data)
+            .catch((err) => rejectWithValue(err.response.data));
+        }
 );
-
-// export const getLogout = async () => {
-//     const Authorization = localStorage.getItem("Authorization");
-//     return await axios.get(`http://k6c107.p.ssafy.io:8080/user/logout`, {
-//                 headers: {
-//                     Authorization: `Bearer ${Authorization}`
-//                 },
-//     }).then(() => {
-//             console.log(isLogin)
-//         })
-// }
 
 const memberSlice = createSlice({
     name: "member",
@@ -99,16 +67,15 @@ const memberSlice = createSlice({
             }
         ).addCase(
             getLogin.fulfilled, (state) => {
-                console.log(state);
                 state.isLogin = true;
+                window.location.href = "/";
+            }
+        ).addCase(
+            getLogout.fulfilled, (state) => {
+                console.log("로그아웃");
+                state.isLogin = false;
             }
         )
-        //     .addCase(
-        //     getLogout.fulfilled, (state) => {
-        //         console.log(state);
-        //         // state.userInfo = "";
-        //     }
-        // )
     },
 });
 

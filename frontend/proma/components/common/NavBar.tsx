@@ -51,6 +51,12 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getLogout: () => dispatch(getLogout())
+  }
+}
+
 const mapStateToProps = (state: RootState) => {
   return {
       userInfo : state.userReducer.userInfo,
@@ -61,9 +67,11 @@ const mapStateToProps = (state: RootState) => {
 const NavBar = ({
   userInfo,
   isLogin,
+  getLogout,
 }: {
     userInfo: any;
     isLogin: boolean;
+    getLogout: any;
 }) => {
   // const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
@@ -75,13 +83,13 @@ const NavBar = ({
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
 
-  const setLogOut = () => {
-    getLogout();
-  }; 
+  // const setLogOut = () => {
+  //   getLogout();
+  // }; 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [isLogin])
+  // }, [isLogin])
 
   console.log(userInfo)
   console.log(isLogin)
@@ -119,7 +127,7 @@ const NavBar = ({
               userProfileModal={userProfileModal}
               showUserProfileModal={showUserProfileModal}
             />
-            <MenuButton onClick={() => setLogOut()}>Logout</MenuButton>
+            <MenuButton onClick={() => getLogout()}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
@@ -129,4 +137,4 @@ const NavBar = ({
   );
 };
 
-export default  connect(mapStateToProps, null)(NavBar);
+export default  connect(mapStateToProps, mapDispatchToProps)(NavBar);
