@@ -46,17 +46,12 @@ public class TeamService extends AbstractService {
     Map<String, Object> resultMap = new HashMap<>();
 
     String projectNo = teamDto.getProjectNo();
-    String userNo = securityUtil.getCurrentUserNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
     Project project = takeOp(projectOp);
-    Optional<User> userOp = userRepository.findByNo(userNo);
-    User user = takeOp(userOp);
 
     Team team = teamDto.toEntity(project);
-    UserTeam userTeam = teamDto.toEntity(team, user);
     teamRepository.save(team);
-    userTeamRepository.save(userTeam);
 
     resultMap.put("message", Message.TEAM_CREATE_SUCCESS_MESSAGE);
     return resultMap;
@@ -157,11 +152,11 @@ public class TeamService extends AbstractService {
       Optional<UserTeam> userTeamOp = userTeamRepository.findByUserAndTeam(user, team);
       UserTeam userTeam = takeOp(userTeamOp);
 
-      if(userTeam.getTeam() == team) {
-        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), true);
+      if(userTeam == null) {
+        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), false);
         teamDtoList.add(teamDto);
       } else {
-        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), false);
+        TeamDto teamDto = new TeamDto(team.getNo(), team.getName(), true);
         teamDtoList.add(teamDto);
       }
     });
@@ -209,10 +204,10 @@ public class TeamService extends AbstractService {
     UserTeam userTeam = takeOp(userTeamOp);
 
     TeamDto teamDto;
-    if(userTeam.getTeam() == team) {
-      teamDto = new TeamDto(teamNo, team.getName(), true);
-    } else {
+    if(userTeam == null) {
       teamDto = new TeamDto(teamNo, team.getName(), false);
+    } else {
+      teamDto = new TeamDto(teamNo, team.getName(), true);
     }
 
     resultMap.put("team", teamDto);
