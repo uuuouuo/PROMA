@@ -306,7 +306,7 @@ const TeamSpace = ({
     setTeamNo(teamCode);
 
     getTeamInfo(teamCode);
-  }, [router.isReady]);
+  }, [router.asPath]);
 
   useEffect(() => {
     setTeamName(teamInfo.title);
