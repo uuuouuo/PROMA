@@ -61,10 +61,10 @@ public class UserController {
     @ApiOperation(value = "JWT 토큰 재발급", notes = "JWT 토큰을 재발급한다. 재발급 성공 시 토큰을 반환한다.", response = Map.class)
     public ResponseEntity<String> refresh(@RequestHeader(value = JwtProperties.JWT_HEADER_STRING) String jwtToken,
                                           @RequestHeader(value = JwtProperties.REF_HEADER_STRING) String refToken,
-                                          @RequestBody String userNo, HttpServletResponse response) {
+                                          HttpServletResponse response) {
         String jwt = jwtToken.replace(JwtProperties.TOKEN_PREFIX, "");
         String refresh = refToken.replace(JwtProperties.TOKEN_PREFIX, "");
-        String newToken = githubAuthService.refreshToken(userNo, jwt, refresh);
+        String newToken = githubAuthService.refreshToken(jwt, refresh);
         response.addHeader(JwtProperties.JWT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + newToken);
         return new ResponseEntity<String>(newToken, HttpStatus.OK);
     }

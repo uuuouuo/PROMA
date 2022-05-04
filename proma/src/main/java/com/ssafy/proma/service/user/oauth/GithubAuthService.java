@@ -57,16 +57,15 @@ public class GithubAuthService {
         return true;
     }
 
-    public String refreshToken(String userNo, String jwtToken, String refToken){
+    public String refreshToken(String jwtToken, String refToken){
         if(!jwtTokenService.validateJwt(jwtToken))
             throw new AccessDeniedException("Token 만료되지 않음");
-
-        User user = userRepository.findByNo(userNo).get();
-
-        if(!refToken.equals(user.getRefresh()) || !jwtTokenService.validateExpired(refToken))
+        Optional<User> findUserOptional = userRepository.findByRefresh(refToken);
+        if(findUserOptional.isEmpty() || !jwtTokenService.validateExpired(refToken))
             throw new AccessDeniedException("Refresh Token 유효하지 않음");
 
-        String newJwtToken = jwtTokenService.create(user);
+        User findUser = findUserOptional.get();
+        String newJwtToken = jwtTokenService.create(findUser);
 
         return newJwtToken;
     }
