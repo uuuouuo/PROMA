@@ -269,7 +269,7 @@ const TeamSpace = ({
   //update team
   const onKeyUpTeamName = (e: any) => {
     if (e.key !== "Enter") return;
-    updateTeamInfo();
+    updateTeamName();
   };
   const updateTeamName = () => {
     updateTeamInfo({
