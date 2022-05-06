@@ -14,8 +14,8 @@ interface CommonHeaderProperties extends HeadersDefaults {
 
 const getRefresh = async () => {
   const Authorization = localStorage.getItem("Authorization");
-  const Refresh = localStorage.getItem("refToken");
-  axios
+  const Refresh = localStorage.getItem("RefreshToken");
+  await axios
     .post(`/user/refresh`, {
       headers: {
         Authorization,
@@ -61,10 +61,10 @@ export const apiInstance = () => {
     (response: AxiosResponse) => {
       console.log(response);
 
-    //   const Authorization = response.headers.Authorization;
-    //   const RefreshToken = response.headers.Refresh;
-    //   if (Authorization) localStorage.setItem("Authorization", Authorization);
-    //   if (RefreshToken) localStorage.setItem("RefreshToken", RefreshToken);
+      const Authorization = response.data.loginRes.jwtToken;
+      const RefreshToken = response.data.loginRes.refToken;
+      if (Authorization) localStorage.setItem("Authorization", Authorization);
+      if (RefreshToken) localStorage.setItem("RefreshToken", RefreshToken);
 
       return response;
     },
@@ -75,10 +75,14 @@ export const apiInstance = () => {
         console.log(error.response.status);
         if (error.response.status === 401) {
           let accessTokenExpiredCode = error.response.data.code;
+          console.log(accessTokenExpiredCode);
           //access token 만료 시
-          if (accessTokenExpiredCode === "C004") {
+          if (
+            accessTokenExpiredCode === "C004" ||
+            accessTokenExpiredCode === "C003"
+          ) {
             console.log("에러에러");
-            getRefresh();
+            // getRefresh();
           }
           //refresh token 만료 시
           else if (accessTokenExpiredCode === "C006") {
