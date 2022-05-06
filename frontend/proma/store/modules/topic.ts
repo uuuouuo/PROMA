@@ -30,7 +30,7 @@ export const getTopicList = createAsyncThunk(
   }
 );
 
-//get topic detail api
+//get topic info api
 export const getTopicInfo = createAsyncThunk(
   "GET/TOPIC",
   async (topicNo: string, thunkAPI) => {
@@ -49,6 +49,20 @@ export const createNewTopic = createAsyncThunk(
       .post(`/topic`, newTopicInfo)
       .then((res) => {
         thunkAPI.dispatch(getTopicList(newTopicInfo.projectNo));
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//update topic info api
+export const updateTopicInfo = createAsyncThunk(
+  "PUT/TOPIC",
+  async (topicInfo: any, thunkAPI) => {
+    return await api
+      .put(`/topic/${topicInfo.topicNo}`, topicInfo.updatedInfo)
+      .then((res) => {
+        thunkAPI.dispatch(getTopicInfo(topicInfo.topicNo));
         return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));

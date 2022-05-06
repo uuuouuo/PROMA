@@ -5,7 +5,7 @@ import { FaPen, FaCheck, FaCaretSquareDown } from "react-icons/fa";
 import Image from "next/image";
 
 import { connect } from "react-redux";
-import { getTopicInfo } from "../../../../store/modules/topic";
+import { getTopicInfo, updateTopicInfo } from "../../../../store/modules/topic";
 import { RootState } from "../../../../store/modules";
 import { useRouter } from "next/router";
 
@@ -141,15 +141,19 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getTopicInfo: (topicNo: string) => dispatch(getTopicInfo(topicNo)),
+    updateTopicInfo: (topicInfo: string) =>
+      dispatch(updateTopicInfo(topicInfo)),
   };
 };
 
 const TopicDetail = ({
   getTopicInfo,
   topicInfo,
+  updateTopicInfo,
 }: {
   getTopicInfo: any;
   topicInfo: any;
+  updateTopicInfo: any;
 }) => {
   const router = useRouter();
   const [updateTopic, setUpdateTopic] = useState<boolean>(false);
@@ -164,6 +168,17 @@ const TopicDetail = ({
     const name = e.target.name as string;
     const value = e.target.value as string;
     setTopicDetail((cur: any) => ({ ...cur, [name]: value }));
+  };
+
+  const onUpdateTopicInfo = () => {
+    updateTopicInfo({
+      topicNo,
+      updatedInfo: {
+        title: topicDetail.title,
+        description: topicDetail.description,
+      },
+    });
+    setUpdateTopic((cur) => !cur);
   };
 
   useEffect(() => {
@@ -191,9 +206,15 @@ const TopicDetail = ({
         </SubTitle>
 
         <TopicDetailBox>
-          <IconBox onClick={() => setUpdateTopic((cur) => !cur)}>
-            {updateTopic ? <FaCheck /> : <FaPen />}
-          </IconBox>
+          {updateTopic ? (
+            <IconBox onClick={onUpdateTopicInfo}>
+              <FaCheck />
+            </IconBox>
+          ) : (
+            <IconBox onClick={() => setUpdateTopic((cur) => !cur)}>
+              <FaPen />
+            </IconBox>
+          )}
           <p>Title</p>
           <ToggleBox>
             {updateTopic ? (
