@@ -69,6 +69,17 @@ export const updateTopicInfo = createAsyncThunk(
   }
 );
 
+//delete topic api
+export const deleteTopic = createAsyncThunk(
+  "DELETE/TOPIC",
+  async (topicNo: string, thunkAPI) => {
+    return await api
+      .delete(`/topic/${topicNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const topicSlice = createSlice({
   name: "topic",
   initialState,
