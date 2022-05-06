@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { getProjectList } from "./project";
-
 import { apiInstance } from "../../api";
 const api = apiInstance();
 
@@ -23,10 +21,21 @@ const initialState: TopicState = {
 
 //get topic list api
 export const getTopicList = createAsyncThunk(
-  "GET/TOPIC",
+  "GET/TOPICS",
   async (projectNo: string, thunkAPI) => {
     return await api
       .get(`/topic/list/${projectNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+//get topic detail api
+export const getTopicInfo = createAsyncThunk(
+  "GET/TOPIC",
+  async (topicNo: string, thunkAPI) => {
+    return await api
+      .get(`/topic/detail/${topicNo}`)
       .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
@@ -51,9 +60,13 @@ const topicSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getTopicList.fulfilled, (state, { payload }) => {
-      state.topicList = payload.topicList;
-    });
+    builder
+      .addCase(getTopicList.fulfilled, (state, { payload }) => {
+        state.topicList = payload.topicList;
+      })
+      .addCase(getTopicInfo.fulfilled, (state, { payload }) => {
+        state.topicInfo = payload.topicDetail;
+      });
   },
 });
 

@@ -4,6 +4,17 @@ import { ThemeType } from "../../../../interfaces/style";
 import { FaPen, FaCheck, FaCaretSquareDown } from "react-icons/fa";
 import Image from "next/image";
 
+import { connect } from "react-redux";
+import { getTopicInfo } from "../../../../store/modules/topic";
+import { RootState } from "../../../../store/modules";
+import { useRouter } from "next/router";
+
+interface topicType {
+  title: string;
+  description: string;
+  topicNo: number;
+}
+
 //styled-components
 const TopicContainer = styled.div`
   width: inherit;
@@ -121,30 +132,57 @@ const AssigneeBox = styled.div`
   align-items: center;
 `;
 
-const TopicDetail = () => {
-  const [updateTopic, setUpdateTopic] = useState<boolean>(false);
+const mapStateToProps = (state: RootState) => {
+  return {
+    topicInfo: state.topicReducer.topicInfo,
+  };
+};
 
-  //dummyData
-  const [topicName, setTopicName] = useState<string>("Topic Name");
-  const [topicDesc, setTopicDesc] = useState<string>("description..");
-  const issueData = [
-    {
-      issueNo: 0,
-      issueTitle: "컴포넌트 구성",
-      description: "컴포넌트 구성합니다.",
-      assignee: "Sue",
-    },
-    {
-      issueNo: 1,
-      issueTitle: "db 설계",
-      description: "db 설계합니다.",
-      assignee: "Eus",
-    },
-  ];
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getTopicInfo: (topicNo: string) => dispatch(getTopicInfo(topicNo)),
+  };
+};
+
+const TopicDetail = ({
+  getTopicInfo,
+  topicInfo,
+}: {
+  getTopicInfo: any;
+  topicInfo: any;
+}) => {
+  const router = useRouter();
+  const [updateTopic, setUpdateTopic] = useState<boolean>(false);
+  const [topicNo, setTopicNo] = useState<string>("");
+  const [topicDetail, setTopicDetail] = useState<any>({
+    title: "",
+    description: "",
+    topicNo: 0,
+  });
+
+  const onChangeTopicInfo = (e: any) => {
+    const name = e.target.name as string;
+    const value = e.target.value as string;
+    setTopicDetail((cur: any) => ({ ...cur, [name]: value }));
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const topicCode = router.query.topicCode as string;
+    setTopicNo(topicCode);
+    getTopicInfo(topicCode);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (!topicInfo) return;
+    console.log(topicInfo);
+
+    setTopicDetail(topicInfo);
+  }, [topicInfo]);
 
   return (
     <TopicContainer>
-      <TopicTitle>{topicName}</TopicTitle>
+      <TopicTitle>{topicDetail.title}</TopicTitle>
 
       <SubBox>
         <SubTitle>
@@ -161,13 +199,14 @@ const TopicDetail = () => {
             {updateTopic ? (
               <input
                 type="text"
-                value={topicName}
-                onChange={(e) => setTopicName(e.target.value)}
-                placeholder="Type Topic Name"
+                name="title"
+                value={topicDetail.title}
+                onChange={onChangeTopicInfo}
+                placeholder="Type Topic Title"
                 required
               />
             ) : (
-              <p>{topicName}</p>
+              <p>{topicDetail.title}</p>
             )}
           </ToggleBox>
           <p>Description</p>
@@ -175,13 +214,14 @@ const TopicDetail = () => {
             {updateTopic ? (
               <input
                 type="text"
-                value={topicDesc}
-                onChange={(e) => setTopicDesc(e.target.value)}
+                name="description"
+                value={topicDetail.description}
+                onChange={onChangeTopicInfo}
                 placeholder="Type Topic Description"
                 required
               />
             ) : (
-              <p>{topicDesc}</p>
+              <p>{topicDetail.description}</p>
             )}
           </ToggleBox>
         </TopicDetailBox>
@@ -194,7 +234,7 @@ const TopicDetail = () => {
         </SubTitle>
 
         <IssueContainer>
-          {issueData.map((issue, index) => (
+          {/* {issueData.map((issue, index) => (
             <IssueBox key={index}>
               <div>
                 <p>No. {issue.issueNo}</p>
@@ -207,11 +247,11 @@ const TopicDetail = () => {
                 <p>{issue.assignee}</p>
               </AssigneeBox>
             </IssueBox>
-          ))}
+          ))} */}
         </IssueContainer>
       </SubBox>
     </TopicContainer>
   );
 };
 
-export default TopicDetail;
+export default connect(mapStateToProps, mapDispatchToProps)(TopicDetail);

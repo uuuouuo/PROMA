@@ -53,7 +53,7 @@ export const TopicListModal = ({
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
     getTopicList(projectCode);
-  }, [router.isReady]);
+  }, [router.asPath]);
 
   useEffect(() => {
     if (!topicList) return;
@@ -70,8 +70,9 @@ export const TopicListModal = ({
       <Box sx={style}>
         <Header>Topic List</Header>
         <BodyContainer>
-          {topics
-            ? topics.map((topic, index) => (
+          {topics ? (
+            topics.length > 0 ? (
+              topics.map((topic, index) => (
                 <Link
                   href={`/project/${projectNo}/topic/${topic.topicNo}`}
                   key={index}
@@ -81,7 +82,10 @@ export const TopicListModal = ({
                   </a>
                 </Link>
               ))
-            : null}
+            ) : (
+              <p>There are no topics yet.</p>
+            )
+          ) : null}
           <TextButton onClick={showCreateTopicModal}>+ Add Topic</TextButton>
         </BodyContainer>
       </Box>

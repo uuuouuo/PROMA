@@ -57,7 +57,7 @@ export const TopicCreateModal = ({
 
   const addNewTopic = () => {
     createNewTopic({
-      discription: newTopicDesc,
+      description: newTopicDesc,
       projectNo,
       title: newTopicName,
     });
@@ -70,7 +70,7 @@ export const TopicCreateModal = ({
     if (!router.isReady) return;
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
-  }, [router.isReady]);
+  }, [router.asPath]);
 
   return (
     <ModalBox
