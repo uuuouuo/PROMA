@@ -43,34 +43,33 @@ export const apiInstance = () => {
     }
   );
 
-  // 응답 인터셉터 추가
+  //   // 응답 인터셉터 추가
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
       console.log(response);
-
-      // 응답 후 토큰 갱신
-      const authorization = response.headers.authorization;
-      //   const refreshtoken = response.headers.refreshtoken;
-      if (authorization) {
-        localStorage.setItem("authorization", authorization);
-        // localStorage.setItem("refreshtoken", refreshtoken);
-      }
-      // console.log(`response ${response}`);
-      return response;
     },
+
     // 오류 응답 처리
     (error: AxiosError) => {
       if (error.response) {
-        console.log(error.response.data);
         console.log(error.response.status);
-        console.log(error.response.headers);
+        if (error.response.status === 401) {
+          let accessTokenExpiredCode = error.response.data.code;
+          //access token 만료 시
+          if (accessTokenExpiredCode === "C004") {
+          }
+          //refresh token 만료 시
+          else if (accessTokenExpiredCode === "C006") {
+          }
+        }
+        // console.log(error.response.headers);
       } else if (error.request) {
         console.log(error.request);
       } else {
         console.log(`Error ${error.message}`);
       }
-    //   Promise.reject(error);
+      //   Promise.reject(error);
     }
   );
   return instance;
