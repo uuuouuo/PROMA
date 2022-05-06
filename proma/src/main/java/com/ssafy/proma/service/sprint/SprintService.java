@@ -160,7 +160,7 @@ public class SprintService extends AbstractService {
       new IllegalStateException(SPRINT_DELETE_ERROR_MESSAGE);
     }
     else {
-      sprint.toggleStatus();
+      sprintRepository.delete(sprint);
 
       Optional<List<Issue>> issueListOp = issueRepository.findBySprint(sprint);
       List<Issue> issues = takeOp(issueListOp);
