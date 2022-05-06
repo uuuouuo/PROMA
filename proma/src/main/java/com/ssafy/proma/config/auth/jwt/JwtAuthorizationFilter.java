@@ -1,6 +1,8 @@
 package com.ssafy.proma.config.auth.jwt;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.proma.config.auth.security.PrincipalDetails;
+import com.ssafy.proma.exception.ErrorCode;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,34 +35,49 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         String path = request.getServletPath();
 
-        if(path.equals("/user/refresh")) {
+        if (path.equals("/user/refresh")) {
+            String refToken = request.getHeader(JwtProperties.REF_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+            try {
+            jwtTokenService.validateExpired(refToken);
+            } catch (TokenExpiredException e) {
+                e.printStackTrace();
+                request.setAttribute("exception", ErrorCode.EXPIRED_REF_TOKEN.getCode());
+                chain.doFilter(request, response);
+                return;
+            }
+            Optional<User> userEntity = userRepository.findByRefresh(refToken);
+            if (userEntity.isEmpty())
+                throw new IllegalStateException("Refresh Token 유효하지 않음");
+            PrincipalDetails principalDetails = new PrincipalDetails(userEntity.get());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
             return;
         }
 
         String jwtHeader = request.getHeader(JwtProperties.JWT_HEADER_STRING);
 
-        if(jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
-            chain.doFilter(request,response);
+        if (jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
+            chain.doFilter(request, response);
             return;
         }
 
-        String jwtToken = request.getHeader(JwtProperties.JWT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,"");
+        String jwtToken = request.getHeader(JwtProperties.JWT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
         String userNo = jwtTokenService.getUserNo(jwtToken);
 
-        if(userNo != null) {
+        if (userNo != null) {
             Optional<User> userEntity = userRepository.findByNo(userNo);
 
             PrincipalDetails principalDetails = new PrincipalDetails(userEntity.get());
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails,null, principalDetails.getAuthorities());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            chain.doFilter(request,response);
+            chain.doFilter(request, response);
 
         }
-
     }
+
 }
 

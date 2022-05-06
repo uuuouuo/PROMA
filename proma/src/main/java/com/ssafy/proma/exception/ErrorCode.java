@@ -4,8 +4,9 @@ public enum ErrorCode {
 
     INVALID_PARAMETER(400, null, "Invalid Request Data"),
     NON_LOGIN(401,"C003","Non Login Status"),
-    EXPIRED_TOKEN(401,"C004","EXPIRED_TOKEN"),
-    INVALID_TOKEN(401,"C005","Invalid Token");
+    EXPIRED_JWT_TOKEN(401,"C004","EXPIRED_JWT_TOKEN"),
+    INVALID_TOKEN(401,"C005","Invalid Token"),
+    EXPIRED_REF_TOKEN(401,"C006","EXPIRED_REF_TOKEN");
 
     private final String code;
     private final String message;
