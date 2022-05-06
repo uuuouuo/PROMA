@@ -1,3 +1,4 @@
+/* eslint-disable */
 import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";

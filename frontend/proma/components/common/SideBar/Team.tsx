@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Member from "./Member";
 import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";

@@ -1,3 +1,4 @@
+/* eslint-disable */
 //해당 스프린트 내 팀 컴포넌트
 import Issue from "./Issue";
 import styled from "styled-components";

@@ -13,7 +13,7 @@ interface CommonHeaderProperties extends HeadersDefaults {
 }
 
 // axios 객체 생성
-export const errorInstance = () => {
+export const userInstance = () => {
   const instance = axios.create({
     baseURL: BACKEND_URL,
     headers: {
@@ -46,6 +46,17 @@ export const errorInstance = () => {
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
+      console.log(response.data.message);
+      if (
+        response.data &&
+        response.data.message &&
+        response.data.message === "사용자 로그인 성공"
+      ) {
+        const Authorization = response.data.loginRes.jwtToken;
+        const RefreshToken = response.data.loginRes.refToken;
+        if (Authorization) localStorage.setItem("Authorization", Authorization);
+        if (RefreshToken) localStorage.setItem("RefreshToken", RefreshToken);
+      }
       return response;
     },
 
@@ -64,10 +75,10 @@ export const errorInstance = () => {
   return instance;
 };
 
-const errorApi = errorInstance();
+const userApi = userInstance();
 
 const getRefresh = async () => {
-  return await errorApi
+  return await userApi
     .post(`/user/refresh`)
     .then((res: any) => {
       localStorage.setItem("Authorization", res.data.newJwtToken);
@@ -107,13 +118,6 @@ export const apiInstance = () => {
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
-    //   if (response.data.loginRes) {
-    //     const Authorization = response.data.loginRes.jwtToken;
-    //     const RefreshToken = response.data.loginRes.refToken;
-    //     if (Authorization) localStorage.setItem("Authorization", Authorization);
-    //     if (RefreshToken) localStorage.setItem("RefreshToken", RefreshToken);
-    //   }
-
       return response;
     },
 

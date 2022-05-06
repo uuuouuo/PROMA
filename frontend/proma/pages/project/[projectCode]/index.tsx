@@ -1,4 +1,4 @@
-//프로젝트 워크스페이스
+/* eslint-disable */
 import styled from "styled-components";
 import Sprint from "../../../components/project/Sprint";
 import { useState, useEffect } from "react";
