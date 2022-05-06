@@ -58,7 +58,7 @@ public class User {
     }
 
     public void deleteUser(){
-        this.isDeleted = this.isDeleted^true;
+        this.isDeleted = true;
     }
 
     public void setRefresh(String refresh) {
