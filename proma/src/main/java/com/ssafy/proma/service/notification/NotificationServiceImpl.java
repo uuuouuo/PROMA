@@ -72,7 +72,7 @@ public class NotificationServiceImpl implements NotificationService{
 
         //SprintService에서 notificationService.sendSprintNotification(sprint);
 
-        String message = "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.isStatus() ? "시작" : "종료") + "되었습니다.";
+        String message = "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus() ? "시작" : "종료") + "되었습니다.";
         log.debug(message);
 
         List<UserProject> userProjectList = userProjectRepository.findByProject(sprint.getProject());

@@ -1,20 +1,23 @@
 package com.ssafy.proma.model.entity.sprint;
 
+import static javax.persistence.FetchType.LAZY;
+
 import com.ssafy.proma.model.entity.project.Project;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import javax.persistence.*;
-
-import java.sql.Timestamp;
 import lombok.NoArgsConstructor;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Entity
@@ -43,7 +46,7 @@ public class Sprint {
 
     @Column
     @ApiModelProperty(value = "스프린트 시작, 종료 여부")
-    private boolean status;
+    private Boolean status;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "PROJECT_NO", nullable = false)
@@ -51,7 +54,8 @@ public class Sprint {
     private Project project;
 
     public void toggleStatus(){
-        this.status = this.status^true;
+//        this.status = this.status^true;
+        this.status = this.status ? false : true;
     }
 
     public void update(String name,String startDate,String endDate){

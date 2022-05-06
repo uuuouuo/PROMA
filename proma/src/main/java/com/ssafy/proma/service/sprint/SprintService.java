@@ -9,7 +9,6 @@ import static com.ssafy.proma.exception.Message.SPRINT_GET_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.SPRINT_UPDATE_ERROR_MESSAGE;
 import static com.ssafy.proma.exception.Message.SPRINT_UPDATE_SUCCESS_MESSAGE;
 
-import com.ssafy.proma.model.dto.sprint.ReqSprintDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto;
 import com.ssafy.proma.model.dto.sprint.ReqSprintDto.SprintCreateDto.SprintUpdateDto;
 import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintDto;
@@ -118,7 +117,7 @@ public class SprintService extends AbstractService {
       List<SprintDto> sprintDtoList = sprintList.stream().map(
           sprint -> new SprintDto(sprint.getNo(), sprint.getName(),
               sprint.getStartDate().toString(),
-              sprint.getEndDate().toString(), sprint.isStatus())).collect(
+              sprint.getEndDate().toString(), sprint.getStatus())).collect(
           Collectors.toList());
 
       resultMap.put("sprint", sprintDtoList);
@@ -150,6 +149,7 @@ public class SprintService extends AbstractService {
     return resultMap;
   }
 
+  @Transactional
   public Map<String, Object> getDeleteSprint(Integer sprintNo){
 
     Map<String, Object> resultMap = new HashMap<>();
@@ -160,6 +160,8 @@ public class SprintService extends AbstractService {
       new IllegalStateException(SPRINT_DELETE_ERROR_MESSAGE);
     }
     else {
+      sprint.toggleStatus();
+
       Optional<List<Issue>> issueListOp = issueRepository.findBySprint(sprint);
       List<Issue> issues = takeOp(issueListOp);
 
