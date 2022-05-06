@@ -29,14 +29,20 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
 
 
-        if(exception.equals(ErrorCode.EXPIRED_TOKEN.getCode())) {
-            errorCode = ErrorCode.EXPIRED_TOKEN;
+        if(exception.equals(ErrorCode.EXPIRED_JWT_TOKEN.getCode())) {
+            errorCode = ErrorCode.EXPIRED_JWT_TOKEN;
             setResponse(response, errorCode);
             return;
         }
 
         if(exception.equals(ErrorCode.INVALID_TOKEN.getCode())) {
             errorCode = ErrorCode.INVALID_TOKEN;
+            setResponse(response, errorCode);
+            return;
+        }
+
+        if(exception.equals(ErrorCode.EXPIRED_REF_TOKEN.getCode())) {
+            errorCode = ErrorCode.EXPIRED_REF_TOKEN;
             setResponse(response, errorCode);
         }
     }

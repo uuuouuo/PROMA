@@ -66,13 +66,13 @@ public class ClientGithub implements ClientProxy {
                 .blockFirst();
 
         User user = new User();
-        for (Map.Entry<String, Object> entry : userResponse.entrySet()) {
-            if (entry.getValue() != null) {
-                System.out.println(entry.getKey() + " : " + entry.getValue().toString());
-            } else {
-                System.out.println(entry.getKey() + " : null");
-            }
-        }
+//        for (Map.Entry<String, Object> entry : userResponse.entrySet()) {
+//            if (entry.getValue() != null) {
+//                System.out.println(entry.getKey() + " : " + entry.getValue().toString());
+//            } else {
+//                System.out.println(entry.getKey() + " : null");
+//            }
+//        }
 
         String userNodeId = userResponse.get("node_id").toString();
         Optional<User> findUserByNodeId = userService.checkUserNodeId(userNodeId);

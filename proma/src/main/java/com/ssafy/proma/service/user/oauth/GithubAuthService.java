@@ -2,32 +2,36 @@ package com.ssafy.proma.service.user.oauth;
 
 import com.ssafy.proma.config.auth.jwt.JwtTokenService;
 import com.ssafy.proma.config.auth.provider.ClientGithub;
+import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.user.UserDto.LoginRes;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.user.UserRepository;
+import com.ssafy.proma.service.AbstractService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GithubAuthService {
+public class GithubAuthService extends AbstractService {
 
     private final ClientGithub clientGithub;
     private final JwtTokenService jwtTokenService;
     private final UserRepository userRepository;
 
     @Transactional
-    public LoginRes login(String code) {
+    public Map<String, Object> login(String code) {
+        Map<String, Object> resultMap = new HashMap<>();
+
         User user = clientGithub.getUserData(code);
 
         String userNo = user.getNo();
-        System.out.println(userNo + " " + user.getNickname());
 
         Optional<User> findUserByNodeID = userRepository.findByNoAndIsDeleted(userNo, false);
 
@@ -37,62 +41,58 @@ public class GithubAuthService {
 
         String jwtToken = jwtTokenService.create(user);
         String refToken = jwtTokenService.createRefresh();
-        System.out.println(jwtToken);
-        User findUser = userRepository.findByNo(userNo).get();
+        Optional<User> userOp = userRepository.findByNo(userNo);
+        User findUser = takeOp(userOp);
         findUser.setRefresh(refToken);
 
         LoginRes loginRes = new LoginRes();
         loginRes.setJwtToken(jwtToken);
         loginRes.setRefToken(refToken);
 
-        return  loginRes;
+        resultMap.put("loginRes", loginRes);
+        resultMap.put("message", Message.USER_LOGIN_SUCCESS_MESSAGE);
+
+        return resultMap;
     }
 
-    public boolean revoke(String code) {
-        try {
-            clientGithub.deleteUserData(code);
-        } catch (IOException e){
-            return false;
-        }
-        return true;
+    @Transactional
+    public Map<String, Object> revoke(String code, String userNo) throws IOException {
+        Map<String, Object> resultMap = new HashMap<>();
+        clientGithub.deleteUserData(code);
+        Optional<User> userOp = userRepository.findByNo(userNo);
+        User findUser = takeOp(userOp);
+        findUser.deleteUser();
+        resultMap.put("message", Message.USER_WITHDRAWAL_SUCCESS_MESSAGE);
+        return resultMap;
     }
 
-    public String refreshToken(String jwtToken, String refToken){
-        if(!jwtTokenService.validateJwt(jwtToken))
-            throw new AccessDeniedException("Token 만료되지 않음");
+    public Map<String, Object> refreshToken(String jwtToken, String refToken) {
+        Map<String, Object> resultMap = new HashMap<>();
+        if (!jwtTokenService.validateJwt(jwtToken))
+            throw new IllegalStateException("Token 만료되지 않음");
         Optional<User> findUserOptional = userRepository.findByRefresh(refToken);
-        if(findUserOptional.isEmpty() || !jwtTokenService.validateExpired(refToken))
-            throw new AccessDeniedException("Refresh Token 유효하지 않음");
+        if (findUserOptional.isEmpty())
+            throw new IllegalStateException("Refresh Token 유효하지 않음");
 
         User findUser = findUserOptional.get();
         String newJwtToken = jwtTokenService.create(findUser);
+        resultMap.put("newJwtToken", newJwtToken);
+        resultMap.put("message", Message.USER_REFRESH_SUCCESS_MESSAGE);
+        System.out.println(newJwtToken);
 
-        return newJwtToken;
+        return resultMap;
     }
 
-    public String updateToken(String userNo) {
-        Optional<User> userOptional = userRepository.findByNo(userNo);
+    @Transactional
+    public Map<String, Object> logout(String userNo) {
 
-        String newJwtToken = null;
+        Map<String, Object> resultMap = new HashMap<>();
+        Optional<User> userOp = userRepository.findByNo(userNo);
+        User findUser = takeOp(userOp);
+        findUser.setRefresh("invalidate");
+        resultMap.put("message", Message.USER_LOGOUT_SUCCESS_MESSAGE);
 
-        if(userOptional.isPresent()) {
-            User user = userOptional.get();
-            newJwtToken = jwtTokenService.create(user);
-        }
-
-        return newJwtToken;
-    }
-
-    public boolean logout(String userNo) {
-
-        Optional<User> userOptional = userRepository.findByNo(userNo);
-
-        if(userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setRefresh("invalidate");
-            return true;
-        }
-        return false;
+        return resultMap;
 
     }
 }
