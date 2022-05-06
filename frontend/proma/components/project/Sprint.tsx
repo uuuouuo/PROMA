@@ -1,32 +1,16 @@
 //스프린트 컴포넌트
 import Team from "./Team";
+import SprintUpdateModal from "../../components/Modals/SprintUpdateModal";
+
 import styled from "styled-components";
-import { useState, useEffect } from "react";
 import { ThemeType } from "../../interfaces/style";
 
-//더미 데이터
-const teamData = [
-  {
-    teamNo: 0,
-    teamName: "frontend",
-    projectNo: 10,
-  },
-  {
-    teamNo: 1,
-    teamName: "backend",
-    projectNo: 10,
-  },
-  {
-    teamNo: 2,
-    teamName: "db",
-    projectNo: 10,
-  },
-  {
-    teamNo: 3,
-    teamName: "deploy",
-    projectNo: 10,
-  },
-];
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+
+import { connect } from "react-redux";
+import { deleteSprint, updateSprintStatus } from "../../store/modules/sprint";
+import { RootState } from "../../store/modules";
 
 //styled-components
 const Title = styled.h2`
@@ -36,7 +20,6 @@ const Title = styled.h2`
   margin: 0;
   margin-bottom: 10px;
 `;
-
 const SprintBox = styled.div`
   margin-top: 15px;
   border-radius: 3px;
@@ -57,39 +40,140 @@ const FlexBox = styled.div`
 `;
 const FilledButton = styled.button`
   font-size: 15px;
-  &:hover {
-    cursor: pointer;
-  }
   padding: 5px 10px;
   background-color: ${(props: ThemeType) => props.theme.mainColor};
   color: white;
   border: none;
   border-radius: 3px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const OptionBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: black;
+  margin-top: 10px;
+  ${FilledButton} {
+    font-size: 12px;
+    margin-left: 10px;
+  }
+`;
+const UnfilledButton = styled.button`
+  font-size: 15px;
+  background-color: inherit;
+  border: none;
+  color: ${(props: ThemeType) => props.theme.mainColor};
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
-interface SprintType {
-  sprintNo: number;
-  sprintName: string;
-}
+const mapStateToProps = (state: RootState) => {
+  return {
+    isInProgress: state.sprintReducer.isInProgress,
+    inProgressSprintInfo: state.sprintReducer.inProgressSprintInfo,
+  };
+};
 
-const Sprint = ({ sprint }: { sprint: SprintType }) => {
-  const [inProgress, setInProgress] = useState<boolean>(false);
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    deleteSprint: (sprintInfo: any) => dispatch(deleteSprint(sprintInfo)),
+    updateSprintStatus: (sprintInfo: any) =>
+      dispatch(updateSprintStatus(sprintInfo)),
+  };
+};
+
+const Sprint = ({
+  sprint,
+  teamList,
+  deleteSprint,
+  updateSprintStatus,
+  isInProgress,
+  inProgressSprintInfo,
+}: {
+  sprint: any;
+  teamList: any;
+  deleteSprint?: any;
+  updateSprintStatus?: any;
+  isInProgress?: boolean;
+  inProgressSprintInfo?: Object;
+}) => {
+  const router = useRouter();
+
+  const [inProgress, setInProgress] = useState<boolean>(sprint.status);
+  const [teams, setTeams] = useState<Array<Object>>([]);
+  const [sprintUpdateModal, setSprintUpdateModal] = useState<boolean>(false);
+  const [projectNo, setProjectNo] = useState<string>("");
+
+  const showSprintUpdateModal = () => setSprintUpdateModal((cur) => !cur);
+
+  const onDeleteSprint = () => {
+    let deleteConfirm = confirm("Are you sure you want to delete the sprint?");
+    if (deleteConfirm) {
+      deleteSprint({
+        sprintNo: sprint.sprintNo,
+        projectNo,
+      });
+    }
+  };
+
+  const onToggleSprintStatus = () => {
+    updateSprintStatus({
+      sprintNo: sprint.sprintNo,
+      projectNo,
+    }).then((res: any) => {
+      alert(inProgress ? "Sprint is finished" : "Sprint is started");
+      setInProgress((cur) => !cur);
+    });
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectNo = router.query.projectCode as string;
+    setProjectNo(projectNo);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (!teamList) return;
+    setTeams(teamList);
+  }, [teamList]);
 
   return (
     <SprintBox>
       <FlexBox>
-        <Title>{sprint.sprintName}</Title>
-        <FilledButton onClick={() => setInProgress((cur) => !cur)}>
-          {inProgress ? "Finish Sprint" : "Start Sprint"}
-        </FilledButton>
+        <Title>{sprint.title}</Title>
+        <SprintUpdateModal
+          sprintUpdateModal={sprintUpdateModal}
+          showSprintUpdateModal={showSprintUpdateModal}
+          sprintInfo={sprint}
+        />
+        {!isInProgress ? (
+          <FilledButton onClick={onToggleSprintStatus}>
+            Start Sprint
+          </FilledButton>
+        ) : sprint.status ? (
+          <FilledButton onClick={onToggleSprintStatus}>
+            Finish Sprint
+          </FilledButton>
+        ) : null}
       </FlexBox>
       <TeamBox>
-        {teamData.map((team, index) => (
-          <Team team={team} key={index} sprintName={sprint.sprintName} />
-        ))}
+        {teams
+          ? teams?.map((team, index) => (
+              <Team team={team} key={index} sprintName={sprint.title} />
+            ))
+          : null}
       </TeamBox>
+      {sprint.sprintNo && !sprint.status ? (
+        <OptionBox>
+          <UnfilledButton onClick={showSprintUpdateModal}>Edit</UnfilledButton>
+          <UnfilledButton onClick={onDeleteSprint}>Delete</UnfilledButton>
+        </OptionBox>
+      ) : null}
     </SprintBox>
   );
 };
 
-export default Sprint;
+export default connect(mapStateToProps, mapDispatchToProps)(Sprint);

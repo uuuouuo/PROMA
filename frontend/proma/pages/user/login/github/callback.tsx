@@ -1,22 +1,38 @@
 import { useEffect } from 'react';
-import { BsChevronCompactLeft } from 'react-icons/bs';
-import { getMemberList, getMemberInfo } from "../../../../store/modules/member";
+import { getLogin } from "../../../../store/modules/member";
+import { connect } from "react-redux";
+import { RootState } from "../../../../store/modules";
 
-const Callback = () => {
+const mapStateToProps = (state: RootState) => {
+    return {
+        userInfo : state.userReducer.userInfo,
+    };
+}
 
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getLogin: () =>
+            dispatch(getLogin()),
+    };
+};
+
+const Callback = ({
+    getLogin,
+    userInfo,
+}: {
+    getLogin: any;
+    userInfo: any;
+}
+) => {
     useEffect(() => {
         const code = window.location.search.replace("?code=", "");
         localStorage.setItem("code", code);
-        // getMemberList().then(() => Log_in());
-        getMemberInfo();
+        getLogin();
     }, []);
 
-    const Log_in = () => {
-        getMemberInfo();
-    }
     return (
         <></>
     );
 };
 
-export default Callback;
+export default connect(mapStateToProps, mapDispatchToProps)(Callback);

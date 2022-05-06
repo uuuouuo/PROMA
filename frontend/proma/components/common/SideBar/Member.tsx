@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 
 //styled-components
@@ -11,14 +11,13 @@ const MemberContainer = styled.div`
   align-items: center;
   background-color: inherit;
   font-size: 18px;
-  padding: 0 10px;
+  padding: 0px;
   margin-bottom: 5px;
   div {
     display: flex;
     align-items: center;
   }
 `;
-
 const ImageBox = styled.div`
   width: 25px;
   height: 25px;
@@ -26,7 +25,6 @@ const ImageBox = styled.div`
   overflow: hidden;
   margin-right: 5px;
 `;
-
 const ChatButton = styled.button`
   border: 2px solid ${(props: ThemeType) => props.theme.mainColor};
   border-radius: 3px;
@@ -41,19 +39,28 @@ const ChatButton = styled.button`
   }
 `;
 
-const Member = ({ memberName }: { memberName: string }) => {
-
+const Member = ({ memberInfo }: { memberInfo: any }) => {
   // 채팅창 띄우기
-  const [state, setState] = useState(false);
+  const [state, setState] = useState<boolean>(false);
+  const [image, setImage] = useState<string>("");
+
   const showChat = () => setState((cur) => !cur);
-  
+
+  useEffect(() => {
+    setImage(memberInfo.image);
+  }, [memberInfo]);
+
   return (
     <MemberContainer>
       <div>
         <ImageBox>
-          <Image src="/profileimg.png" width={25} height={25}></Image>
+          {image ? (
+            <Image src={`${image}`} width={25} height={25} />
+          ) : (
+            <Image src="/profileimg.png" width={25} height={25} />
+          )}
         </ImageBox>
-        <span>{memberName}</span>
+        <span>{memberInfo.nickname}</span>
       </div>
       <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
       <Chatting state={state} showChat={showChat} />

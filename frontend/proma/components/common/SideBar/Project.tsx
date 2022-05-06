@@ -3,16 +3,17 @@ import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Team from "./Team";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
-import { TeamCreateModal } from "../Modal";
+import TeamCreateModal from "../../Modals/TeamCreateModal";
+import { useRouter } from "next/router";
 
+//styled-components
 const ProjectContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
 `;
-
 const Header = styled.div`
   height: 40px;
   display: flex;
@@ -23,7 +24,7 @@ const Header = styled.div`
   border-radius: 3px;
   padding: 0 10px 0 15px;
   a {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     text-decoration: none;
     color: ${(props: ThemeType) => props.theme.elementTextColor};
@@ -33,7 +34,6 @@ const Header = styled.div`
     align-items: center;
   }
 `;
-
 const ChatButton = styled.button`
   border: 2px solid ${(props: ThemeType) => props.theme.mainColor};
   border-radius: 3px;
@@ -47,7 +47,6 @@ const ChatButton = styled.button`
     cursor: pointer;
   }
 `;
-
 const ArrowButton = styled.button`
   background-color: inherit;
   border: none;
@@ -56,7 +55,6 @@ const ArrowButton = styled.button`
   display: flex;
   align-items: center;
 `;
-
 const AddTeamButton = styled.button`
   background-color: inherit;
   color: ${(props: ThemeType) => props.theme.mainColor};
@@ -70,11 +68,10 @@ const AddTeamButton = styled.button`
     cursor: pointer;
   }
 `;
-
 const TeamBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 10px 5px 0 10px;
   ${AddTeamButton} {
     align-self: flex-start;
     padding: 10px;
@@ -82,17 +79,29 @@ const TeamBox = styled.div`
   }
 `;
 
-//dummy data
-const teams = ["team1", "team2", "team3"];
-
 const Project = ({ projectInfo }: { projectInfo: any }) => {
+  const router = useRouter();
+
   const [showTeams, setShowTeams] = useState<boolean>(false);
   const [teamCreateModal, setTeamCreateModal] = useState<boolean>(false);
+  const [teams, setTeams] = useState<Array<Object>>([]);
   const showTeamCreateModal = () => setTeamCreateModal((cur) => !cur);
 
   // 채팅창 띄우기
   const [state, setState] = useState(false);
   const showChat = () => setState((cur) => !cur);
+
+  useEffect(() => {
+    setTeams(projectInfo.teamList);
+  }, [projectInfo]);
+
+  useEffect(() => {
+    if (router.query.projectCode) {
+      if (router.query.projectCode === projectInfo.projectNo)
+        setShowTeams(true);
+      else setShowTeams(false);
+    }
+  }, [router.asPath]);
 
   return (
     <ProjectContainer>
@@ -110,14 +119,22 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
       </Header>
       {showTeams ? (
         <TeamBox>
-          {teams.map((team, index) => (
-            <Team teamName={team} key={index} />
-          ))}
+          {teams
+            ? teams.map((team: any, index: any) => (
+                <Team
+                  teamInfo={team}
+                  projectNo={projectInfo.projectNo}
+                  currentTeam={showTeams}
+                  key={index}
+                />
+              ))
+            : null}
           <AddTeamButton onClick={showTeamCreateModal}>
             + Add Team
           </AddTeamButton>
           <TeamCreateModal
             teamCreateModal={teamCreateModal}
+            projectNo={projectInfo.projectNo}
             showTeamCreateModal={showTeamCreateModal}
           />
         </TeamBox>

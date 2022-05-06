@@ -16,6 +16,7 @@ import Image from "next/image";
 import { postNewProject } from "../../store/modules/project";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
+import { RootState } from "../../store/modules";
 
 //styling
 export const style = {
@@ -159,6 +160,15 @@ export const DeleteButton = styled(Button)`
   width: inherit;
   margin-top: 10px;
 `;
+export const WithdrawBox = styled.div`
+  text-align: -webkit-center;
+`;
+export const WithdrawButton = styled(Button)`
+  color: white;
+  background: red;
+  width: 90px;
+  font-weight: bold;
+`;
 export const MemberBox = styled.div`
   display: flex;
   align-items: center;
@@ -186,7 +196,7 @@ export const SocialLoginButton = styled.button`
   }
 `;
 export const UserProfileBox = styled(InputArea)`
-  height: 350px;
+  height: 310px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -694,12 +704,17 @@ export const JoinModal = ({
 export const UserProfileModal = ({
   userProfileModal,
   showUserProfileModal,
+  userInfo,
 }: {
   userProfileModal: boolean;
-  showUserProfileModal: any;
+    showUserProfileModal: any;
+    userInfo: any;
 }) => {
-  const [userName, setUserName] = useState<string>("sue");
+  const [userName, setUserName] = useState<string>(`${userInfo.nickname}`);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
+  const bringToken = () => {
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=e9aef6fccada43586c11`;
+  };
 
   return (
     <ModalBox
@@ -717,7 +732,11 @@ export const UserProfileModal = ({
             </button>
             {!updateStatus ? (
               <div>
-                <Image src="/profileimg.png" width={180} height={180} />
+                {
+                  userInfo.profileImage == null ?
+                    <Image src="/profileimg.png" width={180} height={180} /> 
+                    : <Image src={`${userInfo.profileImage}`} width={180} height={180} /> 
+                }
                 <p>{userName}</p>
               </div>
             ) : (
@@ -729,10 +748,16 @@ export const UserProfileModal = ({
                   placeholder="Type your name."
                   onChange={(e) => setUserName(e.target.value)}
                   autoFocus
-                />
+                  />
               </div>
             )}
           </UserProfileBox>
+          <WithdrawBox>
+            {
+              !updateStatus ? null : <WithdrawButton onClick={bringToken}>Account Withdraw</WithdrawButton>
+            }
+          </WithdrawBox>
+          
         </BodyContainer>
       </Box>
     </ModalBox>

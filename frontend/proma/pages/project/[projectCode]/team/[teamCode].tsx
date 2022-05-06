@@ -5,10 +5,18 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
+
+import WarningModal from "../../../../components/Modals/WarningModal";
+import { IssueCreateModal } from "../../../../components/common/Modal";
+
+import { connect } from "react-redux";
 import {
-  IssueCreateModal,
-  WarningModal,
-} from "../../../../components/common/Modal";
+  getTeamInfo,
+  updateTeamInfo,
+  deleteTeam,
+  outTeam,
+} from "../../../../store/modules/team";
+import { RootState } from "../../../../store/modules";
 
 //team info get api 필요
 
@@ -206,73 +214,130 @@ const issueData = [
   },
 ];
 
-const TeamSpace = () => {
-  //DOM 준비되었을 때 렌더링
-  const [isReady, setIsReady] = useState<boolean>(false);
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
+const mapStateToProps = (state: RootState) => {
+  return {
+    teamInfo: state.teamReducer.teamInfo,
+  };
+};
 
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getTeamInfo: (teamNo: string) => dispatch(getTeamInfo(teamNo)),
+    updateTeamInfo: (teamInfo: any) => dispatch(updateTeamInfo(teamInfo)),
+    deleteTeam: (teamInfo: any) => dispatch(deleteTeam(teamInfo)),
+    outTeam: (teamInfo: any) => dispatch(outTeam(teamInfo)),
+  };
+};
+
+const TeamSpace = ({
+  getTeamInfo,
+  teamInfo,
+  updateTeamInfo,
+  deleteTeam,
+  outTeam,
+}: {
+  getTeamInfo: any;
+  teamInfo: any;
+  updateTeamInfo: any;
+  deleteTeam: any;
+  outTeam: any;
+}) => {
   const router = useRouter();
 
-  const [updateTeamName, setUpdateTeamName] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  const [updateTitle, setUpdateTitle] = useState<boolean>(false);
+  const [projectNo, setProejctNo] = useState<string>("");
+  const [teamNo, setTeamNo] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("Team Name");
   const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
   const [sprintName, setSprintName] = useState<string>("Sprint Name");
+  const [isMember, setIsMember] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
+  const [warningTeamOutModal, setWarningTeamOutModal] =
+    useState<boolean>(false);
+  const [warningTeamDeleteModal, setWarningTeamDeleteModal] =
+    useState<boolean>(false);
+  const [teamOutComment] = useState<string>(
+    "팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?"
+  );
+  const [teamDeleteComment] = useState<string>(
+    "팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?"
+  );
 
-    const project_code = router.query.projectCode;
-    const team_code = router.query.teamCode;
-  }, [router.isReady]);
+  const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
+  const showWarningTeamOutModal = () => setWarningTeamOutModal((cur) => !cur);
+  const showWarningTeamDeleteModal = () =>
+    setWarningTeamDeleteModal((cur) => !cur);
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
     console.log(args);
   };
 
-  //팀 별 이슈 get api 로직 필요
+  //update team
+  const onKeyUpTeamName = (e: any) => {
+    if (e.key !== "Enter") return;
+    updateTeamName();
+  };
+  const updateTeamName = () => {
+    updateTeamInfo({
+      teamNo,
+      title: teamName,
+    });
+    setUpdateTitle((cur) => !cur);
+  };
 
-  //issue create modal
-  const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
-  const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
+  const onOutTeam = () =>
+    outTeam({ teamNo, projectNo }).then((res: any) =>
+      router.push(`/project/${projectNo}`)
+    );
+  const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
-  // 팀 나가기 / 삭제하기
-  const [warningListModal, setWarningListModal] = useState<boolean>(false);
-  const [warningListModal2, setWarningListModal2] = useState<boolean>(false);
-  const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-  const [warningCreateModal2, setWarningCreateModal2] =
-    useState<boolean>(false);
-  const showWarningListModal = () => setWarningListModal((cur) => !cur);
-  const showWarningListModal2 = () => setWarningListModal2((cur) => !cur);
-  const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
-  const showWarningCreateModal2 = () => setWarningCreateModal2((cur) => !cur);
-  const [comment, setComment] = useState<string>(
-    "팀을 나가는 즉시<br/> 팀 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 나가시겠습니까?"
-  );
-  const [comment2, setComment2] = useState<string>(
-    "팀을 삭제하면 즉시<br/> 팀 내 모든 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 팀에서 삭제하시겠습니까?"
-  );
+  //DOM 준비되었을 때 렌더링
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const projectCode = router.query.projectCode as string;
+    const teamCode = router.query.teamCode as string;
+
+    setProejctNo(projectCode);
+    setTeamNo(teamCode);
+
+    getTeamInfo(teamCode);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    setTeamName(teamInfo.title);
+    setIsMember(teamInfo.isMember);
+  }, [teamInfo]);
 
   return (
     <TeamSpaceContainer>
       <TopBar>
-        {updateTeamName ? (
+        {updateTitle ? (
           <FlexBox>
             <input
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
+              onKeyUp={onKeyUpTeamName}
               placeholder="Type Team Name"
               required
               autoFocus
             />
-            <FaCheck onClick={() => setUpdateTeamName((cur) => !cur)} />
+            <FaCheck onClick={() => updateTeamName} />
           </FlexBox>
         ) : (
           <FlexBox>
             <h1>{teamName}</h1>
-            <FaPen onClick={() => setUpdateTeamName((cur) => !cur)} />
+            {isMember ? (
+              <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+            ) : null}
           </FlexBox>
         )}
       </TopBar>
@@ -294,17 +359,21 @@ const TeamSpace = () => {
           <FlexBox>
             <span>Active: </span>
             <h2>{sprintName}</h2>
-            <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
+            {isMember ? (
+              <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
+            ) : null}
           </FlexBox>
         )}
-        <ButtonBox>
-          <button>Only My Issue</button>
-          <button onClick={showIssueCreateModal}>+ Add Issue</button>
-          <IssueCreateModal
-            issueCreateModal={issueCreateModal}
-            showIssueCreateModal={showIssueCreateModal}
-          />
-        </ButtonBox>
+        {isMember ? (
+          <ButtonBox>
+            <button>Only My Issue</button>
+            <button onClick={showIssueCreateModal}>+ Add Issue</button>
+            <IssueCreateModal
+              issueCreateModal={issueCreateModal}
+              showIssueCreateModal={showIssueCreateModal}
+            />
+          </ButtonBox>
+        ) : null}
       </SubTopBar>
 
       {isReady ? (
@@ -439,25 +508,27 @@ const TeamSpace = () => {
           </WorkSpace>
         </DragDropContext>
       ) : null}
-      <WarnButtonBox>
-        <button onClick={showWarningCreateModal}>팀 나가기</button>
-        <button onClick={showWarningCreateModal2}>팀 삭제</button>
+      {isMember ? (
+        <WarnButtonBox>
+          <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+          <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
 
-        <WarningModal
-          warningCreateModal={warningCreateModal}
-          showWarningListModal={showWarningListModal}
-          showWarningCreateModal={showWarningCreateModal}
-          comment={comment}
-        />
-        <WarningModal
-          warningCreateModal={warningCreateModal2}
-          showWarningListModal={showWarningListModal2}
-          showWarningCreateModal={showWarningCreateModal2}
-          comment={comment2}
-        />
-      </WarnButtonBox>
+          <WarningModal
+            warningModal={warningTeamOutModal}
+            showWarningModal={showWarningTeamOutModal}
+            comment={teamOutComment}
+            deleteFunc={onOutTeam}
+          />
+          <WarningModal
+            warningModal={warningTeamDeleteModal}
+            showWarningModal={showWarningTeamDeleteModal}
+            comment={teamDeleteComment}
+            deleteFunc={onDeleteTeam}
+          />
+        </WarnButtonBox>
+      ) : null}
     </TeamSpaceContainer>
   );
 };
 
-export default TeamSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(TeamSpace);

@@ -5,30 +5,31 @@ import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
+import TopicCreateModal from "../../../components/Modals/TopicCreateModal";
+import WarningModal from "../../../components/Modals/WarningModal";
+import TopicListModal from "../../../components/Modals/TopicListModal";
+import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
+
+import { connect } from "react-redux";
 import {
-  SprintCreateModal,
-  TopicListModal,
-  TopicCreateModal,
-  WarningModal,
-} from "../../../components/common/Modal";
+  getProjectInfo,
+  updateProjectInfo,
+  deleteProject,
+  getProjectJoinStatus,
+  joinProject,
+} from "../../../store/modules/project";
+import { getTeamList } from "../../../store/modules/team";
+import {
+  getSprintList,
+  getInProgressSprint,
+} from "../../../store/modules/sprint";
+import { RootState } from "../../../store/modules";
+import { useRouter } from "next/router";
 
-//해당 프로젝트 내 스프린트 get api 로직 필요
-
-//dummy data
-const sprints: any[] = [
-  {
-    sprintNo: 0,
-    sprintName: "1주차",
-  },
-  {
-    sprintNo: 1,
-    sprintName: "2주차",
-  },
-  {
-    sprintNo: 2,
-    sprintName: "Backlog",
-  },
-];
+const backlog = {
+  sprintNo: null,
+  title: "Backlog",
+};
 
 //styled-components
 const Button = styled.button`
@@ -104,20 +105,6 @@ const TopBar = styled(FlexBox)`
     }
   }
 `;
-const InitialBox = styled(FlexBox)`
-  /* margin-top: 300px; */
-  justify-content: center;
-  height: inherit;
-  ${Button} {
-    background-color: #a589c7;
-    color: white;
-    border: 1px solid #a589c7;
-    border-radius: 7px;
-    padding: 7px 10px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-`;
 const ButtonBox = styled.div`
   ${UnfilledButton} {
     margin-left: 10px;
@@ -130,34 +117,98 @@ const SprintsBox = styled.div`
   background-color: ${(props: ThemeType) => props.theme.bgColor};
 `;
 
-const ProjectSpace = () => {
-  //DOM 준비되었을 때 렌더링
+const mapStateToProps = (state: RootState) => {
+  return {
+    projectInfo: state.projectReducer.projectInfo,
+    teamList: state.teamReducer.teamList,
+    sprintList: state.sprintReducer.sprintList,
+    isLogin: state.userReducer.isLogin,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
+    deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
+    joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
+    getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
+    getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
+    updateProjectInfo: (projectNewInfo: any) =>
+      dispatch(updateProjectInfo(projectNewInfo)),
+    getProjectJoinStatus: (projectNo: string) =>
+      dispatch(getProjectJoinStatus(projectNo)),
+    getInProgressSprint: (projectNo: string) =>
+      dispatch(getInProgressSprint(projectNo)),
+  };
+};
+
+const ProjectSpace = ({
+  getProjectInfo,
+  projectInfo,
+  updateProjectInfo,
+  deleteProject,
+  getProjectJoinStatus,
+  isLogin,
+  joinProject,
+  getTeamList,
+  teamList,
+  sprintList,
+  getSprintList,
+  getInProgressSprint,
+}: {
+  getProjectInfo: any;
+  projectInfo: any;
+  updateProjectInfo: any;
+  deleteProject: any;
+  getProjectJoinStatus: any;
+  isLogin: boolean;
+  joinProject: any;
+  getTeamList: any;
+  sprintList: any;
+  teamList: any;
+  getSprintList: any;
+  getInProgressSprint: any;
+}) => {
+  const router = useRouter();
+
   const [isReady, setIsReady] = useState<boolean>(false);
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
+
+  const [projectNo, setProjectNo] = useState<string>("");
+  const [isManager, setIsManager] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
+  const [teams, setTeams] = useState<Array<Object>>([]);
+  const [sprints, setSprints] = useState<Array<Object>>([]);
+  const [comment] = useState<string>(
+    "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
+  );
 
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>("Project Name");
-  const [comment, setComment] = useState<string>("프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?")
-  
   const [topicListModal, setTopicListModal] = useState<boolean>(false);
   const [topicCreateModal, setTopicCreateModal] = useState<boolean>(false);
   const [sprintCreateModal, setSprintCreateModal] = useState<boolean>(false);
-  const [warningListModal, setWarningListModal] = useState<boolean>(false);
-  const [warningCreateModal, setWarningCreateModal] = useState<boolean>(false);
-
+  const [warningModal, setWarningModal] = useState<boolean>(false);
 
   const showTopicListModal = () => setTopicListModal((cur) => !cur);
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
-  const showWarningListModal = () => setWarningListModal((cur) => !cur);
-  const showWarningCreateModal = () => setWarningCreateModal((cur) => !cur);
+  const showWarningModal = () => setWarningModal((cur) => !cur);
 
-  //최초 프로젝트 시작 시 생성 => 백로그 생성됨
-  const onStartProject = () => {
-    //백로그라는 스프린트 생성 post api 로직 필요
+  //update project
+  const onKeyUpProjectName = (e: any) => {
+    if (e.key !== "Enter") return;
+    updateProjectName();
   };
+  const updateProjectName = () => {
+    updateProjectInfo({
+      projectNo,
+      title,
+    });
+    setUpdateTitle((cur) => !cur);
+  };
+
+  //delete project
+  const onDeleteProject = () =>
+    deleteProject(projectNo).then((res: any) => router.push("/"));
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
@@ -165,6 +216,59 @@ const ProjectSpace = () => {
     //이슈 옮겨졌을 때 이슈 수정 post api 로직 필요
     //그 후 재렌더링 로직 필요
   };
+
+  //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const value = router.query.projectCode as string;
+    setProjectNo(value);
+
+    if (isLogin) {
+      getProjectJoinStatus(value).then((res: any) => {
+        if (!res.payload) {
+          joinProject({ projectNo: value }).then((res: any) =>
+            setIsReady(true)
+          );
+        } else {
+          setIsReady(true);
+        }
+      });
+    } else {
+      alert("Please login first");
+      router.push("/");
+    }
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (!projectNo) return;
+
+    getProjectInfo(projectNo);
+    getSprintList(projectNo);
+    getTeamList(projectNo);
+    getInProgressSprint(projectNo);
+  }, [projectNo]);
+
+  useEffect(() => {
+    if (!projectInfo) return;
+
+    setTitle(projectInfo.title);
+
+    if (projectInfo.role === "MANAGER") setIsManager(true);
+    else setIsManager(false);
+  }, [projectInfo]);
+
+  useEffect(() => {
+    if (!teamList) return;
+
+    setTeams(teamList);
+  }, [teamList]);
+
+  useEffect(() => {
+    if (!sprintList) return;
+
+    setSprints(sprintList);
+  }, [sprintList]);
 
   return (
     <>
@@ -174,24 +278,29 @@ const ProjectSpace = () => {
             {updateTitle ? (
               <TopBar>
                 <input
-                  onChange={(e) => setProjectName(e.target.value)}
-                  value={projectName}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onKeyUp={onKeyUpProjectName}
+                  value={title}
                   placeholder="Type Project Name"
                   required
                   autoFocus
                 />
-                <FaCheck onClick={() => setUpdateTitle((cur) => !cur)} />
+                <FaCheck onClick={updateProjectName} />
               </TopBar>
             ) : (
               <TopBar>
-                <h1>{projectName}</h1>
-                <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                <h1>{title}</h1>
+                {isManager ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
               </TopBar>
             )}
             <FlexBox>
               <UnfilledButton>Only My Issues</UnfilledButton>
               <ButtonBox>
-                <FilledButton onClick={showSprintCreateModal}>Create Sprint</FilledButton>
+                <FilledButton onClick={showSprintCreateModal}>
+                  Create Sprint
+                </FilledButton>
                 <SprintCreateModal
                   sprintCreateModal={sprintCreateModal}
                   showSprintCreateModal={showSprintCreateModal}
@@ -212,24 +321,19 @@ const ProjectSpace = () => {
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {sprints.length > 0 ? (
-                sprints.map((sprint, index) => (
-                  <Sprint sprint={sprint} key={index} />
-                ))
-              ) : (
-                <InitialBox>
-                  <Button onClick={onStartProject}>프로젝트 시작하기</Button>
-                </InitialBox>
-              )}
+              {sprints?.map((sprint, index) => (
+                <Sprint sprint={sprint} key={index} teamList={teams} />
+              ))}
+              <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
-            <WarnButton onClick={showWarningCreateModal}>
-              프로젝트 종료
-            </WarnButton>
+            {isManager ? (
+              <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
+            ) : null}
             <WarningModal
-              warningCreateModal={warningCreateModal}
-              showWarningListModal={showWarningListModal}
-              showWarningCreateModal={showWarningCreateModal}
+              warningModal={warningModal}
+              showWarningModal={showWarningModal}
               comment={comment}
+              deleteFunc={onDeleteProject}
             />
           </WorkSpace>
         </DragDropContext>
@@ -238,4 +342,4 @@ const ProjectSpace = () => {
   );
 };
 
-export default ProjectSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectSpace);

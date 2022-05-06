@@ -7,6 +7,9 @@ import Link from "next/link";
 import Toggle from "./Toggle";
 import { LoginModal, JoinModal, UserProfileModal } from "./Modal";
 import { FaRegUserCircle } from "react-icons/fa";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
+import { getLogout } from "../../store/modules/member";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -48,20 +51,37 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const NavBar = () => {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getLogout: () => dispatch(getLogout()),
+  };
+};
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    userInfo: state.userReducer.userInfo,
+    isLogin: state.userReducer.isLogin,
+  };
+};
+
+const NavBar = ({
+  userInfo,
+  isLogin,
+  getLogout,
+}: {
+  userInfo: any;
+  isLogin: boolean;
+  getLogout: any;
+}) => {
+  // const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
   const [userProfileModal, setUserProfileModal] = useState<boolean>(false);
 
-  const toggleLoginStatus = () => setIsLogin((cur) => !cur);
+  // const toggleLoginStatus = () => setIsLogin((cur) => !cur);
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
-
-  const setLogOut = () => {
-    setIsLogin(false);
-  }; 
 
   return (
     <NavBarContainer>
@@ -79,12 +99,12 @@ const NavBar = () => {
               loginModal={loginModal}
               showLoginModal={showLoginModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
             <JoinModal
               joinModal={joinModal}
               showJoinModal={showJoinModal}
-              toggleLoginStatus={toggleLoginStatus}
+              toggleLoginStatus={isLogin}
             />
           </MenuToggleBox>
         ) : (
@@ -95,8 +115,9 @@ const NavBar = () => {
             <UserProfileModal
               userProfileModal={userProfileModal}
               showUserProfileModal={showUserProfileModal}
+              userInfo={userInfo}
             />
-            <MenuButton onClick={setLogOut}>Logout</MenuButton>
+            <MenuButton onClick={() => getLogout()}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
@@ -106,4 +127,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

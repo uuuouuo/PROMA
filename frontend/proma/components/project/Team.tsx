@@ -58,13 +58,7 @@ const Title = styled.h3`
   font-weight: 400;
 `;
 
-interface TeamType {
-  teamNo: number;
-  teamName: string;
-  projectNo: number;
-}
-
-const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
+const Team = ({ team, sprintName }: { team: any; sprintName: string }) => {
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
@@ -86,7 +80,7 @@ const Team = ({ team, sprintName }: { team: TeamType; sprintName: string }) => {
             <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
               <Link href={`/project/${team.projectNo}/team/${team.teamNo}`}>
                 <TeamName>
-                  <Title>{team.teamName}</Title>
+                  <Title>{team.title}</Title>
                 </TeamName>
               </Link>
               {issueData.map((issue, index) => (

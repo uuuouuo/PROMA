@@ -1,8 +1,22 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { ThemeType } from "../../../../interfaces/style";
-import { FaPen, FaCheck, FaCaretSquareDown } from "react-icons/fa";
-import Image from "next/image";
+import { FaCaretSquareDown } from "react-icons/fa";
+
+import { connect } from "react-redux";
+import {
+  getTopicInfo,
+  updateTopicInfo,
+  deleteTopic,
+} from "../../../../store/modules/topic";
+import { RootState } from "../../../../store/modules";
+import { useRouter } from "next/router";
+
+interface topicType {
+  title: string;
+  description: string;
+  topicNo: number;
+}
 
 //styled-components
 const TopicContainer = styled.div`
@@ -14,12 +28,7 @@ const TopicContainer = styled.div`
   overflow-y: scroll;
 `;
 const TopicTitle = styled.h1`
-  font-size: 35px;
-`;
-const IconBox = styled.div`
-  &:hover {
-    cursor: pointer;
-  }
+  font-size: 30px;
 `;
 const SubBox = styled.div`
   display: flex;
@@ -32,7 +41,7 @@ const SubBox = styled.div`
 `;
 const SubTitle = styled.div`
   color: ${(props: ThemeType) => props.theme.subPurpleColor};
-  font-size: 25px;
+  font-size: 22px;
   display: flex;
   align-items: center;
   margin-bottom: 15px;
@@ -41,14 +50,33 @@ const SubTitle = styled.div`
     color: ${(props: ThemeType) => props.theme.textColor};
   }
 `;
+const UnfilledButton = styled.button`
+  font-size: 15px;
+  background-color: inherit;
+  border: none;
+  color: ${(props: ThemeType) => props.theme.elementTextColor};
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const OptionBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  ${UnfilledButton} {
+    margin-left: 10px;
+  }
+`;
 const TopicDetailBox = styled(SubBox)`
   width: inherit;
   position: relative;
-  ${IconBox} {
+  ${OptionBox} {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 20px;
+    right: 20px;
     color: ${(props: ThemeType) => props.theme.textColor};
+  }
+  p {
     font-size: 20px;
   }
 `;
@@ -59,9 +87,9 @@ const ToggleBox = styled.div`
     outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
     opacity: 0.7;
     padding: 10px 15px;
-    font-size: 20px;
     width: 98%;
     margin-right: 100px;
+    font-size: 18px;
     &:focus {
       border: none;
       outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
@@ -69,7 +97,7 @@ const ToggleBox = styled.div`
     }
   }
   p {
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 600;
     color: ${(props: ThemeType) => props.theme.elementTextColor};
     margin: 0;
@@ -121,30 +149,84 @@ const AssigneeBox = styled.div`
   align-items: center;
 `;
 
-const TopicDetail = () => {
-  const [updateTopic, setUpdateTopic] = useState<boolean>(false);
+const mapStateToProps = (state: RootState) => {
+  return {
+    topicInfo: state.topicReducer.topicInfo,
+  };
+};
 
-  //dummyData
-  const [topicName, setTopicName] = useState<string>("Topic Name");
-  const [topicDesc, setTopicDesc] = useState<string>("description..");
-  const issueData = [
-    {
-      issueNo: 0,
-      issueTitle: "컴포넌트 구성",
-      description: "컴포넌트 구성합니다.",
-      assignee: "Sue",
-    },
-    {
-      issueNo: 1,
-      issueTitle: "db 설계",
-      description: "db 설계합니다.",
-      assignee: "Eus",
-    },
-  ];
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getTopicInfo: (topicNo: string) => dispatch(getTopicInfo(topicNo)),
+    deleteTopic: (topicNo: string) => dispatch(deleteTopic(topicNo)),
+    updateTopicInfo: (topicInfo: any) => dispatch(updateTopicInfo(topicInfo)),
+  };
+};
+
+const TopicDetail = ({
+  getTopicInfo,
+  topicInfo,
+  updateTopicInfo,
+  deleteTopic,
+}: {
+  getTopicInfo: any;
+  topicInfo: any;
+  updateTopicInfo: any;
+  deleteTopic: any;
+}) => {
+  const router = useRouter();
+  const [updateTopic, setUpdateTopic] = useState<boolean>(false);
+  const [projectNo, setProjectNo] = useState<string>("");
+  const [topicNo, setTopicNo] = useState<string>("");
+  const [topicDetail, setTopicDetail] = useState<any>({
+    title: "",
+    description: "",
+    topicNo: 0,
+  });
+
+  const onChangeTopicInfo = (e: any) => {
+    const name = e.target.name as string;
+    const value = e.target.value as string;
+    setTopicDetail((cur: any) => ({ ...cur, [name]: value }));
+  };
+
+  const onUpdateTopicInfo = () => {
+    updateTopicInfo({
+      topicNo,
+      updatedInfo: {
+        title: topicDetail.title,
+        description: topicDetail.description,
+      },
+    });
+    setUpdateTopic((cur) => !cur);
+  };
+
+  const onDeleteTopic = () => {
+    const confirmResult = confirm("Are you sure you want to delete the topic?");
+    if (confirmResult) {
+      deleteTopic(topicNo).then((res: any) =>
+        router.push(`/project/${projectNo}`)
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectCode = router.query.projectCode as string;
+    const topicCode = router.query.topicCode as string;
+    setProjectNo(projectCode);
+    setTopicNo(topicCode);
+    getTopicInfo(topicCode);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (!topicInfo) return;
+    setTopicDetail(topicInfo);
+  }, [topicInfo]);
 
   return (
     <TopicContainer>
-      <TopicTitle>{topicName}</TopicTitle>
+      <TopicTitle>{topicDetail.title}</TopicTitle>
 
       <SubBox>
         <SubTitle>
@@ -153,21 +235,31 @@ const TopicDetail = () => {
         </SubTitle>
 
         <TopicDetailBox>
-          <IconBox onClick={() => setUpdateTopic((cur) => !cur)}>
-            {updateTopic ? <FaCheck /> : <FaPen />}
-          </IconBox>
+          {updateTopic ? (
+            <OptionBox>
+              <UnfilledButton onClick={onUpdateTopicInfo}>Done</UnfilledButton>
+            </OptionBox>
+          ) : (
+            <OptionBox>
+              <UnfilledButton onClick={() => setUpdateTopic((cur) => !cur)}>
+                Edit
+              </UnfilledButton>
+              <UnfilledButton onClick={onDeleteTopic}>Delete</UnfilledButton>
+            </OptionBox>
+          )}
           <p>Title</p>
           <ToggleBox>
             {updateTopic ? (
               <input
                 type="text"
-                value={topicName}
-                onChange={(e) => setTopicName(e.target.value)}
-                placeholder="Type Topic Name"
+                name="title"
+                value={topicDetail.title}
+                onChange={onChangeTopicInfo}
+                placeholder="Type Topic Title"
                 required
               />
             ) : (
-              <p>{topicName}</p>
+              <p>{topicDetail.title}</p>
             )}
           </ToggleBox>
           <p>Description</p>
@@ -175,13 +267,14 @@ const TopicDetail = () => {
             {updateTopic ? (
               <input
                 type="text"
-                value={topicDesc}
-                onChange={(e) => setTopicDesc(e.target.value)}
+                name="description"
+                value={topicDetail.description}
+                onChange={onChangeTopicInfo}
                 placeholder="Type Topic Description"
                 required
               />
             ) : (
-              <p>{topicDesc}</p>
+              <p>{topicDetail.description}</p>
             )}
           </ToggleBox>
         </TopicDetailBox>
@@ -194,7 +287,7 @@ const TopicDetail = () => {
         </SubTitle>
 
         <IssueContainer>
-          {issueData.map((issue, index) => (
+          {/* {issueData.map((issue, index) => (
             <IssueBox key={index}>
               <div>
                 <p>No. {issue.issueNo}</p>
@@ -207,11 +300,11 @@ const TopicDetail = () => {
                 <p>{issue.assignee}</p>
               </AssigneeBox>
             </IssueBox>
-          ))}
+          ))} */}
         </IssueContainer>
       </SubBox>
     </TopicContainer>
   );
 };
 
-export default TopicDetail;
+export default connect(mapStateToProps, mapDispatchToProps)(TopicDetail);

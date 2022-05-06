@@ -3,11 +3,12 @@ import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 
-//dummy data
-const members = ["kim", "Park", "Choi", "Seo", "Jang"];
+import { connect } from "react-redux";
+import { joinTeam } from "../../../store/modules/team";
+import { RootState } from "../../../store/modules";
 
 //styled-components
 const TeamContainer = styled.div`
@@ -15,16 +16,15 @@ const TeamContainer = styled.div`
   flex-direction: column;
   margin: 10px 0;
 `;
-
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: inherit;
-  padding: 0 10px;
+  padding: 0 5px;
   margin-bottom: 10px;
   a {
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
     color: black;
   }
@@ -33,7 +33,6 @@ const Header = styled.div`
     align-items: center;
   }
 `;
-
 const ChatJoinButton = styled.button`
   border: 2px solid ${(props: ThemeType) => props.theme.mainColor};
   border-radius: 3px;
@@ -47,7 +46,6 @@ const ChatJoinButton = styled.button`
     cursor: pointer;
   }
 `;
-
 const ArrowButton = styled.button`
   background-color: inherit;
   border: none;
@@ -56,22 +54,45 @@ const ArrowButton = styled.button`
   display: flex;
   align-items: center;
 `;
-
 const MemberBox = styled.div`
-  padding: 10px 20px;
+  padding: 10px 20px 10px 10px;
 `;
 
-const Team = ({ teamName }: { teamName: string }) => {
-  const [showMembers, setShowMembers] = useState<boolean>(false);
-  const [joinTeam, setJoinTeam] = useState<boolean>(false);
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    joinTeam: (teamInfo: any) => dispatch(joinTeam(teamInfo)),
+  };
+};
+
+const Team = ({
+  teamInfo,
+  projectNo,
+  currentTeam,
+  joinTeam,
+}: {
+  teamInfo: any;
+  projectNo: string;
+  currentTeam: boolean;
+  joinTeam?: any;
+}) => {
+  const [showMembers, setShowMembers] = useState<boolean>(currentTeam);
+  const [members, setMembers] = useState<Array<Object>>([]);
 
   // 채팅창 띄우기
   const [state, setState] = useState(false);
   const showChat = () => setState((cur) => !cur);
 
+  useEffect(() => {
+    setMembers(teamInfo.memberList);
+  }, [teamInfo]);
+
   const onJoinTeam = () => {
-    //join 하겠냐는 모달창 띄우고 거기서
-    setJoinTeam(true);
+    let joinConfirm = confirm("Would you like to join the team?");
+    if (joinConfirm) {
+      joinTeam({ teamNo: teamInfo.teamNo }).then((res: any) =>
+        alert("Team registration is complete.")
+      );
+    }
   };
 
   const onShowChat = () => {};
@@ -79,11 +100,11 @@ const Team = ({ teamName }: { teamName: string }) => {
   return (
     <TeamContainer>
       <Header>
-        <Link href="/project/0/team/0">
-          <a>{teamName}</a>
+        <Link href={`/project/${projectNo}/team/${teamInfo.teamNo}`}>
+          <a>{teamInfo.title}</a>
         </Link>
         <div>
-          {joinTeam ? (
+          {teamInfo.isInMember ? (
             <>
               <ChatJoinButton onClick={() => setState(true)}>
                 Chat
@@ -100,13 +121,15 @@ const Team = ({ teamName }: { teamName: string }) => {
       </Header>
       {showMembers ? (
         <MemberBox>
-          {members.map((member, index) => (
-            <Member memberName={member} key={index} />
-          ))}
+          {members
+            ? members.map((member, index) => (
+                <Member memberInfo={member} key={index} />
+              ))
+            : null}
         </MemberBox>
       ) : null}
     </TeamContainer>
   );
 };
 
-export default Team;
+export default connect(null, mapDispatchToProps)(Team);
