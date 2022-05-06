@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import axios from "axios";
 import { apiInstance } from "../../api";
 const api = apiInstance();
 
@@ -14,14 +14,33 @@ const initialState: ProjectState = {
   projectInfo: {},
 };
 
+//get jwt token again
+// export const refreshAccessToken = createAsyncThunk(
+//   "POST/REFRESHTOKEN",
+//   async (_, { rejectWithValue }) => {
+//     return await api
+//       .post(`/user/refresh`, {
+//         headers: {
+//           Refresh,
+//         },
+//       })
+//       .then((res) => {
+//         console.log(res);
+//       })
+//       .catch((err) => rejectWithValue(err.response.data));
+//   }
+// );
+
 //get every project api
 export const getProjectList = createAsyncThunk(
   "GET/PROJECTS",
-  async (_, { rejectWithValue }) => {
+  async (_, thunkAPI) => {
     return await api
       .get(`/project`)
       .then((res) => res.data)
-      .catch((err) => rejectWithValue(err.response.data));
+      .catch((err) => {
+        thunkAPI.rejectWithValue(err.response.data);
+      });
   }
 );
 

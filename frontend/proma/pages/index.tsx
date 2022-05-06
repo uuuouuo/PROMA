@@ -3,6 +3,8 @@ import { ThemeType } from "../interfaces/style";
 import { FaHandPointLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import axios from "axios";
 
 const animation = keyframes`
     0% {
@@ -75,6 +77,9 @@ function notify() {
 }
 
 const Home = () => {
+//   useEffect(() => {
+//     getRefresh();
+//   }, []);
   return (
     <MainContainer>
       <StyledContainer
