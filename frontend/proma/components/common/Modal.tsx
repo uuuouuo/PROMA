@@ -712,8 +712,10 @@ export const UserProfileModal = ({
 }) => {
   const [userName, setUserName] = useState<string>(`${userInfo.nickname}`);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
+  const bringToken = () => {
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=e9aef6fccada43586c11`;
+  };
 
-  console.log(userInfo);
   return (
     <ModalBox
       open={userProfileModal}
@@ -752,7 +754,7 @@ export const UserProfileModal = ({
           </UserProfileBox>
           <WithdrawBox>
             {
-              !updateStatus ? null : <WithdrawButton>Account Withdraw</WithdrawButton>
+              !updateStatus ? null : <WithdrawButton onClick={bringToken}>Account Withdraw</WithdrawButton>
             }
           </WithdrawBox>
           
