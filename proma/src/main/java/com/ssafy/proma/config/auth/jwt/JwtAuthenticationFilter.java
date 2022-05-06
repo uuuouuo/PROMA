@@ -25,32 +25,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if(path.equals("/user/refresh")) {
+        if (path.equals("/user/refresh")) {
             filterChain.doFilter(request, response);
             return;
         }
-
         final String authorizationHeader = request.getHeader(JwtProperties.JWT_HEADER_STRING);
 
-        if(authorizationHeader == null) {
+        if (authorizationHeader == null) {
             request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
         }
 
         if (authorizationHeader != null && authorizationHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
             String jwtToken = authorizationHeader.replace(JwtProperties.TOKEN_PREFIX, "");
 
-            try{
+            try {
                 if (jwtTokenService.validate(jwtToken)) {
                     Authentication authentication = jwtTokenService.getAuthentication(jwtToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     filterChain.doFilter(request, response);
                 }
-            } catch(TokenExpiredException e) {
+            } catch (TokenExpiredException e) {
                 e.printStackTrace();
-                request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
+                request.setAttribute("exception", ErrorCode.EXPIRED_JWT_TOKEN.getCode());
                 filterChain.doFilter(request, response);
-            } catch(SignatureVerificationException e) {
+            } catch (SignatureVerificationException e) {
                 e.printStackTrace();
                 request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
                 filterChain.doFilter(request, response);
