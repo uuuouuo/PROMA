@@ -4,6 +4,7 @@ import axios from "axios";
 import { apiInstance } from "../../api";
 const api = apiInstance();
 
+
 export type UserState = {
     userInfo: any;
     isLogin: boolean;
@@ -18,11 +19,11 @@ export const getLogin = createAsyncThunk(
     "USER/LOGIN/GITHUB",
     async (_, thunkAPI) => {
         const code = localStorage.getItem("code");
-        
         return await axios
             .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
             .then((res) => {
                 localStorage.setItem("Authorization", res.data.jwtToken);
+                localStorage.setItem("refToken", res.data.refToken);
                 thunkAPI.dispatch(getUserInfo());
     })
         .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -55,6 +56,18 @@ export const getLogout = createAsyncThunk(
         }
 );
 
+export const withdrawUser = createAsyncThunk(
+    "USER/WITHDRWAWAL",
+    async (_, { rejectWithValue }) => {
+        const deletecode = localStorage.getItem("code");
+        return await axios
+            .delete(`http://k6c107.p.ssafy.io:8080/user/withdrawal/github?code=${deletecode}`)
+            .then((res) => res.data)
+            // .then((res) => console.log("탈퇴"))
+            .catch((err) => rejectWithValue(err.response.data));
+        }
+);
+
 const memberSlice = createSlice({
     name: "member",
     initialState,
@@ -68,12 +81,20 @@ const memberSlice = createSlice({
         ).addCase(
             getLogin.fulfilled, (state) => {
                 state.isLogin = true;
-                window.location.href = "/";
+                // window.location.href = "/";
             }
         ).addCase(
             getLogout.fulfilled, (state) => {
-                console.log("로그아웃");
                 state.isLogin = false;
+            }
+        )
+        .addCase(
+            withdrawUser.fulfilled, (state) => {
+                state.isLogin = false;
+                localStorage.removeItem("code");
+                // localStorage.removeItem("deletecode");
+                localStorage.removeItem("Authorization");
+                console.log("탈퇴 성공")
             }
         )
     },
