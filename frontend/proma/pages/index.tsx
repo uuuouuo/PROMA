@@ -1,3 +1,4 @@
+/* eslint-disable */
 import styled, { keyframes } from "styled-components";
 import { ThemeType } from "../interfaces/style";
 import { FaHandPointLeft } from "react-icons/fa";

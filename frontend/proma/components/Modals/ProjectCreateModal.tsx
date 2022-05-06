@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState } from "react";
 import { FaUserAlt, FaRegTimesCircle } from "react-icons/fa";
 import Box from "@mui/material/Box";

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useEffect } from "react";
 import { getLogin } from "../../../../store/modules/member";
 import { connect } from "react-redux";

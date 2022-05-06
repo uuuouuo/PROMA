@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { ThemeType } from "../../../../interfaces/style";
