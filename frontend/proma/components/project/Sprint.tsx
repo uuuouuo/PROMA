@@ -60,6 +60,15 @@ const OptionBox = styled.div`
     margin-left: 10px;
   }
 `;
+const UnfilledButton = styled.button`
+  font-size: 15px;
+  background-color: inherit;
+  border: none;
+  color: ${(props: ThemeType) => props.theme.mainColor};
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -159,10 +168,8 @@ const Sprint = ({
       </TeamBox>
       {sprint.sprintNo && !sprint.status ? (
         <OptionBox>
-          <FilledButton onClick={showSprintUpdateModal}>
-            Update Sprint
-          </FilledButton>
-          <FilledButton onClick={onDeleteSprint}>Delete Sprint</FilledButton>
+          <UnfilledButton onClick={showSprintUpdateModal}>Edit</UnfilledButton>
+          <UnfilledButton onClick={onDeleteSprint}>Delete</UnfilledButton>
         </OptionBox>
       ) : null}
     </SprintBox>

@@ -216,47 +216,6 @@ export const UserProfileBox = styled(InputArea)`
   }
 `;
 
-export const TopicListModal = ({
-  topicListModal,
-  showTopicListModal,
-  showTopicCreateModal,
-}: {
-  topicListModal: boolean;
-  showTopicListModal: any;
-  showTopicCreateModal: any;
-}) => {
-  //dummy data
-  const topicList = ["Topic1", "Topic2", "Topic3"];
-
-  const showCreateTopicModal = () => {
-    showTopicCreateModal();
-    showTopicListModal();
-  };
-
-  return (
-    <ModalBox
-      open={topicListModal}
-      onClose={showTopicListModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Header>Topic List</Header>
-        <BodyContainer>
-          {topicList.map((topic, index) => (
-            <Link href={`/project/projectCode/topic/topicCode`} key={index}>
-              <a>
-                <p key={index}>{topic}</p>
-              </a>
-            </Link>
-          ))}
-          <TextButton onClick={showCreateTopicModal}>+ Add Topic</TextButton>
-        </BodyContainer>
-      </Box>
-    </ModalBox>
-  );
-};
-
 export const TopicCreateModal = ({
   topicCreateModal,
   showTopicListModal,

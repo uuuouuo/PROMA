@@ -47,19 +47,9 @@ export const apiInstance = () => {
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
-      console.log(response);
-
-      // 응답 후 토큰 갱신
-      const authorization = response.headers.authorization;
-      //   const refreshtoken = response.headers.refreshtoken;
-      if (authorization) {
-        localStorage.setItem("authorization", authorization);
-        // localStorage.setItem("refreshtoken", refreshtoken);
-      }
-
-      // console.log(`response ${response}`);
       return response;
     },
+
     // 오류 응답 처리
     (error: AxiosError) => {
       if (error.response) {

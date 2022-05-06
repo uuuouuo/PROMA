@@ -8,6 +8,7 @@ import themeReducer from "./theme";
 import userReducer from "./member";
 import teamReducer from "./team";
 import sprintReducer from "./sprint";
+import topicReducer from "./topic";
 
 const persistConfig = {
   key: "root",
@@ -24,6 +25,7 @@ export const rootReducer = combineReducers({
   userReducer,
   teamReducer,
   sprintReducer,
+  topicReducer,
   // 모듈 추가시 여기에 추가
 });
 

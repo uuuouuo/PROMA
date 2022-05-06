@@ -5,11 +5,9 @@ import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
-import {
-  TopicListModal,
-  TopicCreateModal,
-} from "../../../components/common/Modal";
+import { TopicCreateModal } from "../../../components/common/Modal";
 import WarningModal from "../../../components/Modals/WarningModal";
+import TopicListModal from "../../../components/Modals/TopicListModal";
 import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
 
 import { connect } from "react-redux";
