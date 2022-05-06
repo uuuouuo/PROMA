@@ -216,64 +216,6 @@ export const UserProfileBox = styled(InputArea)`
   }
 `;
 
-export const TopicCreateModal = ({
-  topicCreateModal,
-  showTopicListModal,
-  showTopicCreateModal,
-}: {
-  topicCreateModal: boolean;
-  showTopicListModal: any;
-  showTopicCreateModal: any;
-}) => {
-  const [newTopicName, setNewTopicName] = useState<string>("");
-  const [newTopicDesc, setNewTopicDesc] = useState<string>("");
-
-  const cancelCreateTopic = () => {
-    showTopicListModal();
-    showTopicCreateModal();
-  };
-
-  const createNewTopic = () => {
-    //post new topic api
-
-    showTopicCreateModal();
-  };
-
-  return (
-    <ModalBox
-      open={topicCreateModal}
-      onClose={showTopicCreateModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Header>Create Topic</Header>
-        <BodyContainer>
-          <InputArea>
-            <p>Title</p>
-            <input
-              type="text"
-              value={newTopicName}
-              placeholder="Type New Topic Name.."
-              onChange={(e) => setNewTopicName(e.target.value)}
-            />
-            <p>Description</p>
-            <textarea
-              value={newTopicDesc}
-              placeholder="Type New Topic Description.."
-              onChange={(e) => setNewTopicDesc(e.target.value)}
-            ></textarea>
-          </InputArea>
-          <ButtonBox>
-            <CancelButton onClick={cancelCreateTopic}>Cancel</CancelButton>
-            <CreateButton onClick={createNewTopic}>Create</CreateButton>
-          </ButtonBox>
-        </BodyContainer>
-      </Box>
-    </ModalBox>
-  );
-};
-
 export const IssueCreateModal = ({
   issueCreateModal,
   showIssueCreateModal,

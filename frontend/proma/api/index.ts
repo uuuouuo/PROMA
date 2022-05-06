@@ -58,6 +58,7 @@ export const apiInstance = () => {
           let accessTokenExpiredCode = error.response.data.code;
           //access token 만료 시
           if (accessTokenExpiredCode === "C004") {
+            console.log(error.response.headers);
           }
           //refresh token 만료 시
           else if (accessTokenExpiredCode === "C006") {

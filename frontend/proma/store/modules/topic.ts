@@ -32,6 +32,20 @@ export const getTopicList = createAsyncThunk(
   }
 );
 
+//post new topic api
+export const createNewTopic = createAsyncThunk(
+  "POST/TOPIC",
+  async (newTopicInfo: any, thunkAPI) => {
+    return await api
+      .post(`/topic`, newTopicInfo)
+      .then((res) => {
+        thunkAPI.dispatch(getTopicList(newTopicInfo.projectNo));
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const topicSlice = createSlice({
   name: "topic",
   initialState,
