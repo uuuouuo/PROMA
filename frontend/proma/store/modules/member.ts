@@ -70,6 +70,9 @@ const memberSlice = createSlice({
   reducers: {
     getLogout(state: UserState) {
       state.isLogin = false;
+      localStorage.removeItem("Authorization");
+      localStorage.removeItem("RefreshToken");
+      localStorage.removeItem("code");
     },
   },
   extraReducers: (builder) => {
@@ -82,7 +85,6 @@ const memberSlice = createSlice({
       )
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
-        // window.location.href = "/";
       })
       // .addCase(getLogout.fulfilled, (state) => {
       //   state.isLogin = false;
