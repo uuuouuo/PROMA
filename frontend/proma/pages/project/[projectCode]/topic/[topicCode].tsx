@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { ThemeType } from "../../../../interfaces/style";
 import { FaCaretSquareDown } from "react-icons/fa";
 
+import Image from "next/image";
 import { connect } from "react-redux";
 import {
   getTopicInfo,
   updateTopicInfo,
   deleteTopic,
+  getIssueUnderTopic,
 } from "../../../../store/modules/topic";
 import { RootState } from "../../../../store/modules";
 import { useRouter } from "next/router";
@@ -115,6 +117,12 @@ const IssueContainer = styled.div`
   overflow-y: scroll;
   margin: 0 10px;
   max-height: 45vh;
+  span {
+    margin: 20px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: ${(props: ThemeType) => props.theme.elementTextColor};
+  }
 `;
 const IssueBox = styled.div`
   display: flex;
@@ -153,6 +161,7 @@ const AssigneeBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     topicInfo: state.topicReducer.topicInfo,
+    issueList: state.topicReducer.issueList,
   };
 };
 
@@ -160,6 +169,8 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     getTopicInfo: (topicNo: string) => dispatch(getTopicInfo(topicNo)),
     deleteTopic: (topicNo: string) => dispatch(deleteTopic(topicNo)),
+    getIssueUnderTopic: (topicNo: string) =>
+      dispatch(getIssueUnderTopic(topicNo)),
     updateTopicInfo: (topicInfo: any) => dispatch(updateTopicInfo(topicInfo)),
   };
 };
@@ -169,11 +180,15 @@ const TopicDetail = ({
   topicInfo,
   updateTopicInfo,
   deleteTopic,
+  getIssueUnderTopic,
+  issueList,
 }: {
   getTopicInfo: any;
   topicInfo: any;
   updateTopicInfo: any;
   deleteTopic: any;
+  getIssueUnderTopic: any;
+  issueList: any;
 }) => {
   const router = useRouter();
   const [updateTopic, setUpdateTopic] = useState<boolean>(false);
@@ -218,6 +233,7 @@ const TopicDetail = ({
     setProjectNo(projectCode);
     setTopicNo(topicCode);
     getTopicInfo(topicCode);
+    getIssueUnderTopic(topicCode);
   }, [router.asPath]);
 
   useEffect(() => {
@@ -288,20 +304,24 @@ const TopicDetail = ({
         </SubTitle>
 
         <IssueContainer>
-          {/* {issueData.map((issue, index) => (
-            <IssueBox key={index}>
-              <div>
-                <p>No. {issue.issueNo}</p>
-                <p>{issue.issueTitle}</p>
-              </div>
-              <AssigneeBox>
-                <ImageBox>
-                  <Image src="/profileimg.png" width={20} height={20} />
-                </ImageBox>
-                <p>{issue.assignee}</p>
-              </AssigneeBox>
-            </IssueBox>
-          ))} */}
+          {issueList && issueList.length > 0 ? (
+            issueList.map((issue: any, index: number) => (
+              <IssueBox key={index}>
+                <div>
+                  <p>No. {issue.issueNo}</p>
+                  <p>{issue.title}</p>
+                </div>
+                <AssigneeBox>
+                  <ImageBox>
+                    <Image src="/profileimg.png" width={20} height={20} />
+                  </ImageBox>
+                  <p>{issue.assignee.nickname}</p>
+                </AssigneeBox>
+              </IssueBox>
+            ))
+          ) : (
+            <span>No issues yet.</span>
+          )}
         </IssueContainer>
       </SubBox>
     </TopicContainer>

@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { ThemeType } from "../../../../interfaces/style";
 import {
@@ -8,7 +7,14 @@ import {
   FaCaretSquareDown,
   FaCaretSquareRight,
 } from "react-icons/fa";
+
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+
+import { connect } from "react-redux";
+import { RootState } from "../../../../store/modules";
+import { getIssueInfo } from "../../../../store/modules/issue";
 
 //styled-components
 const IssueContainer = styled.div`
@@ -124,34 +130,51 @@ const AssigneeInfo = styled.div`
   align-items: center;
 `;
 
-const IssueDetail = () => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    issueInfo: state.issueReducer.issueInfo,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getIssueInfo: (params: any) => dispatch(getIssueInfo(params)),
+  };
+};
+
+const IssueDetail = ({
+  issueInfo,
+  getIssueInfo,
+}: {
+  issueInfo: any;
+  getIssueInfo: any;
+}) => {
+  const router = useRouter();
+  const [isReady, setIsReady] = useState<boolean>(false);
+
   const [updateSprint, setUpdateSprint] = useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateIssue, setUpdateIssue] = useState<boolean>(false);
 
   //dummy data
-  const [sprintName, setSprintName] = useState<string>("sprint1");
-  const [topicName, setTopicName] = useState<string>("Topic Name");
-  const [issueName, setIssueName] = useState<string>("Issue Name");
-  const [assigneeName, setAssigneeName] = useState<string>("Assignee");
-  const [issueDesc, setIssueDesc] = useState<string>("Issue Desc");
+  const [sprintName, setSprintName] = useState<string>("");
+  const [issueDetail, setIssueDetail] = useState<any>([]);
   const [status, setStatus] = useState<string>("To Do");
-  const sprintList = ["sprint1", "sprint2", "sprint3"];
   const statusList = ["To Do", "In Progress", "Done"];
 
   //change sprint
   const onSearchSprint = (e: any) => {
-    const value = e.target.value;
-    setSprintName(value);
+    // const value = e.target.value;
+    // setSprintName(value);
   };
   const onChangeSprint = (e: any) => {
-    const value = e.target.value;
-    //sprint list에 해당 sprint가 존재하는 지 확인
-    if (sprintList.indexOf(value) !== -1) {
-      //확인됐다면
-      setSprintName(value);
-      setUpdateSprint(false);
-    }
+    // const value = e.target.value;
+    // //sprint list에 해당 sprint가 존재하는 지 확인
+    // if (sprintList.indexOf(value) !== -1) {
+    //   //확인됐다면
+    //   setSprintName(value);
+    //   setUpdateSprint(false);
+    // }
   };
 
   //change status
@@ -172,143 +195,180 @@ const IssueDetail = () => {
     }
   };
 
-  return (
-    <IssueContainer>
-      <TopicTitle>
-        {topicName} | {issueName}
-      </TopicTitle>
+  const onChangeIssueName = (e: any) => {
+    const value = e.target.value;
+    setIssueDetail({ ...issueDetail, issueTitle: value });
+  };
 
-      <TopBar>
-        <SelectBox>
-          <ToggleIconBox onClick={() => setUpdateSprint((cur) => !cur)}>
-            {updateSprint ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
-          </ToggleIconBox>
-          {updateSprint ? (
-            <form action="">
-              <input
-                type="text"
-                list="depList"
-                value={sprintName}
-                onInput={onChangeSprint}
-                onChange={onSearchSprint}
-              />
-              <datalist id="depList">
-                {sprintList.map((sprint, index) => (
+  const onChangeIssueDesc = (e: any) => {
+    const value = e.target.value;
+    setIssueDetail({ ...issueDetail, description: value });
+  };
+
+  const onChangeIssueTopic = (e: any) => {
+    const value = e.target.value;
+    setIssueDetail({ ...issueDetail, topic: { topicTitle: value } });
+  };
+
+  const onChangeIssueAssignee = (e: any) => {
+    const value = e.target.value;
+    setIssueDetail({ ...issueDetail, assignee: { nickname: value } });
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const issueCode = router.query.issueCode as string;
+    getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
+      setIsReady(true)
+    );
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (!issueInfo) return;
+    setIssueDetail(issueInfo);
+  }, [issueInfo]);
+
+  return (
+    <>
+      {isReady ? (
+        <IssueContainer>
+          <TopicTitle>
+            {issueDetail.team.title} | {issueDetail.issueTitle}
+          </TopicTitle>
+
+          <TopBar>
+            <SelectBox>
+              <ToggleIconBox onClick={() => setUpdateSprint((cur) => !cur)}>
+                {updateSprint ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
+              </ToggleIconBox>
+              {updateSprint ? (
+                <form action="">
+                  <input
+                    type="text"
+                    list="depList"
+                    value={sprintName}
+                    onInput={onChangeSprint}
+                    onChange={onSearchSprint}
+                  />
+                  <datalist id="depList">
+                    {/* {sprintList.map((sprint, index) => (
                   <option value={sprint} key={index}>
                     {sprint}
                   </option>
-                ))}
-              </datalist>
-            </form>
-          ) : (
-            <span>{sprintName}</span>
-          )}
-        </SelectBox>
+                ))} */}
+                  </datalist>
+                </form>
+              ) : (
+                <span>{sprintName}</span>
+              )}
+            </SelectBox>
 
-        <SelectBox>
-          <ToggleIconBox onClick={() => setUpdateStatus((cur) => !cur)}>
-            {updateStatus ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
-          </ToggleIconBox>
-          {updateStatus ? (
-            <form>
-              <input
-                type="text"
-                list="statusList"
-                value={status}
-                onInput={onChangeStatus}
-                onChange={onSearchStatus}
-              />
-              <datalist id="statusList">
-                {statusList.map((status, index) => (
-                  <option value={status} key={index}>
-                    {status}
-                  </option>
-                ))}
-              </datalist>
-            </form>
-          ) : (
-            <span>{status}</span>
-          )}
-        </SelectBox>
-      </TopBar>
+            <SelectBox>
+              <ToggleIconBox onClick={() => setUpdateStatus((cur) => !cur)}>
+                {updateStatus ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
+              </ToggleIconBox>
+              {updateStatus ? (
+                <form>
+                  <input
+                    type="text"
+                    list="statusList"
+                    value={status}
+                    onInput={onChangeStatus}
+                    onChange={onSearchStatus}
+                  />
+                  <datalist id="statusList">
+                    {statusList.map((status, index) => (
+                      <option value={status} key={index}>
+                        {status}
+                      </option>
+                    ))}
+                  </datalist>
+                </form>
+              ) : (
+                <span>{status}</span>
+              )}
+            </SelectBox>
+          </TopBar>
 
-      <SubBox>
-        <SubTitle>
-          <FaCaretSquareDown />
-          <span>Details</span>
-        </SubTitle>
+          <SubBox>
+            <SubTitle>
+              <FaCaretSquareDown />
+              <span>Details</span>
+            </SubTitle>
 
-        <IssueDetailBox>
-          <IconBox onClick={() => setUpdateIssue((cur) => !cur)}>
-            {updateIssue ? <FaCheck /> : <FaPen />}
-          </IconBox>
-          <p>Title</p>
-          <ToggleBox>
-            {updateIssue ? (
-              <input
-                type="text"
-                value={issueName}
-                onChange={(e) => setTopicName(e.target.value)}
-                placeholder="Type Topic Name"
-                required
-              />
-            ) : (
-              <p>{issueName}</p>
-            )}
-          </ToggleBox>
+            <IssueDetailBox>
+              <IconBox onClick={() => setUpdateIssue((cur) => !cur)}>
+                {updateIssue ? <FaCheck /> : <FaPen />}
+              </IconBox>
+              <p>Title</p>
+              <ToggleBox>
+                {updateIssue ? (
+                  <input
+                    type="text"
+                    value={issueDetail.issueTitle}
+                    onChange={onChangeIssueName}
+                    placeholder="Type Topic Name"
+                    required
+                  />
+                ) : (
+                  <p>{issueDetail.issueTitle}</p>
+                )}
+              </ToggleBox>
 
-          <p>Description</p>
-          <ToggleBox>
-            {updateIssue ? (
-              <input
-                type="text"
-                value={issueDesc}
-                onChange={(e) => setIssueDesc(e.target.value)}
-                placeholder="Type Issue Description"
-                required
-              />
-            ) : (
-              <p>{issueDesc}</p>
-            )}
-          </ToggleBox>
+              <p>Description</p>
+              <ToggleBox>
+                {updateIssue ? (
+                  <input
+                    type="text"
+                    value={issueDetail.description}
+                    onChange={onChangeIssueDesc}
+                    placeholder="Type Issue Description"
+                    required
+                  />
+                ) : (
+                  <p>{issueDetail.description}</p>
+                )}
+              </ToggleBox>
 
-          <p>Topic</p>
-          <ToggleBox>
-            {updateIssue ? (
-              <input
-                type="text"
-                value={topicName}
-                onChange={(e) => setTopicName(e.target.value)}
-                required
-              />
-            ) : (
-              <p>{topicName}</p>
-            )}
-          </ToggleBox>
+              <p>Topic</p>
+              <ToggleBox>
+                {updateIssue ? (
+                  <input
+                    type="text"
+                    value={issueDetail.topic.topicTitle}
+                    onChange={onChangeIssueTopic}
+                    required
+                  />
+                ) : (
+                  <p>{issueDetail.topic.topicTitle}</p>
+                )}
+              </ToggleBox>
 
-          <p>Assignee</p>
-          <ToggleBox>
-            {updateIssue ? (
-              <input
-                type="text"
-                value={issueDesc}
-                onChange={(e) => setIssueDesc(e.target.value)}
-                placeholder="Type Issue Description"
-                required
-              />
-            ) : (
-              <AssigneeInfo>
-                <ImageBox>
-                  <Image src="/profileimg.png" width={25} height={25} />
-                </ImageBox>
-                <p>{assigneeName}</p>
-              </AssigneeInfo>
-            )}
-          </ToggleBox>
-        </IssueDetailBox>
-      </SubBox>
-    </IssueContainer>
+              <p>Assignee</p>
+              <ToggleBox>
+                {updateIssue ? (
+                  <input
+                    type="text"
+                    value={issueDetail.assignee.nickname}
+                    onChange={onChangeIssueAssignee}
+                    placeholder="Type Issue Description"
+                    required
+                  />
+                ) : (
+                  <AssigneeInfo>
+                    <ImageBox>
+                      <Image src="/profileimg.png" width={25} height={25} />
+                    </ImageBox>
+                    <p>{issueDetail.assignee.nickname}</p>
+                  </AssigneeInfo>
+                )}
+              </ToggleBox>
+            </IssueDetailBox>
+          </SubBox>
+        </IssueContainer>
+      ) : null}
+    </>
   );
 };
 
-export default IssueDetail;
+export default connect(mapStateToProps, mapDispatchToProps)(IssueDetail);

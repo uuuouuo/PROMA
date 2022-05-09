@@ -41,7 +41,7 @@ const TeamCreateModal = ({
       title: teamName,
     };
     createNewTeam(newProjectInfo);
-
+    setTeamName("");
     showTeamCreateModal();
   };
 
