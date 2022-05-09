@@ -79,15 +79,9 @@ const Team = ({
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
   const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
   const [issueList, setIssueList] = useState<any>([]);
+  const [projectNo, setProjectNo] = useState<string>("");
 
-  useEffect(() => {
-    if (!router.isReady) return;
-    setIsReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (sprintNo === undefined) return;
-
+  const getIssues = () => {
     let params = {};
     if (sprintNo === null) {
       params = {
@@ -103,12 +97,26 @@ const Team = ({
     }
 
     getIssueList(params).then((res: any) => {
-      //   const issues = res.issueList;
-      console.log(res.payload.issueList);
       const issues = res.payload.issueList;
-
       setIssueList(issues);
     });
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const projectCode = router.query.projectCode as string;
+    setProjectNo(projectCode);
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (sprintNo === undefined) return;
+    getIssues();
   }, [sprintNo, onlyMyIssue]);
 
   const droppableId = `${sprintNo}_${team.teamName}`;
@@ -120,7 +128,7 @@ const Team = ({
           {(provided) => (
             <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
               <TopBar>
-                <Link href={`/project/${team.projectNo}/team/${team.teamNo}`}>
+                <Link href={`/project/${projectNo}/team/${team.teamNo}`}>
                   <TeamName>
                     <Title>{team.title}</Title>
                   </TeamName>
@@ -133,11 +141,12 @@ const Team = ({
                 <IssueCreateModal
                   issueCreateModal={issueCreateModal}
                   showIssueCreateModal={showIssueCreateModal}
+                  getIssues={getIssues}
                   teamNo={team.teamNo}
                   sprintNo={sprintNo}
                 />
               </TopBar>
-              {issueList ? (
+              {issueList && issueList.length > 0 ? (
                 issueList.map((issue: any, index: number) => (
                   <Issue issue={issue} key={index} droppableId={droppableId} />
                 ))

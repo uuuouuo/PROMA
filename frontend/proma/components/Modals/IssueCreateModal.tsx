@@ -44,6 +44,7 @@ const IssueCreateModal = ({
   topics,
   getTopicList,
   getTeamMembers,
+  getIssues,
 }: {
   issueCreateModal: boolean;
   showIssueCreateModal: any;
@@ -54,6 +55,7 @@ const IssueCreateModal = ({
   topics?: any;
   getTopicList?: any;
   getTeamMembers?: any;
+  getIssues?: any;
 }) => {
   const router = useRouter();
 
@@ -114,7 +116,7 @@ const IssueCreateModal = ({
       return;
     }
 
-    createNewIssue(newIssueInfo);
+    createNewIssue(newIssueInfo).then((res: any) => getIssues());
     showIssueCreateModal();
   };
 

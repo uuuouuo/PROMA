@@ -1,17 +1,26 @@
 /* eslint-disable */
 import styled from "styled-components";
-import Sprint from "../../../components/project/Sprint";
-import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
+
+import Sprint from "../../../components/project/Sprint";
 import TopicCreateModal from "../../../components/Modals/TopicCreateModal";
 import WarningModal from "../../../components/Modals/WarningModal";
 import TopicListModal from "../../../components/Modals/TopicListModal";
 import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
-import { switchViewOption } from "../../../store/modules/mode";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { connect } from "react-redux";
+import { RootState } from "../../../store/modules";
+import { getTeamList } from "../../../store/modules/team";
+import { switchViewOption } from "../../../store/modules/mode";
+import {
+  getSprintList,
+  getInProgressSprint,
+} from "../../../store/modules/sprint";
 import {
   getProjectInfo,
   updateProjectInfo,
@@ -19,13 +28,6 @@ import {
   getProjectJoinStatus,
   joinProject,
 } from "../../../store/modules/project";
-import { getTeamList } from "../../../store/modules/team";
-import {
-  getSprintList,
-  getInProgressSprint,
-} from "../../../store/modules/sprint";
-import { RootState } from "../../../store/modules";
-import { useRouter } from "next/router";
 
 const backlog = {
   sprintNo: null,
@@ -243,6 +245,8 @@ const ProjectSpace = ({
       alert("Please login first");
       router.push("/");
     }
+
+    getInProgressSprint(value);
   }, [router.asPath]);
 
   useEffect(() => {

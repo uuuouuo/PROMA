@@ -12,11 +12,17 @@ interface IssueType {
 export type IssueState = {
   issueList: Array<IssueType>;
   issueInfo: any;
+  toDoList: any;
+  inProgressList: any;
+  doneList: any;
 };
 //state
 const initialState: IssueState = {
   issueList: [],
   issueInfo: {},
+  toDoList: [],
+  inProgressList: [],
+  doneList: [],
 };
 
 //create issue api
@@ -41,15 +47,53 @@ export const getIssueList = createAsyncThunk(
   }
 );
 
+//get todo issues api
+export const getToDoIssues = createAsyncThunk(
+  "GET/ISSUESTODO",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/issue/${params.teamNo}`, { params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+//get inprogress issues api
+export const getInProgressIssues = createAsyncThunk(
+  "GET/ISSUESINPROGRESS",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/issue/${params.teamNo}`, { params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+//get done issues api
+export const getDoneIssues = createAsyncThunk(
+  "GET/ISSUESDONE",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/issue/${params.teamNo}`, { params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const issueSlice = createSlice({
   name: "issue",
   initialState,
   reducers: {},
-  //   extraReducers: (builder) => {
-  //     builder.addCase(getIssueList.fulfilled, (state, { payload }) => {
-  //       state.issueList = payload.issueList;
-  //     });
-  //   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getToDoIssues.fulfilled, (state, { payload }) => {
+        state.toDoList = payload.issueList;
+      })
+      .addCase(getInProgressIssues.fulfilled, (state, { payload }) => {
+        state.inProgressList = payload.issueList;
+      })
+      .addCase(getDoneIssues.fulfilled, (state, { payload }) => {
+        state.doneList = payload.issueList;
+      });
+  },
 });
 
 export default issueSlice.reducer;

@@ -1,5 +1,4 @@
 /* eslint-disable */
-//스프린트 컴포넌트
 import Team from "./Team";
 import SprintUpdateModal from "../../components/Modals/SprintUpdateModal";
 
@@ -157,7 +156,7 @@ const Sprint = ({
           showSprintUpdateModal={showSprintUpdateModal}
           sprintInfo={sprint}
         />
-        {!isInProgress ? (
+        {!isInProgress && sprint.sprintNo !== null ? (
           <FilledButton onClick={onToggleSprintStatus}>
             Start Sprint
           </FilledButton>
