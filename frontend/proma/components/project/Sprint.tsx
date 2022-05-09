@@ -163,7 +163,7 @@ const Sprint = ({
       <TeamBox>
         {teams
           ? teams?.map((team, index) => (
-              <Team team={team} key={index} sprintName={sprint.title} />
+              <Team team={team} key={index} sprint={sprint} />
             ))
           : null}
       </TeamBox>
