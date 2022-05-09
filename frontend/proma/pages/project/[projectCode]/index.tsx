@@ -28,6 +28,11 @@ import {
   getProjectJoinStatus,
   joinProject,
 } from "../../../store/modules/project";
+import {
+  getIssueList,
+  updateIssueSprint,
+  isNotUpdated,
+} from "../../../store/modules/issue";
 
 const backlog = {
   sprintNo: null,
@@ -126,6 +131,8 @@ const mapStateToProps = (state: RootState) => {
     teamList: state.teamReducer.teamList,
     sprintList: state.sprintReducer.sprintList,
     isLogin: state.userReducer.isLogin,
+    userInfo: state.userReducer.userInfo,
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
   };
 };
 
@@ -143,6 +150,10 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(getProjectJoinStatus(projectNo)),
     getInProgressSprint: (projectNo: string) =>
       dispatch(getInProgressSprint(projectNo)),
+    updateIssueSprint: (issueInfo: any) =>
+      dispatch(updateIssueSprint(issueInfo)),
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
+    isNotUpdated: () => dispatch(isNotUpdated()),
   };
 };
 
@@ -160,6 +171,11 @@ const ProjectSpace = ({
   getSprintList,
   getInProgressSprint,
   switchViewOption,
+  onlyMyIssue,
+  userInfo,
+  updateIssueSprint,
+  getIssueList,
+  isNotUpdated,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -174,12 +190,15 @@ const ProjectSpace = ({
   getSprintList: any;
   getInProgressSprint: any;
   switchViewOption: any;
+  onlyMyIssue: boolean;
+  userInfo: any;
+  updateIssueSprint: any;
+  getIssueList: any;
+  isNotUpdated: any;
 }) => {
   const router = useRouter();
-
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const [onlyMyIssue, setOnlyMyIssue] = useState<boolean>(false);
   const [projectNo, setProjectNo] = useState<string>("");
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
@@ -219,15 +238,35 @@ const ProjectSpace = ({
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
-    console.log(args);
-    //이슈 옮겨졌을 때 이슈 수정 post api 로직 필요
-    //그 후 재렌더링 로직 필요
+    const targetIssueNo = args.draggableId.split("_")[2];
+    const fromSprint = args.source.droppableId.split("_")[0];
+    const fromTeam = args.source.droppableId.split("_")[1];
+    const toSprint = args.destination.droppableId.split("_")[0];
+    const toTeam = args.destination.droppableId.split("_")[1];
+
+    console.log(targetIssueNo);
+    console.log(fromSprint, fromTeam);
+    console.log(toSprint, toTeam);
+
+    if (fromTeam !== toTeam) {
+      alert("Issues can only be moved within the same team.");
+      return;
+    } else if (fromSprint === toSprint) {
+      return;
+    } else {
+      updateIssueSprint({
+        issueNo: targetIssueNo,
+        sprintNo: toSprint,
+        fromSprint,
+        onlyMyIssue,
+        teamNo: fromTeam,
+      }).then((res: any) => isNotUpdated);
+    }
   };
 
   //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
   useEffect(() => {
     if (!router.isReady) return;
-
     const value = router.query.projectCode as string;
     setProjectNo(value);
 
@@ -251,7 +290,6 @@ const ProjectSpace = ({
 
   useEffect(() => {
     if (!projectNo) return;
-
     getProjectInfo(projectNo);
     getSprintList(projectNo);
     getTeamList(projectNo);
@@ -260,7 +298,6 @@ const ProjectSpace = ({
 
   useEffect(() => {
     if (!projectInfo) return;
-
     setTitle(projectInfo.title);
 
     if (projectInfo.role === "MANAGER") setIsManager(true);
@@ -269,13 +306,11 @@ const ProjectSpace = ({
 
   useEffect(() => {
     if (!teamList) return;
-
     setTeams(teamList);
   }, [teamList]);
 
   useEffect(() => {
     if (!sprintList) return;
-
     setSprints(sprintList);
   }, [sprintList]);
 

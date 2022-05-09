@@ -15,6 +15,7 @@ export type IssueState = {
   toDoList: any;
   inProgressList: any;
   doneList: any;
+  isUpdated: boolean;
 };
 //state
 const initialState: IssueState = {
@@ -23,6 +24,7 @@ const initialState: IssueState = {
   toDoList: [],
   inProgressList: [],
   doneList: [],
+  isUpdated: false,
 };
 
 //create issue api
@@ -67,6 +69,7 @@ export const getInProgressIssues = createAsyncThunk(
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
+
 //get done issues api
 export const getDoneIssues = createAsyncThunk(
   "GET/ISSUESDONE",
@@ -78,10 +81,41 @@ export const getDoneIssues = createAsyncThunk(
   }
 );
 
+//update issue sprint api
+export const updateIssueSprint = createAsyncThunk(
+  "PUT/ISSUESPRINT",
+  async (issueInfo: any, thunkAPI) => {
+    return await api
+      .put(`/issue/sprint`, issueInfo)
+      .then((res) => {
+        thunkAPI.dispatch(
+          getIssueList({
+            onlyMyIssue: issueInfo.onlyMyIssue,
+            teamNo: issueInfo.teamNo,
+            sprintNo: issueInfo.sprintNo,
+          })
+        );
+        thunkAPI.dispatch(
+          getIssueList({
+            onlyMyIssue: issueInfo.onlyMyIssue,
+            teamNo: issueInfo.teamNo,
+            sprintNo: issueInfo.fromSprint,
+          })
+        );
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const issueSlice = createSlice({
   name: "issue",
   initialState,
-  reducers: {},
+  reducers: {
+    isNotUpdated(state: IssueState) {
+      state.isUpdated = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getToDoIssues.fulfilled, (state, { payload }) => {
@@ -92,8 +126,12 @@ const issueSlice = createSlice({
       })
       .addCase(getDoneIssues.fulfilled, (state, { payload }) => {
         state.doneList = payload.issueList;
+      })
+      .addCase(updateIssueSprint.fulfilled, (state) => {
+        state.isUpdated = true;
       });
   },
 });
 
+export const { isNotUpdated } = issueSlice.actions;
 export default issueSlice.reducer;

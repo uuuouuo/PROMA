@@ -143,7 +143,6 @@ const Sprint = ({
 
   useEffect(() => {
     if (!sprint) return;
-    console.log(sprint.sprintNo);
     setSprintNo(sprint.sprintNo);
   }, [sprint]);
 

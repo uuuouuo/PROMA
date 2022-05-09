@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
 import IssueCreateModal from "../Modals/IssueCreateModal";
-import { getIssueList } from "../../store/modules/issue";
+import { getIssueList, isNotUpdated } from "../../store/modules/issue";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { useRouter } from "next/router";
@@ -53,12 +53,14 @@ const AddButton = styled.button`
 const mapStateToProps = (state: RootState) => {
   return {
     onlyMyIssue: state.modeReducer.onlyMyIssue,
+    isUpdated: state.issueReducer.isUpdated,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getIssueList: (params: any) => dispatch(getIssueList(params)),
+    isNotUpdated: () => dispatch(isNotUpdated()),
   };
 };
 
@@ -67,11 +69,15 @@ const Team = ({
   sprintNo,
   getIssueList,
   onlyMyIssue,
+  isUpdated,
+  isNotUpdated,
 }: {
   team: any;
   sprintNo: any;
   onlyMyIssue: boolean;
   getIssueList?: any;
+  isUpdated?: boolean;
+  isNotUpdated?: any;
 }) => {
   const router = useRouter();
   //DOM 준비되었을 때 렌더링
@@ -99,6 +105,7 @@ const Team = ({
     getIssueList(params).then((res: any) => {
       const issues = res.payload.issueList;
       setIssueList(issues);
+      isNotUpdated();
     });
   };
 
@@ -109,7 +116,6 @@ const Team = ({
 
   useEffect(() => {
     if (!router.isReady) return;
-
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
   }, [router.asPath]);
@@ -119,12 +125,14 @@ const Team = ({
     getIssues();
   }, [sprintNo, onlyMyIssue]);
 
-  const droppableId = `${sprintNo}_${team.teamName}`;
+  useEffect(() => {
+    if (isUpdated) getIssues();
+  }, [isUpdated]);
 
   return (
     <>
       {isReady ? (
-        <Droppable droppableId={droppableId}>
+        <Droppable droppableId={`${sprintNo}_${team.teamNo}`}>
           {(provided) => (
             <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
               <TopBar>
@@ -148,7 +156,11 @@ const Team = ({
               </TopBar>
               {issueList && issueList.length > 0 ? (
                 issueList.map((issue: any, index: number) => (
-                  <Issue issue={issue} key={index} droppableId={droppableId} />
+                  <Issue
+                    issue={issue}
+                    key={index}
+                    droppableId={`${sprintNo}_${team.teamNo}`}
+                  />
                 ))
               ) : (
                 <p>No issues yet.</p>

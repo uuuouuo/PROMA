@@ -59,12 +59,11 @@ const Issue = ({
     setIsReady(true);
   }, []);
 
-  const draggableId = `${droppableId}_${issue.title}`;
   return (
     <>
       {isReady ? (
         <Draggable
-          draggableId={draggableId}
+          draggableId={`${droppableId}_${issue.issueNo}`}
           index={issue.issueNo}
           key={issue.issueNo}
         >
