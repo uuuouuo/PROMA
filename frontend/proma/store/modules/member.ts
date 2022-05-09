@@ -21,7 +21,7 @@ export const getLogin = createAsyncThunk(
   async (_, thunkAPI) => {
     const code = localStorage.getItem("code");
     return await userApi
-      .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
+      .get(`/user/login/github?code=${code}`)
       .then((res) => {
         thunkAPI.dispatch(getProjectList());
         res.data;
@@ -34,23 +34,18 @@ export const getUserInfo = createAsyncThunk(
   "USER/DATA",
   async (_, { rejectWithValue }) => {
     return await userApi
-      .get(`http://k6c107.p.ssafy.io:8080/user/data`)
+      .get(`/user/data`)
       .then((res) => res.data)
       .catch((err) => rejectWithValue(err.response.data));
   }
 );
 
-
 export const withdrawUser = createAsyncThunk(
   "USER/WITHDRWAWAL",
-  async (_, { rejectWithValue }) => {
-    const deletecode = localStorage.getItem("code");
-    return await axios
-      .delete(
-        `http://localhost:3000/user/withdrawal/github?code=${deletecode}`
-      )
-      .then((res) => res.data)
-      // .then((res) => localStorage.removeItem("code"))
+  async (code: string, { rejectWithValue }) => {
+    return await api
+      .delete(`/user/withdrawal/github?code=${code}`)
+      .then((res) => console.log("탈퇴 성공", res))
       .catch((err) => rejectWithValue(err.response.data));
   }
 );
@@ -62,6 +57,8 @@ const memberSlice = createSlice({
     getLogout(state: UserState) {
       state.isLogin = false;
       localStorage.removeItem("code");
+      localStorage.removeItem("Authorization");
+      localStorage.removeItem("RefreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -74,20 +71,6 @@ const memberSlice = createSlice({
       )
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
-      })
-      // .addCase(getLogout.fulfilled, (state) => {
-      //   state.isLogin = false;
-      // })
-      // .addCase(getLogout.rejected, (state) => {
-      //   state.isLogin = false;
-      // })
-      .addCase(withdrawUser.fulfilled, (state) => {
-        // state.isLogin = false;
-        // localStorage.removeItem("code");
-        // localStorage.removeItem("Authorization");
-        // localStorage.removeItem("RefreshToken");
-        window.location.href = "/";
-        console.log("탈퇴 성공");
       });
   },
 });
