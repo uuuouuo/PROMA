@@ -45,6 +45,10 @@ public class TeamService extends AbstractService {
 
     Map<String, Object> resultMap = new HashMap<>();
 
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+    User user = takeOp(userOp);
+
     String projectNo = teamDto.getProjectNo();
 
     Optional<Project> projectOp = projectRepository.findByNo(projectNo);
@@ -52,6 +56,9 @@ public class TeamService extends AbstractService {
 
     Team team = teamDto.toEntity(project);
     teamRepository.save(team);
+
+    UserTeam userTeam = teamDto.toEntity(team, user);
+    userTeamRepository.save(userTeam);
 
     resultMap.put("message", Message.TEAM_CREATE_SUCCESS_MESSAGE);
     return resultMap;
