@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useEffect } from 'react';
 import { getLogin, withdrawUser } from "../../../../store/modules/member";
 import { connect } from "react-redux";
@@ -36,7 +37,6 @@ const Callback = ({
             getLogin()
         }
         else if (localStorage.getItem("code") !== null) {
-            console.log("정상")
             withdrawUser()
         }
     }, []);
