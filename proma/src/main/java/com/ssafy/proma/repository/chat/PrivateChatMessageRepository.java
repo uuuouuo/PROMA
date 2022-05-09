@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PrivateChatMessageRepository extends JpaRepository<PrivateChatMessage, Integer> {
 
-  Page<PrivateChatMessage> findByChatRoomOrderByTimeDesc(PrivateChatRoom privateChatRoom, Pageable pageable);
+  Page<PrivateChatMessage> findByChatRoomAndNoLessThanOrderByTimeDesc(PrivateChatRoom privateChatRoom, Integer lastMsgNo,Pageable pageable);
 
 }
