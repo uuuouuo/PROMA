@@ -19,7 +19,7 @@ export const getLogin = createAsyncThunk(
   async (_, thunkAPI) => {
     const code = localStorage.getItem("code");
     return await api
-      .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
+      .get(`/user/login/github?code=${code}`)
       .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
@@ -30,7 +30,7 @@ export const getUserInfo = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     const Authorization = localStorage.getItem("Authorization");
     return await axios
-      .get(`http://k6c107.p.ssafy.io:8080/user/data`, {
+      .get(`http://localhost:3000/user/data`, {
         headers: {
           Authorization: `Bearer ${Authorization}`,
         },
@@ -40,15 +40,6 @@ export const getUserInfo = createAsyncThunk(
   }
 );
 
-// export const getLogout = createAsyncThunk(
-//   "USER/LOGOUT",
-//   async (_, { rejectWithValue }) => {
-//     return await api
-//       .get(`/user/logout`)
-//       .then((res) => res.data)
-//       .catch((err) => rejectWithValue(err.response.data));
-//   }
-// );
 
 export const withdrawUser = createAsyncThunk(
   "USER/WITHDRWAWAL",
@@ -56,10 +47,10 @@ export const withdrawUser = createAsyncThunk(
     const deletecode = localStorage.getItem("code");
     return await axios
       .delete(
-        `http://k6c107.p.ssafy.io:8080/user/withdrawal/github?code=${deletecode}`
+        `http://localhost:3000/user/withdrawal/github?code=${deletecode}`
       )
       .then((res) => res.data)
-      // .then((res) => console.log("탈퇴"))
+      // .then((res) => localStorage.removeItem("code"))
       .catch((err) => rejectWithValue(err.response.data));
   }
 );
@@ -70,6 +61,7 @@ const memberSlice = createSlice({
   reducers: {
     getLogout(state: UserState) {
       state.isLogin = false;
+      localStorage.removeItem("code");
     },
   },
   extraReducers: (builder) => {
@@ -82,7 +74,7 @@ const memberSlice = createSlice({
       )
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
-        // window.location.href = "/";
+        window.location.href = "/";
       })
       // .addCase(getLogout.fulfilled, (state) => {
       //   state.isLogin = false;
@@ -91,10 +83,11 @@ const memberSlice = createSlice({
       //   state.isLogin = false;
       // })
       .addCase(withdrawUser.fulfilled, (state) => {
-        state.isLogin = false;
-        localStorage.removeItem("code");
-        // localStorage.removeItem("deletecode");
-        localStorage.removeItem("Authorization");
+        // state.isLogin = false;
+        // localStorage.removeItem("code");
+        // localStorage.removeItem("Authorization");
+        // localStorage.removeItem("RefreshToken");
+        window.location.href = "/";
         console.log("탈퇴 성공");
       });
   },

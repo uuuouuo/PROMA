@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getLogin } from "../../../../store/modules/member";
+import { getLogin, withdrawUser } from "../../../../store/modules/member";
 import { connect } from "react-redux";
 import { RootState } from "../../../../store/modules";
 
@@ -13,21 +13,31 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         getLogin: () =>
             dispatch(getLogin()),
+        withdrawUser: () => 
+                dispatch(withdrawUser())
     };
 };
 
 const Callback = ({
     getLogin,
     userInfo,
+    withdrawUser
 }: {
     getLogin: any;
     userInfo: any;
+    withdrawUser: any;
 }
 ) => {
+    
     useEffect(() => {
-        const code = window.location.search.replace("?code=", "");
-        localStorage.setItem("code", code);
-        getLogin();
+        if (localStorage.getItem("code") == null) {
+            const code = window.location.search.replace("?code=", "");
+            localStorage.setItem("code", code);
+            getLogin()
+        }
+        else if (localStorage.getItem("code") !== null) {
+            withdrawUser()
+        }
     }, []);
 
     return (
