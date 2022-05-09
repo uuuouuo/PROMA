@@ -44,10 +44,13 @@ export const getTeamInfo = createAsyncThunk(
 export const createNewTeam = createAsyncThunk(
   "POST/TEAM",
   async (newTeamInfo: any, thunkAPI) => {
+    console.log(newTeamInfo);
+
     return await api
       .post(`/team`, newTeamInfo)
       .then((res) => {
         thunkAPI.dispatch(getProjectList());
+        thunkAPI.dispatch(getTeamList(newTeamInfo.projectNo));
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
