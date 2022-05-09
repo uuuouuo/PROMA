@@ -2,10 +2,27 @@
 import styled from "styled-components";
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
 import Image from "next/image";
+import { projectChat } from "../../store/modules/chat";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    projectList: state.projectReducer.projectList,
+    chatList: state.chatReducer.chatList,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+  };
+};
+
 
 const InputChat = styled.div`
   width: 420px;
@@ -66,10 +83,13 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 
-const Chatting = ({ state, showChat }: { state: boolean; showChat: any }) => {
-  // const [func, setFunc] = useState({
-  //     isPaneOpen: false,
-  // });
+const Chatting = ({ state, showChat, projectList, chatList }: { state: boolean; showChat: any; projectList: any; chatList: any; }) => {
+
+  useEffect(() => {
+    console.log(chatList);
+    projectChat(projectList[0].projectNo);
+  }, [chatList])
+
   const [dummy2, setDummy2] = useState([
     {
       name: "김일환",
@@ -227,4 +247,4 @@ const Chatting = ({ state, showChat }: { state: boolean; showChat: any }) => {
   );
 };
 
-export default Chatting;
+export default connect(mapStateToProps, mapDispatchToProps)(Chatting);

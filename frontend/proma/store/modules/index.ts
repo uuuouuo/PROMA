@@ -7,6 +7,7 @@ import projectReducer from "./project";
 import themeReducer from "./theme";
 import userReducer from "./member";
 import teamReducer from "./team";
+import chatReducer from "./chat";
 import sprintReducer from "./sprint";
 import topicReducer from "./topic";
 
@@ -15,7 +16,7 @@ const persistConfig = {
   // localStorage에 저장
   storage,
   //  localstorage에 저장헐 reducer 배열로 넣기
-  whitelist: ["themeReducer", "userReducer"],
+  whitelist: ["themeReducer", "userReducer", "chatReducer"],
 };
 
 export const rootReducer = combineReducers({
@@ -26,6 +27,7 @@ export const rootReducer = combineReducers({
   teamReducer,
   sprintReducer,
   topicReducer,
+  chatReducer,
   // 모듈 추가시 여기에 추가
 });
 
