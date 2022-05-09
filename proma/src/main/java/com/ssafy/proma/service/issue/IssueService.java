@@ -51,8 +51,7 @@ public class IssueService extends AbstractService {
     Integer sprintNo = issueCreateDto.getSprintNo();
     Integer teamNo = issueCreateDto.getTeamNo();
     Integer topicNo = issueCreateDto.getTopicNo();
-
-    String userNo = securityUtil.getCurrentUserNo();
+    String userNo = issueCreateDto.getUserNo();
 
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
     Sprint sprint = takeOp(sprintOp);
@@ -125,7 +124,7 @@ public class IssueService extends AbstractService {
     if(onlyMyIssue) {
       issueList = issues.stream()
           .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
           .collect(Collectors.toList());
 
     }
@@ -135,7 +134,7 @@ public class IssueService extends AbstractService {
       issueList = issues.stream()
           .filter(issue->issue.getUser().getNo().equals(userNo))
           .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
           .collect(Collectors.toList());
     }
 
@@ -161,7 +160,7 @@ public class IssueService extends AbstractService {
     if(onlyMyIssue) {
       issueList = issues.stream()
           .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
           .collect(Collectors.toList());
 
     }
@@ -171,7 +170,7 @@ public class IssueService extends AbstractService {
       issueList = issues.stream()
           .filter(issue->issue.getUser().getNo().equals(userNo))
           .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
           .collect(Collectors.toList());
     }
 
@@ -234,7 +233,7 @@ public class IssueService extends AbstractService {
 
     List<IssueNoTitleDto> issueList = issues.stream()
         .map(issue -> new IssueNoTitleDto(issue.getNo()
-            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle()))
+            , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
         .collect(Collectors.toList());
 
     resultMap.put("issueList", issueList);
