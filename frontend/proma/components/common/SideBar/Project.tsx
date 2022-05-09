@@ -8,6 +8,14 @@ import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
+import { projectChat, test } from "../../../store/modules/chat";
+import { connect } from "react-redux";
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+  };
+};
 
 //styled-components
 const ProjectContainer = styled.div`
@@ -80,7 +88,7 @@ const TeamBox = styled.div`
   }
 `;
 
-const Project = ({ projectInfo }: { projectInfo: any }) => {
+const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: any }) => {
   const router = useRouter();
 
   const [showTeams, setShowTeams] = useState<boolean>(false);
@@ -111,7 +119,11 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
           <a>{projectInfo.title}</a>
         </Link>
         <div>
-          <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
+          <ChatButton onClick={() => {
+            setState(true)
+            console.log(projectInfo.projectNo)
+            projectChat(projectInfo.projectNo)
+          }}>Chat</ChatButton>
           <Chatting state={state} showChat={showChat} />
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
@@ -144,4 +156,5 @@ const Project = ({ projectInfo }: { projectInfo: any }) => {
   );
 };
 
-export default Project;
+// export default Project;
+export default connect(null, mapDispatchToProps)(Project);
