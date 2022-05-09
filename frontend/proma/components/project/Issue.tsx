@@ -8,9 +8,9 @@ import Image from "next/image";
 
 interface IssueType {
   issueNo: number;
-  issueTitle: string;
+  title: string;
   description: string;
-  assignee: string;
+  userNo: string;
 }
 
 //styled-components
@@ -51,7 +51,7 @@ const Issue = ({
     setIsReady(true);
   }, []);
 
-  const draggableId = `${droppableId}_${issue.issueTitle}`;
+  const draggableId = `${droppableId}_${issue.title}`;
   return (
     <>
       {isReady ? (
@@ -67,12 +67,12 @@ const Issue = ({
               {...provided.draggableProps} //드래그 되는 영역
             >
               <p>No. {issue.issueNo}</p>
-              <p>{issue.issueTitle}</p>
+              <p>{issue.title}</p>
               <FlexBox>
                 <ImageBox>
                   <Image src="/profileimg.png" width={20} height={20}></Image>
                 </ImageBox>
-                <p>{issue.assignee}</p>
+                <p>{issue.userNo}</p>
               </FlexBox>
             </IssueBox>
           )}

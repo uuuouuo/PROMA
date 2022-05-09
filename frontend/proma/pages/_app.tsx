@@ -64,7 +64,7 @@ let client = Stomp.over(sock);
 
 const mapStateToProps = (state: RootState) => {
   return {
-    darkModeState: state.themeReducer.darkMode,
+    darkModeState: state.modeReducer.darkMode,
   };
 };
 

@@ -62,7 +62,7 @@ const IssueCreateModal = ({
     sprintNo: number;
     description: string;
     topicNo: any;
-    assignee: string;
+    userNo: string;
     teamNo: number;
     status: string;
   }
@@ -72,7 +72,7 @@ const IssueCreateModal = ({
     sprintNo,
     description: "",
     topicNo: "",
-    assignee: "",
+    userNo: "",
     teamNo,
     status: "todo",
   });
@@ -93,8 +93,8 @@ const IssueCreateModal = ({
     setNewIssueInfo((cur) => ({ ...cur, topicNo }));
   };
   const onSelectAssignee = (e: any) => {
-    const assignee = e.target.value as string;
-    setNewIssueInfo((cur) => ({ ...cur, assignee }));
+    const userNo = e.target.value as string;
+    setNewIssueInfo((cur) => ({ ...cur, userNo }));
   };
 
   const cancelCreateIssue = () => showIssueCreateModal();
@@ -109,7 +109,7 @@ const IssueCreateModal = ({
     } else if (!newIssueInfo.topicNo) {
       alert("Please choose topic");
       return;
-    } else if (!newIssueInfo.assignee) {
+    } else if (!newIssueInfo.userNo) {
       alert("Please choose issue assignee");
       return;
     }

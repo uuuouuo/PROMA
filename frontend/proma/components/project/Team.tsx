@@ -6,6 +6,10 @@ import { useState, useEffect } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
 import IssueCreateModal from "../Modals/IssueCreateModal";
+import { getIssueList } from "../../store/modules/issue";
+import { connect } from "react-redux";
+import { RootState } from "../../store/modules";
+import { useRouter } from "next/router";
 
 //styled-components
 const TeamBox = styled.div`
@@ -46,17 +50,68 @@ const AddButton = styled.button`
   }
 `;
 
-const Team = ({ team, sprint }: { team: any; sprint: any }) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
+  };
+};
+
+const Team = ({
+  team,
+  sprintNo,
+  getIssueList,
+  onlyMyIssue,
+}: {
+  team: any;
+  sprintNo: any;
+  onlyMyIssue: boolean;
+  getIssueList?: any;
+}) => {
+  const router = useRouter();
   //DOM 준비되었을 때 렌더링
   const [isReady, setIsReady] = useState<boolean>(false);
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
   const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
+  const [issueList, setIssueList] = useState<any>([]);
 
   useEffect(() => {
+    if (!router.isReady) return;
     setIsReady(true);
   }, []);
 
-  const droppableId = `${sprint.title}_${team.teamName}`;
+  useEffect(() => {
+    if (sprintNo === undefined) return;
+
+    let params = {};
+    if (sprintNo === null) {
+      params = {
+        teamNo: team.teamNo,
+        onlyMyIssue,
+      };
+    } else {
+      params = {
+        teamNo: team.teamNo,
+        sprintNo,
+        onlyMyIssue,
+      };
+    }
+
+    getIssueList(params).then((res: any) => {
+      //   const issues = res.issueList;
+      console.log(res.payload.issueList);
+      const issues = res.payload.issueList;
+
+      setIssueList(issues);
+    });
+  }, [sprintNo, onlyMyIssue]);
+
+  const droppableId = `${sprintNo}_${team.teamName}`;
 
   return (
     <>
@@ -79,12 +134,16 @@ const Team = ({ team, sprint }: { team: any; sprint: any }) => {
                   issueCreateModal={issueCreateModal}
                   showIssueCreateModal={showIssueCreateModal}
                   teamNo={team.teamNo}
-                  sprintNo={sprint.sprintNo}
+                  sprintNo={sprintNo}
                 />
               </TopBar>
-              {/* {issueData.map((issue, index) => (
-                <Issue issue={issue} key={index} droppableId={droppableId} />
-              ))} */}
+              {issueList ? (
+                issueList.map((issue: any, index: number) => (
+                  <Issue issue={issue} key={index} droppableId={droppableId} />
+                ))
+              ) : (
+                <p>No issues yet.</p>
+              )}
               {provided.placeholder}
             </TeamBox>
           )}
@@ -94,4 +153,4 @@ const Team = ({ team, sprint }: { team: any; sprint: any }) => {
   );
 };
 
-export default Team;
+export default connect(mapStateToProps, mapDispatchToProps)(Team);

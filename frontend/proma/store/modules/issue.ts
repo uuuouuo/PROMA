@@ -30,15 +30,26 @@ export const createNewIssue = createAsyncThunk(
   }
 );
 
+//get issue list api
+export const getIssueList = createAsyncThunk(
+  "GET/ISSUES",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/issue`, { params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const issueSlice = createSlice({
   name: "issue",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    // builder
-    //   .addCase(.fulfilled, (state, { payload }) => {
-    //   });
-  },
+  //   extraReducers: (builder) => {
+  //     builder.addCase(getIssueList.fulfilled, (state, { payload }) => {
+  //       state.issueList = payload.issueList;
+  //     });
+  //   },
 });
 
 export default issueSlice.reducer;

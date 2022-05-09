@@ -9,6 +9,7 @@ import TopicCreateModal from "../../../components/Modals/TopicCreateModal";
 import WarningModal from "../../../components/Modals/WarningModal";
 import TopicListModal from "../../../components/Modals/TopicListModal";
 import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
+import { switchViewOption } from "../../../store/modules/mode";
 
 import { connect } from "react-redux";
 import {
@@ -128,6 +129,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    switchViewOption: () => dispatch(switchViewOption()),
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
     joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
@@ -155,6 +157,7 @@ const ProjectSpace = ({
   sprintList,
   getSprintList,
   getInProgressSprint,
+  switchViewOption,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -168,11 +171,13 @@ const ProjectSpace = ({
   teamList: any;
   getSprintList: any;
   getInProgressSprint: any;
+  switchViewOption: any;
 }) => {
   const router = useRouter();
 
   const [isReady, setIsReady] = useState<boolean>(false);
 
+  const [onlyMyIssue, setOnlyMyIssue] = useState<boolean>(false);
   const [projectNo, setProjectNo] = useState<string>("");
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
@@ -296,7 +301,9 @@ const ProjectSpace = ({
               </TopBar>
             )}
             <FlexBox>
-              <UnfilledButton>Only My Issues</UnfilledButton>
+              <UnfilledButton onClick={switchViewOption}>
+                Only My Issues
+              </UnfilledButton>
               <ButtonBox>
                 <FilledButton onClick={showSprintCreateModal}>
                   Create Sprint

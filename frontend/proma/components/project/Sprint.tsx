@@ -107,6 +107,7 @@ const Sprint = ({
   const [teams, setTeams] = useState<Array<Object>>([]);
   const [sprintUpdateModal, setSprintUpdateModal] = useState<boolean>(false);
   const [projectNo, setProjectNo] = useState<string>("");
+  const [sprintNo, setSprintNo] = useState<any>("");
 
   const showSprintUpdateModal = () => setSprintUpdateModal((cur) => !cur);
 
@@ -114,7 +115,7 @@ const Sprint = ({
     let deleteConfirm = confirm("Are you sure you want to delete the sprint?");
     if (deleteConfirm) {
       deleteSprint({
-        sprintNo: sprint.sprintNo,
+        sprintNo,
         projectNo,
       });
     }
@@ -122,7 +123,7 @@ const Sprint = ({
 
   const onToggleSprintStatus = () => {
     updateSprintStatus({
-      sprintNo: sprint.sprintNo,
+      sprintNo,
       projectNo,
     }).then((res: any) => {
       alert(inProgress ? "Sprint is finished" : "Sprint is started");
@@ -140,6 +141,12 @@ const Sprint = ({
     if (!teamList) return;
     setTeams(teamList);
   }, [teamList]);
+
+  useEffect(() => {
+    if (!sprint) return;
+    console.log(sprint.sprintNo);
+    setSprintNo(sprint.sprintNo);
+  }, [sprint]);
 
   return (
     <SprintBox>
@@ -163,7 +170,7 @@ const Sprint = ({
       <TeamBox>
         {teams
           ? teams?.map((team, index) => (
-              <Team team={team} key={index} sprint={sprint} />
+              <Team team={team} key={index} sprintNo={sprintNo} />
             ))
           : null}
       </TeamBox>

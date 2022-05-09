@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ThemeType } from "../../interfaces/style";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
-import { switchTheme } from "../../store/modules/theme";
+import { switchTheme } from "../../store/modules/mode";
 
 const InputWrapper = styled.label`
   position: relative;
@@ -51,7 +51,7 @@ const Slider = styled.span`
 
 const mapStateToProps = (state: RootState) => {
   return {
-    darkModeState: state.themeReducer.darkMode,
+    darkModeState: state.modeReducer.darkMode,
   };
 };
 
