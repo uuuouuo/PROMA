@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
-import { apiInstance } from "../../api";
+import { apiInstance, userInstance } from "../../api";
+import { getProjectList } from "./project";
 const api = apiInstance();
+const userApi = userInstance();
 
 export type UserState = {
   userInfo: any;
@@ -18,9 +20,12 @@ export const getLogin = createAsyncThunk(
   "USER/LOGIN/GITHUB",
   async (_, thunkAPI) => {
     const code = localStorage.getItem("code");
-    return await api
-      .get(`/user/login/github?code=${code}`)
-      .then((res) => res.data)
+    return await userApi
+      .get(`http://k6c107.p.ssafy.io:8080/user/login/github?code=${code}`)
+      .then((res) => {
+        thunkAPI.dispatch(getProjectList());
+        res.data;
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -28,13 +33,8 @@ export const getLogin = createAsyncThunk(
 export const getUserInfo = createAsyncThunk(
   "USER/DATA",
   async (_, { rejectWithValue }) => {
-    const Authorization = localStorage.getItem("Authorization");
-    return await axios
-      .get(`http://localhost:3000/user/data`, {
-        headers: {
-          Authorization: `Bearer ${Authorization}`,
-        },
-      })
+    return await userApi
+      .get(`http://k6c107.p.ssafy.io:8080/user/data`)
       .then((res) => res.data)
       .catch((err) => rejectWithValue(err.response.data));
   }
@@ -74,7 +74,6 @@ const memberSlice = createSlice({
       )
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
-        window.location.href = "/";
       })
       // .addCase(getLogout.fulfilled, (state) => {
       //   state.isLogin = false;

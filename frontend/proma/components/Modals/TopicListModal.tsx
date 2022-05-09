@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Link from "next/link";
 import Box from "@mui/material/Box";
 import { style, ModalBox, Header, BodyContainer, TextButton } from "./index";

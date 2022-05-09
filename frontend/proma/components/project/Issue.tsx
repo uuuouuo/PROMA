@@ -1,3 +1,4 @@
+/* eslint-disable */
 //해당 스프린트 내 해당 팀 내 이슈 컴포넌트
 import styled from "styled-components";
 import { useState, useEffect } from "react";

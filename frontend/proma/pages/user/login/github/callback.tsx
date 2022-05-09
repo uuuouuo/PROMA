@@ -36,6 +36,7 @@ const Callback = ({
             getLogin()
         }
         else if (localStorage.getItem("code") !== null) {
+            console.log("정상")
             withdrawUser()
         }
     }, []);
