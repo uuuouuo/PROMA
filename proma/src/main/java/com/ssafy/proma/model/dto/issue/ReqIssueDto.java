@@ -20,7 +20,7 @@ public class ReqIssueDto {
     Integer teamNo;
     Integer topicNo;
     String status;
-
+    String userNo;
     public Issue toEntity(Sprint sprint, Team team, Topic topic, User user) {
       return Issue.builder().title(title).description(description).sprint(sprint).team(team)
           .topic(topic).user(user).status(status).build();

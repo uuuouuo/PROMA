@@ -14,11 +14,13 @@ public class ResIssueDto {
     Integer issueNo;
     UserDto assignee;
     String title;
+    String status;
 
-    public IssueNoTitleDto(Integer issueNo, UserDto assignee, String title) {
+    public IssueNoTitleDto(Integer issueNo, UserDto assignee, String title, String status) {
       this.issueNo = issueNo;
       this.assignee = assignee;
       this.title = title;
+      this.status = status;
     }
   }
 
