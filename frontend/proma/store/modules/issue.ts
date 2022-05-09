@@ -49,6 +49,17 @@ export const getIssueList = createAsyncThunk(
   }
 );
 
+//get issue info api
+export const getIssueInfo = createAsyncThunk(
+  "GET/ISSUE",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/issue/details/${params.issueNo}`, { params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 //get todo issues api
 export const getToDoIssues = createAsyncThunk(
   "GET/ISSUESTODO",
@@ -129,6 +140,9 @@ const issueSlice = createSlice({
       })
       .addCase(updateIssueSprint.fulfilled, (state) => {
         state.isUpdated = true;
+      })
+      .addCase(getIssueInfo.fulfilled, (state, { payload }) => {
+        state.issueInfo = payload.issueDetail;
       });
   },
 });

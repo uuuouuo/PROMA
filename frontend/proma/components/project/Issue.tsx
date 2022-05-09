@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface IssueType {
   issueNo: number;
@@ -37,6 +39,10 @@ const TitleBox = styled(FlexBox)`
       width: 70px;
     }
   }
+  a {
+    text-decoration: none;
+    color: black;
+  }
 `;
 const ImageBox = styled.div`
   width: 20px;
@@ -53,11 +59,20 @@ const Issue = ({
   issue: IssueType;
   droppableId: string;
 }) => {
-  //DOM 준비되었을 때 렌더링
+  const router = useRouter();
+
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [projectNo, setProjectNo] = useState<string>("");
+
   useEffect(() => {
     setIsReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectCode = router.query.projectCode as string;
+    setProjectNo(projectCode);
+  }, [router.asPath]);
 
   return (
     <>
@@ -75,7 +90,11 @@ const Issue = ({
             >
               <TitleBox>
                 <p>No. {issue.issueNo}</p>
-                <p>{issue.title}</p>
+                <Link href={`/project/${projectNo}/issue/${issue.issueNo}`}>
+                  <a>
+                    <p>{issue.title}</p>
+                  </a>
+                </Link>
               </TitleBox>
               <FlexBox>
                 <ImageBox>
