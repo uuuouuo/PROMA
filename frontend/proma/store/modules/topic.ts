@@ -12,11 +12,13 @@ interface topicType {
 export type TopicState = {
   topicList: Array<topicType>;
   topicInfo: any;
+  issueList: Array<Object>;
 };
 //state
 const initialState: TopicState = {
   topicList: [],
   topicInfo: {},
+  issueList: [],
 };
 
 //get topic list api
@@ -80,6 +82,17 @@ export const deleteTopic = createAsyncThunk(
   }
 );
 
+//get issues under the topic api
+export const getIssueUnderTopic = createAsyncThunk(
+  "GET/ISSUESUNDERTOPIC",
+  async (topicNo: string, thunkAPI) => {
+    return await api
+      .get(`/topic/${topicNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const topicSlice = createSlice({
   name: "topic",
   initialState,
@@ -91,6 +104,9 @@ const topicSlice = createSlice({
       })
       .addCase(getTopicInfo.fulfilled, (state, { payload }) => {
         state.topicInfo = payload.topicDetail;
+      })
+      .addCase(getIssueUnderTopic.fulfilled, (state, { payload }) => {
+        state.issueList = payload.issueList;
       });
   },
 });
