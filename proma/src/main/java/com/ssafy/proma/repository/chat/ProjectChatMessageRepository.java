@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectChatMessageRepository extends JpaRepository<ProjectChatMessage, Integer> {
 
-  Page<ProjectChatMessage> findByChatRoomOrderByTimeDesc(ProjectChatRoom projectChatRoom, Pageable pageable);
+  Page<ProjectChatMessage> findByChatRoomAndNoLessThanOrderByTimeDesc(ProjectChatRoom projectChatRoom, Integer lastMsgNo, Pageable pageable);
 
 }

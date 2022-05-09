@@ -8,6 +8,8 @@ import com.ssafy.proma.model.entity.chat.TeamChatMessage;
 import com.ssafy.proma.model.entity.chat.TeamChatRoom;
 import com.ssafy.proma.model.entity.user.User;
 import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -78,20 +80,14 @@ public class ChatMessageDto {
   }
 
   @Getter
+  @AllArgsConstructor
   public static class ChatMessageListRes {
 
+    private Integer msgNo;
     private String pubNo;
     private String nickname;
     private String content;
     private LocalDateTime time;
-
-    public ChatMessageListRes(String pubNo, String nickname, String content
-        , LocalDateTime time) {
-      this.pubNo = pubNo;
-      this.nickname = nickname;
-      this.content = content;
-      this.time = time;
-    }
   }
 
 }

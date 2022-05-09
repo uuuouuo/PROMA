@@ -9,6 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamChatMessageRepository extends JpaRepository<TeamChatMessage, Integer> {
 
-  Page<TeamChatMessage> findByChatRoomOrderByTimeDesc(TeamChatRoom teamChatRoom, Pageable pageable);
-
+  Page<TeamChatMessage> findByChatRoomAndNoLessThanOrderByTimeDesc(TeamChatRoom teamChatRoom, Integer lastMsgNo, Pageable pageable);
 }

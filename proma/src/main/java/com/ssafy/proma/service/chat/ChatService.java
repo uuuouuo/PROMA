@@ -1,6 +1,5 @@
 package com.ssafy.proma.service.chat;
 
-import static com.ssafy.proma.exception.Message.PRIVATE_CHATROOM_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.PROJECT_CHATROOM_SUCCESS_MESSAGE;
 import static com.ssafy.proma.exception.Message.TEAM_CHATROOM_SUCCESS_MESSAGE;
 
@@ -38,8 +37,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +57,7 @@ public class ChatService {
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
 
-  public Map<String, Object> getPrivateChatRoom(String subNo, Pageable pageable) {
+  public Map<String, Object> getPrivateChatRoom(String subNo, Integer lastMsgNo) {
 
     // user check
     User pub = findUser(SecurityUtil.getCurrentUserNo());
@@ -67,20 +67,22 @@ public class ChatService {
     PrivateChatRoom chatRoom = null;
     if(pub.getNo().compareTo(sub.getNo()) > 0) {
       chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(pub, sub)
-          .orElseGet(() -> createPrivateChatRoom(pub, sub));
+              .orElseGet(() -> createPrivateChatRoom(pub, sub));
     } else {
       chatRoom = privateChatRoomRepository.findByPublisherAndSubscriber(sub, pub)
-          .orElseGet(() -> createPrivateChatRoom(sub, pub));
+              .orElseGet(() -> createPrivateChatRoom(sub, pub));
     }
 
     // 해당 chatroom 의 messageList 가져오기
-    Page<PrivateChatMessage> msgList = privateChatMessageRepository.findByChatRoomOrderByTimeDesc(chatRoom, pageable);
+    if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
+    List<PrivateChatMessage> msgList = new ArrayList<>();
+    msgList = privateChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,10)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
-    if(!msgList.isEmpty()) {
+    if(msgList.size() != 0) {
       msgList.forEach(m -> {
-        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
-            m.getUser().getNickname(), m.getContent(), m.getTime());
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getNo(), m.getUser().getNo(),
+                m.getUser().getNickname(), m.getContent(), m.getTime());
         msgResList.add(chatMsgListRes);
       });
     }
@@ -89,30 +91,31 @@ public class ChatService {
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);
-    result.put("message", PRIVATE_CHATROOM_SUCCESS_MESSAGE);
+    result.put("message", TEAM_CHATROOM_SUCCESS_MESSAGE);
 
     return result;
 
   }
 
-  public Map<String, Object> getTeamChatRoom(Integer teamNo, Pageable pageable) {
+  public Map<String, Object> getTeamChatRoom(Integer teamNo, Integer lastMsgNo) {
 
     // team check
     Team team = findTeam(teamNo);
 
     // chatroom check
     TeamChatRoom chatRoom = teamChatRoomRepository.findByTeam(team)
-        .orElseGet(() -> creatTeamChatRoom(team));
+            .orElseGet(() -> creatTeamChatRoom(team));
 
     // 해당 chatroom 의 messageList 가져오기
-    Page<TeamChatMessage> msgList = teamChatMessageRepository.findByChatRoomOrderByTimeDesc(
-        chatRoom, pageable);
+    if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
+    List<TeamChatMessage> msgList = new ArrayList<>();
+    msgList = teamChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,10)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
-    if(!msgList.isEmpty()) {
+    if(msgList.size() != 0) {
       msgList.forEach(m -> {
-        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
-            m.getUser().getNickname(), m.getContent(), m.getTime());
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getNo(), m.getUser().getNo(),
+                m.getUser().getNickname(), m.getContent(), m.getTime());
         msgResList.add(chatMsgListRes);
       });
     }
@@ -127,24 +130,25 @@ public class ChatService {
 
   }
 
-  public Map<String, Object> getProjectChatRoom(String projectNo, Pageable pageable) {
+  public Map<String, Object> getProjectChatRoom(String projectNo, Integer lastMsgNo) {
 
     // project check
     Project project = findProject(projectNo);
 
     // chatroom check
     ProjectChatRoom chatRoom = projectChatRoomRepository.findByProject(project)
-        .orElseGet(() -> creatProjectChatRoom(project));
+            .orElseGet(() -> creatProjectChatRoom(project));
 
     // 해당 chatroom 의 messageList 가져오기
-    Page<ProjectChatMessage> msgList = projectChatMessageRepository.findByChatRoomOrderByTimeDesc(
-        chatRoom, pageable);
+    if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
+    List<ProjectChatMessage> msgList
+            = projectChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0, 10)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
-    if(!msgList.isEmpty()) {
+    if(msgList.size() != 0) {
       msgList.forEach(m -> {
-        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getUser().getNo(),
-            m.getUser().getNickname(), m.getContent(), m.getTime());
+        ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getNo(), m.getUser().getNo(),
+                m.getUser().getNickname(), m.getContent(), m.getTime());
         msgResList.add(chatMsgListRes);
       });
     }
@@ -167,7 +171,7 @@ public class ChatService {
     LocalDateTime time = LocalDateTime.now();
 
     ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
-        user.getNickname(), content, time);
+            user.getNickname(), content, time);
 
     PrivateChatMessage chatMessage = ChatMessageDto.toPrivateMsgEntity(chatRoom, user, content, time);
     privateChatMessageRepository.save(chatMessage);
@@ -186,7 +190,7 @@ public class ChatService {
     LocalDateTime time = LocalDateTime.now();
 
     ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
-        user.getNickname(), content, time);
+            user.getNickname(), content, time);
 
     TeamChatMessage chatMessage = ChatMessageDto.toTeamMsgEntity(chatRoom, user, content, time);
     teamChatMessageRepository.save(chatMessage);
@@ -205,7 +209,7 @@ public class ChatService {
     LocalDateTime time = LocalDateTime.now();
 
     ChatMessageRes response = new ChatMessageRes(chatRoom.getNo(), user.getNo(),
-        user.getNickname(), content, time);
+            user.getNickname(), content, time);
 
     ProjectChatMessage chatMessage = ChatMessageDto.toProjectMsgEntity(chatRoom, user, content, time);
     projectChatMessageRepository.save(chatMessage);
@@ -239,32 +243,32 @@ public class ChatService {
 
   public User findUser(String userNo) {
     return userRepository.findByNo(userNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않은 회원입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않은 회원입니다."));
   }
 
   private Team findTeam(Integer teamNo) {
     return teamRepository.findById(teamNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않은 팀입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않은 팀입니다."));
   }
 
   private Project findProject(String projectNo) {
     return projectRepository.findById(projectNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않은 팀입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않은 팀입니다."));
   }
 
   public PrivateChatRoom findPrivateChatRoom(Integer roomNo) {
     return privateChatRoomRepository.findByNo(roomNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않는 개인 채팅방입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않는 개인 채팅방입니다."));
   }
 
   public TeamChatRoom findTeamChatRoom(Integer roomNo) {
     return teamChatRoomRepository.findByNo(roomNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않는 그룹 채팅방입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않는 그룹 채팅방입니다."));
   }
 
   public ProjectChatRoom findProjectChatRoom(Integer roomNo) {
     return projectChatRoomRepository.findByNo(roomNo)
-        .orElseThrow(() -> new IllegalStateException("존재하지 않는 그룹 채팅방입니다."));
+            .orElseThrow(() -> new IllegalStateException("존재하지 않는 그룹 채팅방입니다."));
   }
 
 
