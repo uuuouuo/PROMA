@@ -35,9 +35,11 @@ public class ResIssueDto {
     String status;
     TopicDto topic;
     UserDto assignee;
+    Integer sprintNo;
 
-    public IssueDetailsDto(Integer issueNo, TeamIssueDto team, String issueTitle, String description,
-        String status, TopicDto topic, UserDto assignee) {
+    public IssueDetailsDto(Integer issueNo, TeamIssueDto team, String issueTitle,
+        String description, String status,
+        TopicDto topic, UserDto assignee, Integer sprintNo) {
       this.issueNo = issueNo;
       this.team = team;
       this.issueTitle = issueTitle;
@@ -45,6 +47,7 @@ public class ResIssueDto {
       this.status = status;
       this.topic = topic;
       this.assignee = assignee;
+      this.sprintNo = sprintNo;
     }
 
     @Getter

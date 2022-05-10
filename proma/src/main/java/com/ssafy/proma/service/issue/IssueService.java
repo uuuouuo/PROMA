@@ -250,6 +250,7 @@ public class IssueService extends AbstractService {
     String issueTitle = issue.getTitle();
     String description = issue.getDescription();
     String status = issue.getStatus();
+    Integer sprintNo = issue.getSprint().getNo();
 
     User user = issue.getUser();
     String userNo = user.getNo();
@@ -265,7 +266,7 @@ public class IssueService extends AbstractService {
 
     IssueDetailsDto issueDetailsDto = new IssueDetailsDto(issueNo,
         new TeamIssueDto(teamNo, teamName), issueTitle, description, status
-            , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname,image));
+            , new TopicDto(topicNo, topicTitle), new UserDto(userNo, nickname,image),sprintNo);
 
     resultMap.put("issueDetail", issueDetailsDto);
     resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
