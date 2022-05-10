@@ -15,7 +15,8 @@ export type IssueState = {
   toDoList: any;
   inProgressList: any;
   doneList: any;
-  isUpdated: boolean;
+  dndMoved: any;
+  movedIssue: any;
 };
 //state
 const initialState: IssueState = {
@@ -24,7 +25,8 @@ const initialState: IssueState = {
   toDoList: [],
   inProgressList: [],
   doneList: [],
-  isUpdated: false,
+  dndMoved: {},
+  movedIssue: {},
 };
 
 //create issue api
@@ -44,7 +46,11 @@ export const getIssueList = createAsyncThunk(
   async (params: any, thunkAPI) => {
     return await api
       .get(`/issue`, { params })
-      .then((res) => res.data)
+      .then((res) => {
+        console.log(res.data);
+
+        return res.data;
+      })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -70,6 +76,7 @@ export const getToDoIssues = createAsyncThunk(
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
+
 //get inprogress issues api
 export const getInProgressIssues = createAsyncThunk(
   "GET/ISSUESINPROGRESS",
@@ -92,29 +99,24 @@ export const getDoneIssues = createAsyncThunk(
   }
 );
 
+//update issue info api
+export const updateIssueInfo = createAsyncThunk(
+  "PUT/ISSUEINFO",
+  async (issueInfo: any, thunkAPI) => {
+    return await api
+      .put(`/issue/${issueInfo.issueNo}`, { params: issueInfo.params })
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 //update issue sprint api
 export const updateIssueSprint = createAsyncThunk(
   "PUT/ISSUESPRINT",
   async (issueInfo: any, thunkAPI) => {
     return await api
       .put(`/issue/sprint`, issueInfo)
-      .then((res) => {
-        thunkAPI.dispatch(
-          getIssueList({
-            onlyMyIssue: issueInfo.onlyMyIssue,
-            teamNo: issueInfo.teamNo,
-            sprintNo: issueInfo.sprintNo,
-          })
-        );
-        thunkAPI.dispatch(
-          getIssueList({
-            onlyMyIssue: issueInfo.onlyMyIssue,
-            teamNo: issueInfo.teamNo,
-            sprintNo: issueInfo.fromSprint,
-          })
-        );
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -125,23 +127,7 @@ export const updateIssueStatus = createAsyncThunk(
   async (issueInfo: any, thunkAPI) => {
     return await api
       .put(`/issue/status`, issueInfo)
-      .then((res) => {
-        // thunkAPI.dispatch(
-        //   getIssueList({
-        //     onlyMyIssue: issueInfo.onlyMyIssue,
-        //     teamNo: issueInfo.teamNo,
-        //     sprintNo: issueInfo.sprintNo,
-        //   })
-        // );
-        // thunkAPI.dispatch(
-        //   getIssueList({
-        //     onlyMyIssue: issueInfo.onlyMyIssue,
-        //     teamNo: issueInfo.teamNo,
-        //     sprintNo: issueInfo.fromSprint,
-        //   })
-        // );
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
@@ -150,12 +136,18 @@ const issueSlice = createSlice({
   name: "issue",
   initialState,
   reducers: {
-    isNotUpdated(state: IssueState) {
-      state.isUpdated = false;
+    setDndMoved(state: IssueState, { payload }) {
+      state.dndMoved = payload;
+    },
+    setMovedIssue(state: IssueState, { payload }) {
+      state.movedIssue = payload;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getIssueList.fulfilled, (state, { payload }) => {
+        state.issueList = payload.issueList;
+      })
       .addCase(getToDoIssues.fulfilled, (state, { payload }) => {
         state.toDoList = payload.issueList;
       })
@@ -165,14 +157,11 @@ const issueSlice = createSlice({
       .addCase(getDoneIssues.fulfilled, (state, { payload }) => {
         state.doneList = payload.issueList;
       })
-      .addCase(updateIssueSprint.fulfilled, (state) => {
-        state.isUpdated = true;
-      })
       .addCase(getIssueInfo.fulfilled, (state, { payload }) => {
         state.issueInfo = payload.issueDetail;
       });
   },
 });
 
-export const { isNotUpdated } = issueSlice.actions;
+export const { setDndMoved, setMovedIssue } = issueSlice.actions;
 export default issueSlice.reducer;

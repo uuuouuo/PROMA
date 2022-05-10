@@ -14,7 +14,13 @@ import { useRouter } from "next/router";
 
 import { connect } from "react-redux";
 import { RootState } from "../../../../store/modules";
-import { getIssueInfo } from "../../../../store/modules/issue";
+import {
+  getIssueInfo,
+  updateIssueInfo,
+  updateIssueSprint,
+  updateIssueStatus,
+} from "../../../../store/modules/issue";
+import { getSprintList, updateSprint } from "../../../../store/modules/sprint";
 
 //styled-components
 const IssueContainer = styled.div`
@@ -24,8 +30,9 @@ const IssueContainer = styled.div`
   color: ${(props: ThemeType) => props.theme.textColor};
   overflow-y: scroll;
 `;
-const TopicTitle = styled.h1`
-  font-size: 35px;
+const TopicTitle = styled.h2`
+  font-size: 30px;
+  font-weight: 500;
 `;
 const TopBar = styled.div`
   width: 100%;
@@ -41,19 +48,19 @@ const ToggleIconBox = styled.div`
 const SelectBox = styled.div`
   display: flex;
   align-items: center;
-  margin: 20px;
-  padding-right: 20px;
+  margin-right: 20px;
+  font-size: 15px;
   ${ToggleIconBox} {
     margin-right: 10px;
   }
-  form {
-    input {
-      border: none;
-      border-radius: 3px;
-      outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
-      font-size: 20px;
-      padding: 3px 10px;
-    }
+  select {
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    font-size: 15px;
+    color: ${(props: ThemeType) => props.theme.mainColor};
+    padding-right: 10px;
+    margin: 0 5px;
   }
 `;
 const SubBox = styled.div`
@@ -67,14 +74,30 @@ const SubBox = styled.div`
 `;
 const SubTitle = styled.div`
   color: ${(props: ThemeType) => props.theme.subPurpleColor};
-  font-size: 25px;
+  font-size: 22px;
   display: flex;
   align-items: center;
   margin-bottom: 15px;
   span {
     margin-left: 15px;
     color: ${(props: ThemeType) => props.theme.textColor};
-    font-size: 30px;
+  }
+`;
+const UnfilledButton = styled.button`
+  font-size: 15px;
+  background-color: inherit;
+  border: none;
+  color: ${(props: ThemeType) => props.theme.elementTextColor};
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const OptionBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  ${UnfilledButton} {
+    margin-left: 10px;
   }
 `;
 const IconBox = styled.div`
@@ -93,15 +116,25 @@ const IssueDetailBox = styled(SubBox)`
     color: ${(props: ThemeType) => props.theme.textColor};
     font-size: 20px;
   }
+  ${OptionBox} {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: ${(props: ThemeType) => props.theme.textColor};
+  }
+  p {
+    font-size: 20px;
+  }
 `;
 const ToggleBox = styled.div`
+  margin-bottom: 20px;
   input {
     border-radius: 3px;
     border: none;
     outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
     opacity: 0.7;
     padding: 10px 15px;
-    font-size: 20px;
+    font-size: 18px;
     width: 98%;
     margin-right: 100px;
     &:focus {
@@ -111,7 +144,7 @@ const ToggleBox = styled.div`
     }
   }
   p {
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 600;
     color: ${(props: ThemeType) => props.theme.elementTextColor};
     margin: 0;
@@ -133,160 +166,206 @@ const AssigneeInfo = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     issueInfo: state.issueReducer.issueInfo,
+    sprints: state.sprintReducer.sprintList,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getIssueInfo: (params: any) => dispatch(getIssueInfo(params)),
+    updateIssueInfo: (issueInfo: any) => dispatch(updateIssueInfo(issueInfo)),
+    updateIssueSprint: (issueInfo: any) =>
+      dispatch(updateIssueSprint(issueInfo)),
+    updateIssueStatus: (issueInfo: any) =>
+      dispatch(updateIssueStatus(issueInfo)),
+    getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
   };
 };
 
 const IssueDetail = ({
   issueInfo,
   getIssueInfo,
+  updateIssueInfo,
+  sprints,
+  getSprintList,
+  updateIssueSprint,
+  updateIssueStatus,
 }: {
   issueInfo: any;
   getIssueInfo: any;
+  updateIssueInfo: any;
+  sprints: any;
+  getSprintList: any;
+  updateIssueSprint: any;
+  updateIssueStatus: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
 
-  const [updateSprint, setUpdateSprint] = useState<boolean>(false);
-  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateIssue, setUpdateIssue] = useState<boolean>(false);
-
-  //dummy data
+  const [issueNo, setIssueNo] = useState<number>(0);
+  const [issueDetail, setIssueDetail] = useState<any>({
+    description: "",
+    title: "",
+    topicNo: 0,
+    userNo: "",
+  });
+  const [statusName, setStatusName] = useState<string>("");
+  const [statusList, setStatusList] = useState<any>([]);
+  const [sprintNo, setSprintNo] = useState<number>(0);
   const [sprintName, setSprintName] = useState<string>("");
-  const [issueDetail, setIssueDetail] = useState<any>([]);
-  const [status, setStatus] = useState<string>("To Do");
-  const statusList = ["To Do", "In Progress", "Done"];
+  const status = [
+    { name: "To Do", value: "todo" },
+    { name: "In Progress", value: "inprogress" },
+    { name: "Done", value: "done" },
+  ];
+  const [sprintList, setSprintList] = useState<any>([]);
 
-  //change sprint
-  const onSearchSprint = (e: any) => {
-    // const value = e.target.value;
-    // setSprintName(value);
-  };
-  const onChangeSprint = (e: any) => {
-    // const value = e.target.value;
-    // //sprint list에 해당 sprint가 존재하는 지 확인
-    // if (sprintList.indexOf(value) !== -1) {
-    //   //확인됐다면
-    //   setSprintName(value);
-    //   setUpdateSprint(false);
-    // }
+  const setSprint = () => {
+    const issueSprint = sprints.find(
+      (element: any) => element.sprintNo === issueInfo.sprintNo
+    );
+    const name = issueSprint?.title;
+    setSprintName(name ? name : "");
+
+    const list = sprints.filter(
+      (element: any) => element.sprintNo !== issueInfo.sprintNo
+    );
+    console.log(list);
+    setSprintList(list ? list : []);
   };
 
-  //change status
-  const onSearchStatus = (e: any) => {
-    const value = e.target.value;
-    setStatus(value);
+  const setStatus = () => {
+    const issueStatus = status.find(
+      (element) => element.value === issueInfo.status
+    );
+    const name = issueStatus?.name;
+    setStatusName(name ? name : "");
+
+    const list = status.filter((element) => element.value !== issueInfo.status);
+    console.log(list);
+    setStatusList(list ? list : []);
   };
-  const onChangeStatus = (e: any) => {
+
+  const onSelectSprint = (e: any) => {
     const value = e.target.value;
-    //sprint list에 해당 sprint가 존재하는 지 확인
-    if (statusList.indexOf(value) !== -1) {
-      //확인됐다면
-      setStatus(value);
-      setUpdateStatus(false);
-      console.log("equal");
-    } else {
-      console.log("not equal");
-    }
+    updateIssueSprint({
+      sprintNo: value,
+      issueNo: issueInfo.issueNo,
+    });
+    setSprintNo(value);
+    // .then((res: any) => getIssueInfo({ issueNo }));
+  };
+
+  const onSelectStatus = (e: any) => {
+    const value = e.target.value;
+    console.log(value);
+
+    // setStatus(value);
+
+    // updateIssueStatus()
   };
 
   const onChangeIssueName = (e: any) => {
     const value = e.target.value;
-    setIssueDetail({ ...issueDetail, issueTitle: value });
+    setIssueDetail({ ...issueDetail, title: value });
   };
-
   const onChangeIssueDesc = (e: any) => {
     const value = e.target.value;
     setIssueDetail({ ...issueDetail, description: value });
   };
-
   const onChangeIssueTopic = (e: any) => {
     const value = e.target.value;
-    setIssueDetail({ ...issueDetail, topic: { topicTitle: value } });
+    setIssueDetail({ ...issueDetail, topicNo: value });
   };
-
   const onChangeIssueAssignee = (e: any) => {
     const value = e.target.value;
-    setIssueDetail({ ...issueDetail, assignee: { nickname: value } });
+    setIssueDetail({ ...issueDetail, userNo: value });
+  };
+
+  const onUpdateIssueInfo = () => {
+    updateIssueInfo(issueDetail);
+    setUpdateIssue((cur) => !cur);
+  };
+
+  const onDeleteIssue = () => {
+    // const confirmResult = confirm("Are you sure you want to delete the topic?");
+    // if (confirmResult) {
+    //   deleteIssue(topicNo).then((res: any) =>
+    //     router.push(`/project/${projectNo}`)
+    //   );
+    // }
   };
 
   useEffect(() => {
     if (!router.isReady) return;
+    const projectCode = router.query.projectCode as string;
     const issueCode = router.query.issueCode as string;
+    getSprintList(projectCode);
+    setIssueNo(parseInt(issueCode));
     getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
       setIsReady(true)
     );
   }, [router.asPath]);
 
   useEffect(() => {
-    if (!issueInfo) return;
-    setIssueDetail(issueInfo);
+    if (!issueInfo || issueInfo === {}) return;
+
+    setStatus();
+
+    //set issue detail
+    setIssueDetail({
+      description: issueInfo.description,
+      title: issueInfo.issueTitle,
+      topicNo: issueInfo.topic ? issueInfo.topic.topicNo : null,
+      userNo: issueInfo.assignee ? issueInfo.assignee.userNo : null,
+    });
   }, [issueInfo]);
+
+  useEffect(() => {
+    if (!sprints || !issueInfo) return;
+    setSprint();
+  }, [sprints, sprintNo]);
 
   return (
     <>
       {isReady ? (
         <IssueContainer>
           <TopicTitle>
-            {issueDetail.team.title} | {issueDetail.issueTitle}
+            {issueInfo.team ? issueInfo.team.title : null} | {issueDetail.title}
           </TopicTitle>
 
           <TopBar>
             <SelectBox>
-              <ToggleIconBox onClick={() => setUpdateSprint((cur) => !cur)}>
-                {updateSprint ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
-              </ToggleIconBox>
-              {updateSprint ? (
-                <form action="">
-                  <input
-                    type="text"
-                    list="depList"
-                    value={sprintName}
-                    onInput={onChangeSprint}
-                    onChange={onSearchSprint}
-                  />
-                  <datalist id="depList">
-                    {/* {sprintList.map((sprint, index) => (
-                  <option value={sprint} key={index}>
-                    {sprint}
+              <p>Sprint: </p>
+              <select
+                name="sprintList"
+                id="sprintList"
+                onChange={onSelectSprint}
+              >
+                <option value="">{sprintName}</option>
+                {sprintList.map((s: any, index: number) => (
+                  <option value={s.sprintNo} key={index}>
+                    {s.title}
                   </option>
-                ))} */}
-                  </datalist>
-                </form>
-              ) : (
-                <span>{sprintName}</span>
-              )}
+                ))}
+              </select>
             </SelectBox>
 
             <SelectBox>
-              <ToggleIconBox onClick={() => setUpdateStatus((cur) => !cur)}>
-                {updateStatus ? <FaCaretSquareDown /> : <FaCaretSquareRight />}
-              </ToggleIconBox>
-              {updateStatus ? (
-                <form>
-                  <input
-                    type="text"
-                    list="statusList"
-                    value={status}
-                    onInput={onChangeStatus}
-                    onChange={onSearchStatus}
-                  />
-                  <datalist id="statusList">
-                    {statusList.map((status, index) => (
-                      <option value={status} key={index}>
-                        {status}
-                      </option>
-                    ))}
-                  </datalist>
-                </form>
-              ) : (
-                <span>{status}</span>
-              )}
+              <p>Status:</p>
+              <select
+                name="statusList"
+                id="statusList"
+                onChange={onSelectStatus}
+              >
+                <option value="">{statusName}</option>
+                {statusList.map((s: any, index: number) => (
+                  <option value={s.value} key={index}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
             </SelectBox>
           </TopBar>
 
@@ -297,21 +376,34 @@ const IssueDetail = ({
             </SubTitle>
 
             <IssueDetailBox>
-              <IconBox onClick={() => setUpdateIssue((cur) => !cur)}>
-                {updateIssue ? <FaCheck /> : <FaPen />}
-              </IconBox>
+              {updateIssue ? (
+                <OptionBox>
+                  <UnfilledButton onClick={onUpdateIssueInfo}>
+                    Done
+                  </UnfilledButton>
+                </OptionBox>
+              ) : (
+                <OptionBox>
+                  <UnfilledButton onClick={() => setUpdateIssue((cur) => !cur)}>
+                    Edit
+                  </UnfilledButton>
+                  <UnfilledButton onClick={onDeleteIssue}>
+                    Delete
+                  </UnfilledButton>
+                </OptionBox>
+              )}
               <p>Title</p>
               <ToggleBox>
                 {updateIssue ? (
                   <input
                     type="text"
-                    value={issueDetail.issueTitle}
+                    value={issueDetail.title}
                     onChange={onChangeIssueName}
                     placeholder="Type Topic Name"
                     required
                   />
                 ) : (
-                  <p>{issueDetail.issueTitle}</p>
+                  <p>{issueDetail.title}</p>
                 )}
               </ToggleBox>
 
@@ -335,12 +427,12 @@ const IssueDetail = ({
                 {updateIssue ? (
                   <input
                     type="text"
-                    value={issueDetail.topic.topicTitle}
+                    value={issueInfo ? issueInfo.topic.topicTitle : null}
                     onChange={onChangeIssueTopic}
                     required
                   />
                 ) : (
-                  <p>{issueDetail.topic.topicTitle}</p>
+                  <p>{issueInfo ? issueInfo.topic.topicTitle : null}</p>
                 )}
               </ToggleBox>
 
@@ -349,7 +441,7 @@ const IssueDetail = ({
                 {updateIssue ? (
                   <input
                     type="text"
-                    value={issueDetail.assignee.nickname}
+                    value={issueInfo ? issueInfo.assignee.nickname : null}
                     onChange={onChangeIssueAssignee}
                     placeholder="Type Issue Description"
                     required
@@ -359,7 +451,7 @@ const IssueDetail = ({
                     <ImageBox>
                       <Image src="/profileimg.png" width={25} height={25} />
                     </ImageBox>
-                    <p>{issueDetail.assignee.nickname}</p>
+                    <p>{issueInfo ? issueInfo.assignee.nickname : null}</p>
                   </AssigneeInfo>
                 )}
               </ToggleBox>

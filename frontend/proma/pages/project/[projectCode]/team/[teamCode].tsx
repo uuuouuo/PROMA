@@ -399,7 +399,7 @@ const TeamSpace = ({
     getInProgressSprint(projectNo).then((res: any) => {
       const status = res.payload;
       if (!status) {
-        router.push(`/project/${router.query.projectCode}`);
+        // router.push(`/project/${router.query.projectCode}`);
         alert(
           "Issue management is only available for sprints in progress. Start the sprint first."
         );
@@ -481,6 +481,7 @@ const TeamSpace = ({
                   showIssueCreateModal={showIssueCreateModal}
                   teamNo={teamNo}
                   sprintNo={sprintInfo.sprintNo}
+                  getIssues={getIssues}
                 />
               </ButtonBox>
             ) : null}
@@ -513,7 +514,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.issueTitle}</p>
+                                    <p>{issue.title}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -560,7 +561,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.issueTitle}</p>
+                                    <p>{issue.title}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -607,7 +608,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.issueTitle}</p>
+                                    <p>{issue.title}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -651,7 +652,51 @@ const TeamSpace = ({
             </WarnButtonBox>
           ) : null}
         </TeamSpaceContainer>
-      ) : null}
+      ) : (
+        <TeamSpaceContainer>
+          <TopBar>
+            {updateTitle ? (
+              <FlexBox>
+                <input
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  onKeyUp={onKeyUpTeamName}
+                  placeholder="Type Team Name"
+                  required
+                  autoFocus
+                />
+                <FaCheck onClick={updateTeamName} />
+              </FlexBox>
+            ) : (
+              <FlexBox>
+                <h1>{teamName}</h1>
+                {isMember ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
+              </FlexBox>
+            )}
+          </TopBar>
+          {isMember ? (
+            <WarnButtonBox>
+              <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+              <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
+
+              <WarningModal
+                warningModal={warningTeamOutModal}
+                showWarningModal={showWarningTeamOutModal}
+                comment={teamOutComment}
+                deleteFunc={onOutTeam}
+              />
+              <WarningModal
+                warningModal={warningTeamDeleteModal}
+                showWarningModal={showWarningTeamDeleteModal}
+                comment={teamDeleteComment}
+                deleteFunc={onDeleteTeam}
+              />
+            </WarnButtonBox>
+          ) : null}
+        </TeamSpaceContainer>
+      )}
     </>
   );
 };

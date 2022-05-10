@@ -14,12 +14,21 @@ import {
 
 import { connect } from "react-redux";
 import { createNewSprint } from "../../store/modules/sprint";
+import { getIssueList } from "../../store/modules/issue";
 import { useRouter } from "next/router";
+import { RootState } from "../../store/modules";
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     createNewSprint: (newSprintInfo: any) =>
       dispatch(createNewSprint(newSprintInfo)),
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
   };
 };
 
@@ -27,10 +36,14 @@ const SprintCreateModal = ({
   sprintCreateModal,
   showSprintCreateModal,
   createNewSprint,
+  onlyMyIssue,
+  getIssueList,
 }: {
   sprintCreateModal: boolean;
   showSprintCreateModal: any;
   createNewSprint?: any;
+  onlyMyIssue?: boolean;
+  getIssueList?: any;
 }) => {
   const router = useRouter();
 
@@ -47,6 +60,7 @@ const SprintCreateModal = ({
     endDate: "",
     projectNo: "",
   });
+  const [projectNo, setProjectNo] = useState<string>("");
 
   const onChangeSprintName = (e: any) => {
     const value = e.target.value as string;
@@ -102,17 +116,21 @@ const SprintCreateModal = ({
     }
 
     //post new sprint api
-    createNewSprint(newSprintInfo);
+    createNewSprint(newSprintInfo).then((res: any) =>
+      getIssueList({ projectNo, onlyMyIssue })
+    );
 
     showSprintCreateModal();
   };
 
   useEffect(() => {
     if (!router.isReady) return;
+    const projectCode = router.query.projectCode as string;
     setNewSprintInfo((cur) => ({
       ...cur,
-      projectNo: router.query.projectCode as string,
+      projectNo: projectCode,
     }));
+    setProjectNo(projectCode);
   }, [router.asPath]);
 
   return (
@@ -148,4 +166,4 @@ const SprintCreateModal = ({
   );
 };
 
-export default connect(null, mapDispatchToProps)(SprintCreateModal);
+export default connect(mapStateToProps, mapDispatchToProps)(SprintCreateModal);

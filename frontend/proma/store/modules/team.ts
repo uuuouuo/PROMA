@@ -50,7 +50,6 @@ export const createNewTeam = createAsyncThunk(
       .post(`/team`, newTeamInfo)
       .then((res) => {
         thunkAPI.dispatch(getProjectList());
-        thunkAPI.dispatch(getTeamList(newTeamInfo.projectNo));
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }

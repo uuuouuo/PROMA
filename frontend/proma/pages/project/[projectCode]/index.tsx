@@ -31,7 +31,7 @@ import {
 import {
   getIssueList,
   updateIssueSprint,
-  isNotUpdated,
+  setDndMoved,
 } from "../../../store/modules/issue";
 
 const backlog = {
@@ -130,6 +130,7 @@ const mapStateToProps = (state: RootState) => {
     projectInfo: state.projectReducer.projectInfo,
     teamList: state.teamReducer.teamList,
     sprintList: state.sprintReducer.sprintList,
+    issueList: state.issueReducer.issueList,
     isLogin: state.userReducer.isLogin,
     userInfo: state.userReducer.userInfo,
     onlyMyIssue: state.modeReducer.onlyMyIssue,
@@ -153,7 +154,7 @@ const mapDispatchToProps = (dispatch: any) => {
     updateIssueSprint: (issueInfo: any) =>
       dispatch(updateIssueSprint(issueInfo)),
     getIssueList: (params: any) => dispatch(getIssueList(params)),
-    isNotUpdated: () => dispatch(isNotUpdated()),
+    setDndMoved: (dndInfo: any) => dispatch(setDndMoved(dndInfo)),
   };
 };
 
@@ -175,7 +176,8 @@ const ProjectSpace = ({
   userInfo,
   updateIssueSprint,
   getIssueList,
-  isNotUpdated,
+  setDndMoved,
+  issueList,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -194,7 +196,8 @@ const ProjectSpace = ({
   userInfo: any;
   updateIssueSprint: any;
   getIssueList: any;
-  isNotUpdated: any;
+  setDndMoved: any;
+  issueList: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -203,7 +206,6 @@ const ProjectSpace = ({
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [teams, setTeams] = useState<Array<Object>>([]);
-  const [sprints, setSprints] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
@@ -218,6 +220,7 @@ const ProjectSpace = ({
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningModal = () => setWarningModal((cur) => !cur);
+  const [issueData, setIssueData] = useState<any>([]);
 
   //update project
   const onKeyUpProjectName = (e: any) => {
@@ -238,15 +241,23 @@ const ProjectSpace = ({
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
+    console.log(args);
     const targetIssueNo = args.draggableId.split("_")[2];
     const fromSprint = args.source.droppableId.split("_")[0];
     const fromTeam = args.source.droppableId.split("_")[1];
+    const fromIndex = args.source.index;
     const toSprint = args.destination.droppableId.split("_")[0];
     const toTeam = args.destination.droppableId.split("_")[1];
+    const toIndex = args.destination.index;
 
-    console.log(targetIssueNo);
-    console.log(fromSprint, fromTeam);
-    console.log(toSprint, toTeam);
+    const newDndMoved = {
+      targetIssueNo,
+      teamNo: fromTeam,
+      fromSprint,
+      toSprint,
+      fromIndex,
+      toIndex,
+    };
 
     if (fromTeam !== toTeam) {
       alert("Issues can only be moved within the same team.");
@@ -254,13 +265,16 @@ const ProjectSpace = ({
     } else if (fromSprint === toSprint) {
       return;
     } else {
-      updateIssueSprint({
-        issueNo: targetIssueNo,
-        sprintNo: toSprint,
-        fromSprint,
-        onlyMyIssue,
-        teamNo: fromTeam,
-      }).then((res: any) => isNotUpdated);
+      updateIssueSprint(
+        toSprint
+          ? {
+              issueNo: targetIssueNo,
+              sprintNo: toSprint,
+            }
+          : { issueNo: targetIssueNo }
+      ).then((res: any) => {
+        setDndMoved(newDndMoved);
+      });
     }
   };
 
@@ -284,16 +298,19 @@ const ProjectSpace = ({
       alert("Please login first");
       router.push("/");
     }
-
-    getInProgressSprint(value);
+    // getInProgressSprint(value);
   }, [router.asPath]);
 
   useEffect(() => {
     if (!projectNo) return;
     getProjectInfo(projectNo);
-    getSprintList(projectNo);
-    getTeamList(projectNo);
-    getInProgressSprint(projectNo);
+    getIssueList({
+      projectNo,
+      onlyMyIssue,
+    });
+    // getSprintList(projectNo);
+    // getTeamList(projectNo);
+    // getInProgressSprint(projectNo);
   }, [projectNo]);
 
   useEffect(() => {
@@ -305,14 +322,24 @@ const ProjectSpace = ({
   }, [projectInfo]);
 
   useEffect(() => {
-    if (!teamList) return;
-    setTeams(teamList);
-  }, [teamList]);
+    if (!issueList) return;
+    setIssueData(issueList);
+  }, [issueList]);
 
-  useEffect(() => {
-    if (!sprintList) return;
-    setSprints(sprintList);
-  }, [sprintList]);
+  //   useEffect(() => {
+  //     if (!teamList) return;
+  //     setTeams(teamList);
+  //   }, [teamList]);
+
+  //   useEffect(() => {
+  //     if (!sprintList) return;
+  //     setSprints(sprintList);
+  //     getIssueList({
+  //       onlyMyIssue,
+  //       sprintNo: 18,
+  //       teamNo: 26,
+  //     });
+  //   }, [sprintList]);
 
   return (
     <>
@@ -367,10 +394,9 @@ const ProjectSpace = ({
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {sprints?.map((sprint, index) => (
-                <Sprint sprint={sprint} key={index} teamList={teams} />
+              {issueData?.map((sprint: any, index: number) => (
+                <Sprint sprint={sprint} key={index} />
               ))}
-              <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
             {isManager ? (
               <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>
