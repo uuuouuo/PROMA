@@ -19,6 +19,12 @@ const Title = styled.h2`
   font-size: 22px;
   margin: 0;
   margin-bottom: 10px;
+  p{
+      font-weight: 300;
+      font-size: 15px;
+      margin: 0;
+      margin-top: 10px;
+  }
 `;
 const SprintBox = styled.div`
   margin-top: 15px;
@@ -36,7 +42,7 @@ const FlexBox = styled.div`
   width: inherit;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 `;
 const FilledButton = styled.button`
   font-size: 15px;
@@ -45,6 +51,7 @@ const FilledButton = styled.button`
   color: white;
   border: none;
   border-radius: 3px;
+  margin-bottom:10px;
   &:hover {
     cursor: pointer;
   }
@@ -87,14 +94,12 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const Sprint = ({
   sprint,
-  teamList,
   deleteSprint,
   updateSprintStatus,
   isInProgress,
   inProgressSprintInfo,
 }: {
   sprint: any;
-  teamList: any;
   deleteSprint?: any;
   updateSprintStatus?: any;
   isInProgress?: boolean;
@@ -137,19 +142,20 @@ const Sprint = ({
   }, [router.asPath]);
 
   useEffect(() => {
-    if (!teamList) return;
-    setTeams(teamList);
-  }, [teamList]);
-
-  useEffect(() => {
     if (!sprint) return;
     setSprintNo(sprint.sprintNo);
+    setTeams(sprint.teams);
   }, [sprint]);
 
   return (
     <SprintBox>
       <FlexBox>
-        <Title>{sprint.title}</Title>
+        <Title>
+          {sprint.title ? sprint.title : "Backlog"}
+          <p>
+            {sprint.startDate ? `From: ${sprint.startDate} | To: ${sprint.endDate}` : null}
+          </p>
+        </Title>
         <SprintUpdateModal
           sprintUpdateModal={sprintUpdateModal}
           showSprintUpdateModal={showSprintUpdateModal}

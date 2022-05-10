@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
 import IssueCreateModal from "../Modals/IssueCreateModal";
-import { getIssueList, isNotUpdated } from "../../store/modules/issue";
+import { updateIssueSprint, setMovedIssue } from "../../store/modules/issue";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { useRouter } from "next/router";
@@ -53,31 +53,35 @@ const AddButton = styled.button`
 const mapStateToProps = (state: RootState) => {
   return {
     onlyMyIssue: state.modeReducer.onlyMyIssue,
-    isUpdated: state.issueReducer.isUpdated,
+    dndMoved: state.issueReducer.dndMoved,
+    movedIssue: state.issueReducer.movedIssue,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getIssueList: (params: any) => dispatch(getIssueList(params)),
-    isNotUpdated: () => dispatch(isNotUpdated()),
+    setMovedIssue: (issueInfo: any) => dispatch(setMovedIssue(issueInfo)),
+    updateIssueSprint: (issueInfo: any) =>
+      dispatch(updateIssueSprint(issueInfo)),
   };
 };
 
 const Team = ({
   team,
   sprintNo,
-  getIssueList,
   onlyMyIssue,
-  isUpdated,
-  isNotUpdated,
+  dndMoved,
+  updateIssueSprint,
+  setMovedIssue,
+  movedIssue,
 }: {
   team: any;
   sprintNo: any;
   onlyMyIssue: boolean;
-  getIssueList?: any;
-  isUpdated?: boolean;
-  isNotUpdated?: any;
+  dndMoved?: any;
+  updateIssueSprint?: any;
+  setMovedIssue?: any;
+  movedIssue?: any;
 }) => {
   const router = useRouter();
   //DOM 준비되었을 때 렌더링
@@ -97,37 +101,96 @@ const Team = ({
     } else {
       params = {
         teamNo: team.teamNo,
-        sprintNo,
+        sprintNo: sprintNo,
         onlyMyIssue,
       };
     }
-
-    getIssueList(params).then((res: any) => {
-      const issues = res.payload.issueList;
-      setIssueList(issues);
-      isNotUpdated();
-    });
   };
 
   useEffect(() => {
     if (!router.isReady) return;
     setIsReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!router.isReady) return;
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
   }, [router.asPath]);
 
   useEffect(() => {
-    if (sprintNo === undefined) return;
-    getIssues();
-  }, [sprintNo, onlyMyIssue]);
+    if (!team) return;
+    setIssueList(team.issues);
+  }, [team]);
 
-  useEffect(() => {
-    if (isUpdated) getIssues();
-  }, [isUpdated]);
+  //   useEffect(() => {
+  //     if (sprintNo === undefined) return;
+  //     getIssues();
+  //   }, [sprintNo, onlyMyIssue]);
+
+  //   useEffect(() => {
+  //     if (!dndMoved) return;
+  //     if (team.teamNo !== parseInt(dndMoved.teamNo)) return;
+
+  //     if (
+  //       (sprintNo === null && dndMoved.fromSprint === "null") ||
+  //       sprintNo === parseInt(dndMoved.fromSprint)
+  //     ) {
+  //       const newIssueList = [...issueList];
+  //       newIssueList.splice(dndMoved.fromIndex, 1);
+  //       setIssueList(newIssueList);
+  //       //   getIssues();
+  //     } else if (
+  //       (sprintNo === null && dndMoved.toSprint === "null") ||
+  //       sprintNo === parseInt(dndMoved.toSprint)
+  //     ) {
+  //       getIssues();
+  //     }
+
+  // if (sprintNo === parseInt(dndMoved.fromSprint)) {
+  //     setMovedIssue(issueList[dndMoved.fromIndex]);
+
+  //   updateIssueSprint(
+  //     sprintNo
+  //       ? {
+  //           issueNo: dndMoved.targetIssueNo,
+  //           sprintNo: dndMoved.toSprint,
+  //         }
+  //       : { issueNo: dndMoved.targetIssueNo }
+  //   ).then((res: any) => {
+  //     getIssues(dndMoved.fromSprint);
+  //     getIssues(dndMoved.toSprint);
+  //   });
+  // } else if (sprintNo === parseInt(dndMoved.toSprint)) {
+  //   console.log("to");
+  // } else {
+  //   return;
+  // }
+  //   }, [dndMoved]);
+
+  //   useEffect(() => {
+  //     if (!movedIssue || !dndMoved) return;
+  //     if (team.teamNo !== parseInt(dndMoved.teamNo)) return;
+
+  //     // if (
+  //     //   (sprintNo === null && dndMoved.fromSprint === "null") ||
+  //     //   sprintNo === parseInt(dndMoved.fromSprint)
+  //     // ) {
+  //     //   updateIssueSprint(
+  //     //     sprintNo
+  //     //       ? {
+  //     //           issueNo: dndMoved.targetIssueNo,
+  //     //           sprintNo: dndMoved.toSprint,
+  //     //         }
+  //     //       : { issueNo: dndMoved.targetIssueNo }
+  //     //   ).then((res: any) => getIssues());
+  //     // } else
+  //     if (
+  //       (sprintNo === null && dndMoved.toSprint === "null") ||
+  //       sprintNo === parseInt(dndMoved.toSprint)
+  //     ) {
+  //       const newIssueList = [...issueList];
+  //       newIssueList.splice(dndMoved.toIndex, 0, movedIssue);
+  //       setIssueList(newIssueList);
+  //       getIssues(dndMoved.fromSprint);
+  //     }
+  //   }, [dndMoved, movedIssue]);
 
   return (
     <>
@@ -141,7 +204,8 @@ const Team = ({
                     <Title>{team.title}</Title>
                   </TeamName>
                 </Link>
-                {team.isMember ? (
+                {/* 밑에 조건 isMember 생기면 바꾸기 */}
+                {!team.isMember ? (
                   <AddButton onClick={showIssueCreateModal}>
                     + Add Issue
                   </AddButton>
@@ -158,6 +222,7 @@ const Team = ({
                 issueList.map((issue: any, index: number) => (
                   <Issue
                     issue={issue}
+                    index={index}
                     key={index}
                     droppableId={`${sprintNo}_${team.teamNo}`}
                   />

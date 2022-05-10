@@ -30,8 +30,9 @@ const TopicContainer = styled.div`
   height: 98%;
   overflow-y: scroll;
 `;
-const TopicTitle = styled.h1`
+const TopicTitle = styled.h2`
   font-size: 30px;
+  font-weight: 500;
 `;
 const SubBox = styled.div`
   display: flex;

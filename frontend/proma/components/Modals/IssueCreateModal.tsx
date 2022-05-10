@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
-import { createNewIssue } from "../../store/modules/issue";
+import { createNewIssue, getIssueList } from "../../store/modules/issue";
 import { getTopicList } from "../../store/modules/topic";
 import { getTeamMembers } from "../../store/modules/team";
 import { RootState } from "../../store/modules";
@@ -23,6 +23,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     teamMembers: state.teamReducer.teamMembers,
     topics: state.topicReducer.topicList,
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
   };
 };
 
@@ -31,6 +32,7 @@ const mapDispatchToProps = (dispatch: any) => {
     createNewIssue: (issueInfo: any) => dispatch(createNewIssue(issueInfo)),
     getTopicList: (projectNo: any) => dispatch(getTopicList(projectNo)),
     getTeamMembers: (teamNo: any) => dispatch(getTeamMembers(teamNo)),
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
   };
 };
 
@@ -45,6 +47,8 @@ const IssueCreateModal = ({
   getTopicList,
   getTeamMembers,
   getIssues,
+  onlyMyIssue,
+  getIssueList,
 }: {
   issueCreateModal: boolean;
   showIssueCreateModal: any;
@@ -56,6 +60,8 @@ const IssueCreateModal = ({
   getTopicList?: any;
   getTeamMembers?: any;
   getIssues?: any;
+  onlyMyIssue?: boolean;
+  getIssueList?: any;
 }) => {
   const router = useRouter();
 
@@ -80,6 +86,7 @@ const IssueCreateModal = ({
   });
   const [memberList, setMemberList] = useState<any>([]);
   const [topicList, setTopicList] = useState<any>([]);
+  const [projectNo, setProjectNo] = useState<string>("");
 
   const onChangeTitle = (e: any) => {
     const value = e.target.value as string;
@@ -116,14 +123,17 @@ const IssueCreateModal = ({
       return;
     }
 
-    createNewIssue(newIssueInfo).then((res: any) => getIssues());
+    createNewIssue(newIssueInfo).then((res: any) =>
+      getIssueList({ projectNo, onlyMyIssue })
+    );
     showIssueCreateModal();
   };
 
   useEffect(() => {
     if (!router.isReady) return;
-    const projectNo = router.query.projectCode as string;
-    getTopicList(projectNo);
+    const projectCode = router.query.projectCode as string;
+    setProjectNo(projectCode);
+    getTopicList(projectCode);
     getTeamMembers(teamNo);
   }, [router.asPath]);
 

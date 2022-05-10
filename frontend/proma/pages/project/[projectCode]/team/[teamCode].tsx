@@ -13,6 +13,7 @@ import {
   getToDoIssues,
   getInProgressIssues,
   getDoneIssues,
+  updateIssueStatus,
 } from "../../../../store/modules/issue";
 import { switchViewOption } from "../../../../store/modules/mode";
 import { getInProgressSprint } from "../../../../store/modules/sprint";
@@ -227,6 +228,8 @@ const mapDispatchToProps = (dispatch: any) => {
     getDoneIssues: (params: any) => dispatch(getDoneIssues(params)),
     getInProgressSprint: (projectNo: string) =>
       dispatch(getInProgressSprint(projectNo)),
+    updateIssueStatus: (issueInfo: any) =>
+      dispatch(updateIssueStatus(issueInfo)),
   };
 };
 
@@ -247,6 +250,7 @@ const TeamSpace = ({
   getToDoIssues,
   getInProgressIssues,
   getDoneIssues,
+  updateIssueStatus,
 }: {
   getTeamInfo: any;
   teamInfo: any;
@@ -264,6 +268,7 @@ const TeamSpace = ({
   getToDoIssues: any;
   getInProgressIssues: any;
   getDoneIssues: any;
+  updateIssueStatus: any;
 }) => {
   const router = useRouter();
 
@@ -293,11 +298,6 @@ const TeamSpace = ({
   const showWarningTeamOutModal = () => setWarningTeamOutModal((cur) => !cur);
   const showWarningTeamDeleteModal = () =>
     setWarningTeamDeleteModal((cur) => !cur);
-
-  //유저가 드래그를 끝낸 시점에 불리는 함수
-  const onDragEnd = (args: any) => {
-    console.log(args);
-  };
 
   //update team
   const onKeyUpTeamName = (e: any) => {
@@ -332,6 +332,56 @@ const TeamSpace = ({
     getDoneIssues({ ...params, status: "done" });
   };
 
+  //유저가 드래그를 끝낸 시점에 불리는 함수
+  const onDragEnd = (args: any) => {
+    const targetIssueNo = args.draggableId;
+    const fromStatus = args.source.droppableId;
+    const fromIndex = args.source.index;
+    const toStatus = args.destination.droppableId;
+    const toIndex = args.destination.index;
+
+    let targetIssue = {};
+    if (fromStatus === toStatus) {
+      return;
+    } else {
+      if (fromStatus === "todo") {
+        targetIssue = toDoList[fromIndex];
+        const newToDoList = [...toDoList];
+        newToDoList.splice(fromIndex, 1);
+        setToDoList(newToDoList);
+      } else if (fromStatus === "inprogress") {
+        targetIssue = inProgressList[fromIndex];
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(fromIndex, 1);
+        setInProgressList(newInProgressList);
+      } else {
+        targetIssue = doneList[fromIndex];
+        const newDoneList = [...doneList];
+        newDoneList.splice(fromIndex, 1);
+        setDoneList(newDoneList);
+      }
+
+      if (toStatus === "todo") {
+        const newToDoList = [...toDoList];
+        newToDoList.splice(toIndex, 0, targetIssue);
+        setToDoList(newToDoList);
+      } else if (toStatus === "inprogress") {
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(toIndex, 0, targetIssue);
+        setInProgressList(newInProgressList);
+      } else {
+        const newDoneList = [...doneList];
+        newDoneList.splice(toIndex, 0, targetIssue);
+        setDoneList(newDoneList);
+      }
+
+      updateIssueStatus({
+        issueNo: targetIssueNo,
+        status: toStatus,
+      }).then((res: any) => getIssues());
+    }
+  };
+
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -349,7 +399,7 @@ const TeamSpace = ({
     getInProgressSprint(projectNo).then((res: any) => {
       const status = res.payload;
       if (!status) {
-        router.push(`/project/${router.query.projectCode}`);
+        // router.push(`/project/${router.query.projectCode}`);
         alert(
           "Issue management is only available for sprints in progress. Start the sprint first."
         );
@@ -372,7 +422,6 @@ const TeamSpace = ({
 
   useEffect(() => {
     if (!sprintInfo) return;
-    console.log(sprintInfo, "emfdjdha");
     getIssues();
   }, [sprintInfo]);
 
@@ -432,6 +481,7 @@ const TeamSpace = ({
                   showIssueCreateModal={showIssueCreateModal}
                   teamNo={teamNo}
                   sprintNo={sprintInfo.sprintNo}
+                  getIssues={getIssues}
                 />
               </ButtonBox>
             ) : null}
@@ -450,8 +500,8 @@ const TeamSpace = ({
                       {toDoList
                         ? toDoList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`todo_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -497,8 +547,8 @@ const TeamSpace = ({
                       {inProgressList
                         ? inProgressList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`inprogress_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -521,7 +571,7 @@ const TeamSpace = ({
                                         height={20}
                                       />
                                     </ImageBox>
-                                    <p>{issue.assignee}</p>
+                                    <p>{issue.assignee.nickname}</p>
                                   </IssueSubBox>
                                 </IssueBox>
                               )}
@@ -544,8 +594,8 @@ const TeamSpace = ({
                       {doneList
                         ? doneList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`done_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -568,7 +618,7 @@ const TeamSpace = ({
                                         height={20}
                                       />
                                     </ImageBox>
-                                    <p>{issue.assignee}</p>
+                                    <p>{issue.assignee.nickname}</p>
                                   </IssueSubBox>
                                 </IssueBox>
                               )}
@@ -602,7 +652,51 @@ const TeamSpace = ({
             </WarnButtonBox>
           ) : null}
         </TeamSpaceContainer>
-      ) : null}
+      ) : (
+        <TeamSpaceContainer>
+          <TopBar>
+            {updateTitle ? (
+              <FlexBox>
+                <input
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  onKeyUp={onKeyUpTeamName}
+                  placeholder="Type Team Name"
+                  required
+                  autoFocus
+                />
+                <FaCheck onClick={updateTeamName} />
+              </FlexBox>
+            ) : (
+              <FlexBox>
+                <h1>{teamName}</h1>
+                {isMember ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
+              </FlexBox>
+            )}
+          </TopBar>
+          {isMember ? (
+            <WarnButtonBox>
+              <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+              <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
+
+              <WarningModal
+                warningModal={warningTeamOutModal}
+                showWarningModal={showWarningTeamOutModal}
+                comment={teamOutComment}
+                deleteFunc={onOutTeam}
+              />
+              <WarningModal
+                warningModal={warningTeamDeleteModal}
+                showWarningModal={showWarningTeamDeleteModal}
+                comment={teamDeleteComment}
+                deleteFunc={onDeleteTeam}
+              />
+            </WarnButtonBox>
+          ) : null}
+        </TeamSpaceContainer>
+      )}
     </>
   );
 };
