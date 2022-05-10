@@ -71,19 +71,17 @@ public class IssueController {
     }
     return new ResponseEntity(resultMap, status);
   }
-
   @GetMapping
-  @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이유 제목을 보낸다")
+  @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이슈 제목을 보낸다")
   public ResponseEntity getSprintTeamIssue(
-      @RequestParam(value="sprintNo",required = false) Integer sprintNo,
-      @RequestParam(value="teamNo") Integer teamNo,
-      @RequestParam(value="onlyMyIssue",required = false) Boolean onlyMyIssue) {
+      @RequestParam(value="projectNo") String projectNo,
+      @RequestParam(value="onlyMyIssue") Boolean onlyMyIssue) {
 
     Map<String, Object> resultMap = new HashMap<>();
     HttpStatus status = HttpStatus.ACCEPTED;
 
     try {
-      resultMap = issueService.getSprintTeamIssue(sprintNo,teamNo,onlyMyIssue);
+      resultMap = issueService.getSprintTeamIssue(projectNo,onlyMyIssue);
 
       if (resultMap.get("message").equals(Message.ISSUE_FIND_SUCCESS_MESSAGE)) {
         status = HttpStatus.OK;
@@ -103,7 +101,7 @@ public class IssueController {
       @PathVariable Integer teamNo,
       @RequestParam(value="status") String status,
       @RequestParam(value="sprintNo") Integer sprintNo,
-      @RequestParam(value="onlyMyIssue",required = false) Boolean onlyMyIssue) {
+      @RequestParam(value="onlyMyIssue") Boolean onlyMyIssue) {
 
     //sprintNo가 required = true?
     

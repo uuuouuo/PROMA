@@ -1,5 +1,8 @@
 package com.ssafy.proma.service.issue;
 
+import static com.ssafy.proma.exception.Message.SPRINT_GET_ERROR_MESSAGE;
+import static com.ssafy.proma.exception.Message.SPRINT_GET_SUCCESS_MESSAGE;
+
 import com.ssafy.proma.exception.Message;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueCreateDto;
 import com.ssafy.proma.model.dto.issue.ReqIssueDto.IssueSprintDto;
@@ -9,13 +12,18 @@ import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.TopicDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueDetailsDto.UserDto;
 import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
+import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintDto;
+import com.ssafy.proma.model.dto.sprint.ResSprintDto.SprintTeamDto;
 import com.ssafy.proma.model.dto.team.ResTeamDto.TeamIssueDto;
+import com.ssafy.proma.model.dto.team.ResTeamDto.TeamIssueListDto;
 import com.ssafy.proma.model.entity.issue.Issue;
+import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.team.Team;
 import com.ssafy.proma.model.entity.topic.Topic;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.issue.IssueRepository;
+import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.sprint.SprintRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
@@ -23,12 +31,14 @@ import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
 import com.ssafy.proma.util.SecurityUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +53,7 @@ public class IssueService extends AbstractService {
   private final TopicRepository topicRepository;
   private final UserRepository userRepository;
   private final SecurityUtil securityUtil;
+  private final ProjectRepository projectRepository;
 
   @Transactional
   public Map<String, Object> createIssue(IssueCreateDto issueCreateDto) throws Exception {
@@ -100,49 +111,54 @@ public class IssueService extends AbstractService {
     return resultMap;
   }
 
-  public Map<String, Object> getSprintTeamIssue(Integer sprintNo, Integer teamNo,Boolean onlyMyIssue) throws Exception {
+  public Map<String, Object> getSprintTeamIssue(String projectNo,Boolean onlyMyIssue) throws Exception {
     Map<String, Object> resultMap = new HashMap<>();
 
-    Optional<Team> teamOp = teamRepository.findByNo(teamNo);
-    Team team = takeOp(teamOp);
+    Optional<Project> projectOp = projectRepository.findByNo(projectNo);
+    Project project = takeOp(projectOp);
 
-    Optional<List<Issue>> issueListOp = null;
+    List<SprintTeamDto> issueList = new ArrayList<>();
 
-    if(sprintNo == null ){
-      issueListOp = issueRepository.findByTeamAndSprintNull(team);
+    List<Sprint> sprintList = getSprintList(project);
+    List<Team> teamList = getTeamList(project);
+    sprintList.add(null);
+
+    for(Sprint sprint : sprintList) {
+      List<TeamIssueListDto> teams = new ArrayList<>();
+      for(Team team : teamList) {
+        Optional<List<Issue>> sprintOp = issueRepository.findBySprintAndTeam(sprint,team);
+        List<Issue> issueEntityList = takeOp(sprintOp);
+
+        List<IssueNoTitleDto> issues;
+        if(!onlyMyIssue) {
+          issues = issueEntityList.stream()
+              .map(issue -> new IssueNoTitleDto(issue.getNo()
+                  , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
+              .collect(Collectors.toList());
+        }
+        else {
+          String userNo = securityUtil.getCurrentUserNo();
+          issues = issueEntityList.stream()
+              .filter(issue->issue.getUser().getNo().equals(userNo))
+              .map(issue -> new IssueNoTitleDto(issue.getNo()
+                  , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
+              .collect(Collectors.toList());
+        }
+        teams.add(new TeamIssueListDto(team.getNo(), team.getName(), issues));
+      }
+      if(sprint == null) {
+        issueList.add(new SprintTeamDto(teams));
+      }
+      else {
+        issueList.add(new SprintTeamDto(sprint.getNo(), sprint.getName(), sprint.getStartDate().toString(),sprint.getEndDate().toString(),sprint.getStatus(),teams));
+      }
     }
-    else{
-      Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
-      Sprint sprint = takeOp(sprintOp);
-
-      issueListOp = issueRepository.findBySprintAndTeam(sprint,team);
-    }
-
-    List<Issue> issues = takeOp(issueListOp);
-
-    List<IssueNoTitleDto> issueList = null;
-    if(onlyMyIssue) {
-      issueList = issues.stream()
-          .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
-          .collect(Collectors.toList());
-
-    }
-    else {
-
-      String userNo = securityUtil.getCurrentUserNo();
-      issueList = issues.stream()
-          .filter(issue->issue.getUser().getNo().equals(userNo))
-          .map(issue -> new IssueNoTitleDto(issue.getNo()
-              , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
-          .collect(Collectors.toList());
-    }
-
     resultMap.put("issueList", issueList);
     resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
 
     return resultMap;
   }
+
 
   public Map<String, Object> getStatueIssue(String status, Integer teamNo,Integer sprintNo,Boolean onlyMyIssue) throws Exception {
     Map<String, Object> resultMap = new HashMap<>();
@@ -157,7 +173,7 @@ public class IssueService extends AbstractService {
 
 
     List<IssueNoTitleDto> issueList = null;
-    if(onlyMyIssue) {
+    if(!onlyMyIssue) {
       issueList = issues.stream()
           .map(issue -> new IssueNoTitleDto(issue.getNo()
               , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
@@ -283,5 +299,26 @@ public class IssueService extends AbstractService {
     resultMap.put("message", Message.ISSUE_DELETE_SUCCESS_MESSAGE);
 
     return resultMap;
+  }
+
+  public List<Sprint> getSprintList(Project project) {
+
+    Sort sort = Sort.by(
+        Sort.Order.desc("status"),
+        Sort.Order.asc("startDate")
+    );
+
+    Optional<List<Sprint>> projectListOp = sprintRepository.findAllByProjectAndStatusLessThan(project,2,sort);
+    List<Sprint> sprintList = takeOp(projectListOp);
+
+    return sprintList;
+  }
+
+  public List<Team> getTeamList(Project project) {
+
+    Optional<List<Team>> teamListOp = teamRepository.findByProject(project);
+    List<Team> teamList = takeOp(teamListOp);
+
+    return teamList;
   }
 }
