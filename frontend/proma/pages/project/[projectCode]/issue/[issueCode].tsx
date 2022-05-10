@@ -19,6 +19,7 @@ import {
   updateIssueInfo,
   updateIssueSprint,
   updateIssueStatus,
+  deleteIssue,
 } from "../../../../store/modules/issue";
 import { getSprintList, updateSprint } from "../../../../store/modules/sprint";
 import { getTeamMembers } from "../../../../store/modules/team";
@@ -185,6 +186,7 @@ const mapDispatchToProps = (dispatch: any) => {
     getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
     getTeamMembers: (teamNo: number) => dispatch(getTeamMembers(teamNo)),
     getTopicList: (projectNo: string) => dispatch(getTopicList(projectNo)),
+    deleteIssue: (issueNo: number) => dispatch(deleteIssue(issueNo)),
   };
 };
 
@@ -200,6 +202,7 @@ const IssueDetail = ({
   getTeamMembers,
   getTopicList,
   topics,
+  deleteIssue,
 }: {
   issueInfo: any;
   getIssueInfo: any;
@@ -212,6 +215,7 @@ const IssueDetail = ({
   getTeamMembers: any;
   getTopicList: any;
   topics: any;
+  deleteIssue: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -223,6 +227,7 @@ const IssueDetail = ({
     topicNo: 0,
     userNo: "",
   });
+  const [projectNo, setProjectNo] = useState<string>("");
   const [memberList, setMemberList] = useState<any>([]);
   const [topicList, setTopicList] = useState<any>([]);
   const [statusName, setStatusName] = useState<string>("");
@@ -302,18 +307,19 @@ const IssueDetail = ({
   };
 
   const onDeleteIssue = () => {
-    // const confirmResult = confirm("Are you sure you want to delete the topic?");
-    // if (confirmResult) {
-    //   deleteIssue(topicNo).then((res: any) =>
-    //     router.push(`/project/${projectNo}`)
-    //   );
-    // }
+    const confirmResult = confirm("Are you sure you want to delete the issue?");
+    if (confirmResult) {
+      deleteIssue(issueInfo.issueNo).then((res: any) =>
+        router.push(`/project/${projectNo}`)
+      );
+    }
   };
 
   useEffect(() => {
     if (!router.isReady) return;
     const projectCode = router.query.projectCode as string;
     const issueCode = router.query.issueCode as string;
+    setProjectNo(projectCode);
     getSprintList(projectCode);
     getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
       setIsReady(true)

@@ -132,6 +132,17 @@ export const updateIssueStatus = createAsyncThunk(
   }
 );
 
+//update issue sprint api
+export const deleteIssue = createAsyncThunk(
+  "DELETE/ISSUE",
+  async (issueNo: number, thunkAPI) => {
+    return await api
+      .delete(`/issue/${issueNo}`)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const issueSlice = createSlice({
   name: "issue",
   initialState,
