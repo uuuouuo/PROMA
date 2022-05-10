@@ -137,7 +137,7 @@ public class SprintService extends AbstractService {
       new IllegalStateException(SPRINT_GET_ERROR_MESSAGE);
     }
     else {
-      Optional<Sprint> sprintOp = sprintRepository.findByProjectAndStatusTrue(project);
+      Optional<Sprint> sprintOp = sprintRepository.findByProjectAndStatus(project,1);
       Sprint sprint = takeOp(sprintOp);
 
       SprintNoTitle sprintNoTitle = new SprintNoTitle(sprint.getNo(),sprint.getName());

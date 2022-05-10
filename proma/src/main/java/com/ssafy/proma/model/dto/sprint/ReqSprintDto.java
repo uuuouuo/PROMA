@@ -34,7 +34,7 @@ public class ReqSprintDto{
       LocalDate startDateTime = LocalDate.parse(startDate, DATEFORMATTER);
       LocalDate endDateTime = LocalDate.parse(endDate, DATEFORMATTER);
 
-      return Sprint.builder().name(title).startDate(startDateTime).endDate(endDateTime).status(false).project(project).build();
+      return Sprint.builder().name(title).startDate(startDateTime).endDate(endDateTime).status(0).project(project).build();
     }
 
     @Getter

@@ -45,8 +45,8 @@ public class Sprint {
     private LocalDate endDate;
 
     @Column
-    @ApiModelProperty(value = "스프린트 시작, 종료 여부")
-    private Boolean status;
+    @ApiModelProperty(value = "0:예정 1 :진행 2:종료")
+    private Integer status;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "PROJECT_NO", nullable = false)
@@ -54,8 +54,7 @@ public class Sprint {
     private Project project;
 
     public void toggleStatus(){
-//        this.status = this.status^true;
-        this.status = this.status ? false : true;
+        this.status++;
     }
 
     public void update(String name,String startDate,String endDate){

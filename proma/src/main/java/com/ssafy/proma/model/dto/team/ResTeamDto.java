@@ -1,5 +1,7 @@
 package com.ssafy.proma.model.dto.team;
 
+import com.ssafy.proma.model.dto.issue.ResIssueDto.IssueNoTitleDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,4 +48,13 @@ public class ResTeamDto {
 
   }
 
+  @Getter
+  @AllArgsConstructor
+  public static class TeamIssueListDto {
+
+    Integer teamNo;
+    String title;
+    List<IssueNoTitleDto> issues;
+
+  }
 }
