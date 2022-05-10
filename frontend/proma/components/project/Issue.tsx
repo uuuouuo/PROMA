@@ -55,11 +55,11 @@ const ImageBox = styled.div`
 const Issue = ({
   issue,
   droppableId,
-  index,
+  issueIndex,
 }: {
   issue: IssueType;
   droppableId: string;
-  index: number;
+  issueIndex: number;
 }) => {
   const router = useRouter();
 
@@ -80,8 +80,8 @@ const Issue = ({
     <>
       {isReady ? (
         <Draggable
-          draggableId={`${droppableId}_${issue.issueNo}`}
-          index={index}
+          draggableId={`${issueIndex}_${issue.issueNo}`}
+          index={issueIndex}
           key={issue.issueNo}
         >
           {(provided) => (
@@ -102,7 +102,7 @@ const Issue = ({
                 <ImageBox>
                   <Image src="/profileimg.png" width={20} height={20}></Image>
                 </ImageBox>
-                {/* <p>{issue.assignee.nickname}</p> */}
+                <p>{issue.assignee.nickname}</p>
               </FlexBox>
             </IssueBox>
           )}

@@ -19,8 +19,11 @@ import {
   updateIssueInfo,
   updateIssueSprint,
   updateIssueStatus,
+  deleteIssue,
 } from "../../../../store/modules/issue";
 import { getSprintList, updateSprint } from "../../../../store/modules/sprint";
+import { getTeamMembers } from "../../../../store/modules/team";
+import { getTopicList } from "../../../../store/modules/topic";
 
 //styled-components
 const IssueContainer = styled.div`
@@ -118,8 +121,8 @@ const IssueDetailBox = styled(SubBox)`
   }
   ${OptionBox} {
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 20px;
+    right: 0px;
     color: ${(props: ThemeType) => props.theme.textColor};
   }
   p {
@@ -167,6 +170,8 @@ const mapStateToProps = (state: RootState) => {
   return {
     issueInfo: state.issueReducer.issueInfo,
     sprints: state.sprintReducer.sprintList,
+    teamMembers: state.teamReducer.teamMembers,
+    topics: state.topicReducer.topicList,
   };
 };
 
@@ -179,6 +184,9 @@ const mapDispatchToProps = (dispatch: any) => {
     updateIssueStatus: (issueInfo: any) =>
       dispatch(updateIssueStatus(issueInfo)),
     getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
+    getTeamMembers: (teamNo: number) => dispatch(getTeamMembers(teamNo)),
+    getTopicList: (projectNo: string) => dispatch(getTopicList(projectNo)),
+    deleteIssue: (issueNo: number) => dispatch(deleteIssue(issueNo)),
   };
 };
 
@@ -190,6 +198,11 @@ const IssueDetail = ({
   getSprintList,
   updateIssueSprint,
   updateIssueStatus,
+  teamMembers,
+  getTeamMembers,
+  getTopicList,
+  topics,
+  deleteIssue,
 }: {
   issueInfo: any;
   getIssueInfo: any;
@@ -198,21 +211,27 @@ const IssueDetail = ({
   getSprintList: any;
   updateIssueSprint: any;
   updateIssueStatus: any;
+  teamMembers: any;
+  getTeamMembers: any;
+  getTopicList: any;
+  topics: any;
+  deleteIssue: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const [updateIssue, setUpdateIssue] = useState<boolean>(false);
-  const [issueNo, setIssueNo] = useState<number>(0);
   const [issueDetail, setIssueDetail] = useState<any>({
     description: "",
     title: "",
     topicNo: 0,
     userNo: "",
   });
+  const [projectNo, setProjectNo] = useState<string>("");
+  const [memberList, setMemberList] = useState<any>([]);
+  const [topicList, setTopicList] = useState<any>([]);
   const [statusName, setStatusName] = useState<string>("");
   const [statusList, setStatusList] = useState<any>([]);
-  const [sprintNo, setSprintNo] = useState<number>(0);
   const [sprintName, setSprintName] = useState<string>("");
   const status = [
     { name: "To Do", value: "todo" },
@@ -228,9 +247,9 @@ const IssueDetail = ({
     const name = issueSprint?.title;
     setSprintName(name ? name : "");
 
-    const list = sprints.filter(
-      (element: any) => element.sprintNo !== issueInfo.sprintNo
-    );
+    const list = sprints
+      .filter((element: any) => element.sprintNo !== issueInfo.sprintNo)
+      .filter((element: any) => element.status !== 2);
     console.log(list);
     setSprintList(list ? list : []);
   };
@@ -243,7 +262,6 @@ const IssueDetail = ({
     setStatusName(name ? name : "");
 
     const list = status.filter((element) => element.value !== issueInfo.status);
-    console.log(list);
     setStatusList(list ? list : []);
   };
 
@@ -252,18 +270,16 @@ const IssueDetail = ({
     updateIssueSprint({
       sprintNo: value,
       issueNo: issueInfo.issueNo,
-    });
-    setSprintNo(value);
-    // .then((res: any) => getIssueInfo({ issueNo }));
+    }).then((res: any) => setSprint());
   };
 
   const onSelectStatus = (e: any) => {
     const value = e.target.value;
     console.log(value);
-
-    // setStatus(value);
-
-    // updateIssueStatus()
+    updateIssueStatus({
+      issueNo: issueInfo.issueNo,
+      status: value,
+    }).then((res: any) => setStatus());
   };
 
   const onChangeIssueName = (e: any) => {
@@ -284,32 +300,35 @@ const IssueDetail = ({
   };
 
   const onUpdateIssueInfo = () => {
-    updateIssueInfo(issueDetail);
+    updateIssueInfo({ issueNo: issueInfo.issueNo, issueDetail }).then(
+      (res: any) => getIssueInfo({ issueNo: issueInfo.issueNo })
+    );
     setUpdateIssue((cur) => !cur);
   };
 
   const onDeleteIssue = () => {
-    // const confirmResult = confirm("Are you sure you want to delete the topic?");
-    // if (confirmResult) {
-    //   deleteIssue(topicNo).then((res: any) =>
-    //     router.push(`/project/${projectNo}`)
-    //   );
-    // }
+    const confirmResult = confirm("Are you sure you want to delete the issue?");
+    if (confirmResult) {
+      deleteIssue(issueInfo.issueNo).then((res: any) =>
+        router.push(`/project/${projectNo}`)
+      );
+    }
   };
 
   useEffect(() => {
     if (!router.isReady) return;
     const projectCode = router.query.projectCode as string;
     const issueCode = router.query.issueCode as string;
+    setProjectNo(projectCode);
     getSprintList(projectCode);
-    setIssueNo(parseInt(issueCode));
     getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
       setIsReady(true)
     );
+    getTopicList(projectCode);
   }, [router.asPath]);
 
   useEffect(() => {
-    if (!issueInfo || issueInfo === {}) return;
+    if (!issueInfo.topic || issueInfo === {}) return;
 
     setStatus();
 
@@ -320,12 +339,28 @@ const IssueDetail = ({
       topicNo: issueInfo.topic ? issueInfo.topic.topicNo : null,
       userNo: issueInfo.assignee ? issueInfo.assignee.userNo : null,
     });
+    setSprint();
+    getTeamMembers(issueInfo.team.teamNo);
   }, [issueInfo]);
 
   useEffect(() => {
-    if (!sprints || !issueInfo) return;
-    setSprint();
-  }, [sprints, sprintNo]);
+    if (!teamMembers) return;
+    setMemberList(
+      teamMembers.filter(
+        (element: any) => element.userNo !== issueInfo.assignee.userNo
+      )
+    );
+  }, [teamMembers]);
+
+  useEffect(() => {
+    if (!topics || !issueInfo.topic) return;
+
+    setTopicList(
+      topics.filter(
+        (element: any) => element.topicNo !== issueInfo.topic.topicNo
+      )
+    );
+  }, [topics, issueInfo]);
 
   return (
     <>
@@ -353,7 +388,7 @@ const IssueDetail = ({
             </SelectBox>
 
             <SelectBox>
-              <p>Status:</p>
+              <p>Status: </p>
               <select
                 name="statusList"
                 id="statusList"
@@ -425,27 +460,42 @@ const IssueDetail = ({
               <p>Topic</p>
               <ToggleBox>
                 {updateIssue ? (
-                  <input
-                    type="text"
-                    value={issueInfo ? issueInfo.topic.topicTitle : null}
+                  <select
+                    name="topicList"
+                    id="topicList"
                     onChange={onChangeIssueTopic}
-                    required
-                  />
+                  >
+                    <option value={issueInfo.topic.topicNo}>
+                      {issueInfo.topic.topicTitle}
+                    </option>
+                    {topicList?.map((topic: any, index: number) => (
+                      <option value={topic.topicNo} key={index}>
+                        {topic.title}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
-                  <p>{issueInfo ? issueInfo.topic.topicTitle : null}</p>
+                  <p>{issueInfo.topic ? issueInfo.topic.topicTitle : null}</p>
                 )}
               </ToggleBox>
 
               <p>Assignee</p>
               <ToggleBox>
                 {updateIssue ? (
-                  <input
-                    type="text"
-                    value={issueInfo ? issueInfo.assignee.nickname : null}
+                  <select
+                    name="memberList"
+                    id="memberList"
                     onChange={onChangeIssueAssignee}
-                    placeholder="Type Issue Description"
-                    required
-                  />
+                  >
+                    <option value={issueInfo.assignee.userNo}>
+                      {issueInfo.assignee.nickname}
+                    </option>
+                    {memberList?.map((member: any, index: number) => (
+                      <option value={member.userNo} key={index}>
+                        {member.nickName}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
                   <AssigneeInfo>
                     <ImageBox>
