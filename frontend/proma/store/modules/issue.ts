@@ -119,6 +119,33 @@ export const updateIssueSprint = createAsyncThunk(
   }
 );
 
+//update issue sprint api
+export const updateIssueStatus = createAsyncThunk(
+  "PUT/ISSUESTATUS",
+  async (issueInfo: any, thunkAPI) => {
+    return await api
+      .put(`/issue/status`, issueInfo)
+      .then((res) => {
+        // thunkAPI.dispatch(
+        //   getIssueList({
+        //     onlyMyIssue: issueInfo.onlyMyIssue,
+        //     teamNo: issueInfo.teamNo,
+        //     sprintNo: issueInfo.sprintNo,
+        //   })
+        // );
+        // thunkAPI.dispatch(
+        //   getIssueList({
+        //     onlyMyIssue: issueInfo.onlyMyIssue,
+        //     teamNo: issueInfo.teamNo,
+        //     sprintNo: issueInfo.fromSprint,
+        //   })
+        // );
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const issueSlice = createSlice({
   name: "issue",
   initialState,

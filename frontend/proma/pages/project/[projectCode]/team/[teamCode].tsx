@@ -13,6 +13,7 @@ import {
   getToDoIssues,
   getInProgressIssues,
   getDoneIssues,
+  updateIssueStatus,
 } from "../../../../store/modules/issue";
 import { switchViewOption } from "../../../../store/modules/mode";
 import { getInProgressSprint } from "../../../../store/modules/sprint";
@@ -227,6 +228,8 @@ const mapDispatchToProps = (dispatch: any) => {
     getDoneIssues: (params: any) => dispatch(getDoneIssues(params)),
     getInProgressSprint: (projectNo: string) =>
       dispatch(getInProgressSprint(projectNo)),
+    updateIssueStatus: (issueInfo: any) =>
+      dispatch(updateIssueStatus(issueInfo)),
   };
 };
 
@@ -247,6 +250,7 @@ const TeamSpace = ({
   getToDoIssues,
   getInProgressIssues,
   getDoneIssues,
+  updateIssueStatus,
 }: {
   getTeamInfo: any;
   teamInfo: any;
@@ -264,6 +268,7 @@ const TeamSpace = ({
   getToDoIssues: any;
   getInProgressIssues: any;
   getDoneIssues: any;
+  updateIssueStatus: any;
 }) => {
   const router = useRouter();
 
@@ -293,11 +298,6 @@ const TeamSpace = ({
   const showWarningTeamOutModal = () => setWarningTeamOutModal((cur) => !cur);
   const showWarningTeamDeleteModal = () =>
     setWarningTeamDeleteModal((cur) => !cur);
-
-  //유저가 드래그를 끝낸 시점에 불리는 함수
-  const onDragEnd = (args: any) => {
-    console.log(args);
-  };
 
   //update team
   const onKeyUpTeamName = (e: any) => {
@@ -330,6 +330,56 @@ const TeamSpace = ({
     getToDoIssues(params);
     getInProgressIssues({ ...params, status: "inprogress" });
     getDoneIssues({ ...params, status: "done" });
+  };
+
+  //유저가 드래그를 끝낸 시점에 불리는 함수
+  const onDragEnd = (args: any) => {
+    const targetIssueNo = args.draggableId;
+    const fromStatus = args.source.droppableId;
+    const fromIndex = args.source.index;
+    const toStatus = args.destination.droppableId;
+    const toIndex = args.destination.index;
+
+    let targetIssue = {};
+    if (fromStatus === toStatus) {
+      return;
+    } else {
+      if (fromStatus === "todo") {
+        targetIssue = toDoList[fromIndex];
+        const newToDoList = [...toDoList];
+        newToDoList.splice(fromIndex, 1);
+        setToDoList(newToDoList);
+      } else if (fromStatus === "inprogress") {
+        targetIssue = inProgressList[fromIndex];
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(fromIndex, 1);
+        setInProgressList(newInProgressList);
+      } else {
+        targetIssue = doneList[fromIndex];
+        const newDoneList = [...doneList];
+        newDoneList.splice(fromIndex, 1);
+        setDoneList(newDoneList);
+      }
+
+      if (toStatus === "todo") {
+        const newToDoList = [...toDoList];
+        newToDoList.splice(toIndex, 0, targetIssue);
+        setToDoList(newToDoList);
+      } else if (toStatus === "inprogress") {
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(toIndex, 0, targetIssue);
+        setInProgressList(newInProgressList);
+      } else {
+        const newDoneList = [...doneList];
+        newDoneList.splice(toIndex, 0, targetIssue);
+        setDoneList(newDoneList);
+      }
+
+      updateIssueStatus({
+        issueNo: targetIssueNo,
+        status: toStatus,
+      }).then((res: any) => getIssues());
+    }
   };
 
   useEffect(() => {
@@ -372,7 +422,6 @@ const TeamSpace = ({
 
   useEffect(() => {
     if (!sprintInfo) return;
-    console.log(sprintInfo, "emfdjdha");
     getIssues();
   }, [sprintInfo]);
 
@@ -450,8 +499,8 @@ const TeamSpace = ({
                       {toDoList
                         ? toDoList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`todo_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -464,7 +513,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.title}</p>
+                                    <p>{issue.issueTitle}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -497,8 +546,8 @@ const TeamSpace = ({
                       {inProgressList
                         ? inProgressList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`inprogress_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -511,7 +560,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.title}</p>
+                                    <p>{issue.issueTitle}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -521,7 +570,7 @@ const TeamSpace = ({
                                         height={20}
                                       />
                                     </ImageBox>
-                                    <p>{issue.assignee}</p>
+                                    <p>{issue.assignee.nickname}</p>
                                   </IssueSubBox>
                                 </IssueBox>
                               )}
@@ -544,8 +593,8 @@ const TeamSpace = ({
                       {doneList
                         ? doneList.map((issue: any, index: number) => (
                             <Draggable
-                              draggableId={`done_${issue.title}`}
-                              index={issue.issueNo}
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
                               key={index}
                             >
                               {(provided) => (
@@ -558,7 +607,7 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.title}</p>
+                                    <p>{issue.issueTitle}</p>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -568,7 +617,7 @@ const TeamSpace = ({
                                         height={20}
                                       />
                                     </ImageBox>
-                                    <p>{issue.assignee}</p>
+                                    <p>{issue.assignee.nickname}</p>
                                   </IssueSubBox>
                                 </IssueBox>
                               )}
