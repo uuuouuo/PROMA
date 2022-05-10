@@ -131,7 +131,7 @@ const IssueDetailBox = styled(SubBox)`
 `;
 const ToggleBox = styled.div`
   margin-bottom: 20px;
-  input {
+  input, select {
     border-radius: 3px;
     border: none;
     outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
@@ -145,6 +145,9 @@ const ToggleBox = styled.div`
       outline: 1px solid ${(props: ThemeType) => props.theme.mainColor};
       opacity: 1;
     }
+  }
+  select{
+      width: 100%;
   }
   p {
     font-size: 22px;
