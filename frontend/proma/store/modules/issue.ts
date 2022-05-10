@@ -10,7 +10,7 @@ interface IssueType {
 }
 
 export type IssueState = {
-  issueList: Array<IssueType>;
+  issueList: any;
   issueInfo: any;
   toDoList: any;
   inProgressList: any;
@@ -137,7 +137,17 @@ const issueSlice = createSlice({
   initialState,
   reducers: {
     setDndMoved(state: IssueState, { payload }) {
-      state.dndMoved = payload;
+      //   const issues =
+      //     state.issueList[payload.fromSprint].teams[payload.fromTeam].issues;
+      //   console.log(issues);
+      //   const newIssueList = issues.splice(payload.fromIndex, 1);
+      //   console.log(newIssueList);
+    //   const issueData = [...state.issueList];
+    //   issueData[payload.fromSprint].teams[payload.fromTeam].issues.splice(
+    //     payload.fromIndex,
+    //     1
+    //   );
+      state.issueList[payload.fromSprint].teams[payload.fromTeam].issues = {};
     },
     setMovedIssue(state: IssueState, { payload }) {
       state.movedIssue = payload;

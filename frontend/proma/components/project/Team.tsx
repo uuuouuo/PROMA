@@ -12,12 +12,25 @@ import { RootState } from "../../store/modules";
 import { useRouter } from "next/router";
 
 //styled-components
-const TeamBox = styled.div`
+interface IAreaProps extends ThemeType {
+  isDraggingFromThis: boolean;
+  isDraggingOver: boolean;
+}
+
+const TeamBox = styled.div<IAreaProps>`
   border-radius: 3px;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
   padding: 0px 15px 10px 15px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  border: ${(props) =>
+    props.isDraggingOver
+      ? `5px solid ${props.theme.mainColor}`
+      : props.isDraggingFromThis
+      ? `5px solid ${props.theme.mainColor}`
+      : "none"};
+  transition: border 0.3s ease-out;
 `;
 const TopBar = styled.div`
   display: flex;
@@ -74,6 +87,8 @@ const Team = ({
   updateIssueSprint,
   setMovedIssue,
   movedIssue,
+  sprintIndex,
+  teamIndex,
 }: {
   team: any;
   sprintNo: any;
@@ -82,6 +97,8 @@ const Team = ({
   updateIssueSprint?: any;
   setMovedIssue?: any;
   movedIssue?: any;
+  sprintIndex: number;
+  teamIndex: number;
 }) => {
   const router = useRouter();
   //DOM 준비되었을 때 렌더링
@@ -119,85 +136,17 @@ const Team = ({
     setIssueList(team.issues);
   }, [team]);
 
-  //   useEffect(() => {
-  //     if (sprintNo === undefined) return;
-  //     getIssues();
-  //   }, [sprintNo, onlyMyIssue]);
-
-  //   useEffect(() => {
-  //     if (!dndMoved) return;
-  //     if (team.teamNo !== parseInt(dndMoved.teamNo)) return;
-
-  //     if (
-  //       (sprintNo === null && dndMoved.fromSprint === "null") ||
-  //       sprintNo === parseInt(dndMoved.fromSprint)
-  //     ) {
-  //       const newIssueList = [...issueList];
-  //       newIssueList.splice(dndMoved.fromIndex, 1);
-  //       setIssueList(newIssueList);
-  //       //   getIssues();
-  //     } else if (
-  //       (sprintNo === null && dndMoved.toSprint === "null") ||
-  //       sprintNo === parseInt(dndMoved.toSprint)
-  //     ) {
-  //       getIssues();
-  //     }
-
-  // if (sprintNo === parseInt(dndMoved.fromSprint)) {
-  //     setMovedIssue(issueList[dndMoved.fromIndex]);
-
-  //   updateIssueSprint(
-  //     sprintNo
-  //       ? {
-  //           issueNo: dndMoved.targetIssueNo,
-  //           sprintNo: dndMoved.toSprint,
-  //         }
-  //       : { issueNo: dndMoved.targetIssueNo }
-  //   ).then((res: any) => {
-  //     getIssues(dndMoved.fromSprint);
-  //     getIssues(dndMoved.toSprint);
-  //   });
-  // } else if (sprintNo === parseInt(dndMoved.toSprint)) {
-  //   console.log("to");
-  // } else {
-  //   return;
-  // }
-  //   }, [dndMoved]);
-
-  //   useEffect(() => {
-  //     if (!movedIssue || !dndMoved) return;
-  //     if (team.teamNo !== parseInt(dndMoved.teamNo)) return;
-
-  //     // if (
-  //     //   (sprintNo === null && dndMoved.fromSprint === "null") ||
-  //     //   sprintNo === parseInt(dndMoved.fromSprint)
-  //     // ) {
-  //     //   updateIssueSprint(
-  //     //     sprintNo
-  //     //       ? {
-  //     //           issueNo: dndMoved.targetIssueNo,
-  //     //           sprintNo: dndMoved.toSprint,
-  //     //         }
-  //     //       : { issueNo: dndMoved.targetIssueNo }
-  //     //   ).then((res: any) => getIssues());
-  //     // } else
-  //     if (
-  //       (sprintNo === null && dndMoved.toSprint === "null") ||
-  //       sprintNo === parseInt(dndMoved.toSprint)
-  //     ) {
-  //       const newIssueList = [...issueList];
-  //       newIssueList.splice(dndMoved.toIndex, 0, movedIssue);
-  //       setIssueList(newIssueList);
-  //       getIssues(dndMoved.fromSprint);
-  //     }
-  //   }, [dndMoved, movedIssue]);
-
   return (
     <>
       {isReady ? (
-        <Droppable droppableId={`${sprintNo}_${team.teamNo}`}>
-          {(provided) => (
-            <TeamBox ref={provided.innerRef} {...provided.droppableProps}>
+        <Droppable droppableId={`${sprintIndex}_${teamIndex}_${sprintNo}`}>
+          {(provided, snapshot) => (
+            <TeamBox
+              isDraggingOver={snapshot.isDraggingOver}
+              isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               <TopBar>
                 <Link href={`/project/${projectNo}/team/${team.teamNo}`}>
                   <TeamName>
@@ -222,9 +171,9 @@ const Team = ({
                 issueList.map((issue: any, index: number) => (
                   <Issue
                     issue={issue}
-                    index={index}
+                    issueIndex={index}
                     key={index}
-                    droppableId={`${sprintNo}_${team.teamNo}`}
+                    droppableId={`${sprintIndex}_${teamIndex}`}
                   />
                 ))
               ) : (

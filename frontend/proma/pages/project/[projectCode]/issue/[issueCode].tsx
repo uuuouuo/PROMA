@@ -203,7 +203,6 @@ const IssueDetail = ({
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const [updateIssue, setUpdateIssue] = useState<boolean>(false);
-  const [issueNo, setIssueNo] = useState<number>(0);
   const [issueDetail, setIssueDetail] = useState<any>({
     description: "",
     title: "",
@@ -212,7 +211,6 @@ const IssueDetail = ({
   });
   const [statusName, setStatusName] = useState<string>("");
   const [statusList, setStatusList] = useState<any>([]);
-  const [sprintNo, setSprintNo] = useState<number>(0);
   const [sprintName, setSprintName] = useState<string>("");
   const status = [
     { name: "To Do", value: "todo" },
@@ -228,9 +226,9 @@ const IssueDetail = ({
     const name = issueSprint?.title;
     setSprintName(name ? name : "");
 
-    const list = sprints.filter(
-      (element: any) => element.sprintNo !== issueInfo.sprintNo
-    );
+    const list = sprints
+      .filter((element: any) => element.sprintNo !== issueInfo.sprintNo)
+      .filter((element: any) => element.status !== 2);
     console.log(list);
     setSprintList(list ? list : []);
   };
@@ -243,7 +241,6 @@ const IssueDetail = ({
     setStatusName(name ? name : "");
 
     const list = status.filter((element) => element.value !== issueInfo.status);
-    console.log(list);
     setStatusList(list ? list : []);
   };
 
@@ -253,17 +250,15 @@ const IssueDetail = ({
       sprintNo: value,
       issueNo: issueInfo.issueNo,
     });
-    setSprintNo(value);
-    // .then((res: any) => getIssueInfo({ issueNo }));
   };
 
   const onSelectStatus = (e: any) => {
     const value = e.target.value;
     console.log(value);
-
-    // setStatus(value);
-
-    // updateIssueStatus()
+    updateIssueStatus({
+      issueNo: issueInfo.issueNo,
+      status: value,
+    }).then((res: any) => setStatus());
   };
 
   const onChangeIssueName = (e: any) => {
@@ -302,7 +297,6 @@ const IssueDetail = ({
     const projectCode = router.query.projectCode as string;
     const issueCode = router.query.issueCode as string;
     getSprintList(projectCode);
-    setIssueNo(parseInt(issueCode));
     getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
       setIsReady(true)
     );
@@ -320,12 +314,13 @@ const IssueDetail = ({
       topicNo: issueInfo.topic ? issueInfo.topic.topicNo : null,
       userNo: issueInfo.assignee ? issueInfo.assignee.userNo : null,
     });
+    setSprint();
   }, [issueInfo]);
 
-  useEffect(() => {
-    if (!sprints || !issueInfo) return;
-    setSprint();
-  }, [sprints, sprintNo]);
+  //   useEffect(() => {
+  //     if (!sprints || !issueInfo) return;
+  //     setSprint();
+  //   }, [sprints, sprintNo]);
 
   return (
     <>

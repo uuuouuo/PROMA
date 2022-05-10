@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
+import Link from "next/link";
 
 import WarningModal from "../../../../components/Modals/WarningModal";
 import IssueCreateModal from "../../../../components/Modals/IssueCreateModal";
@@ -161,6 +162,10 @@ const IssueContainer = styled(StatusBox)`
 const IssueSubBox = styled.div`
   display: flex;
   align-items: center;
+  a {
+    text-decoration: none;
+    color: black;
+  }
 `;
 const IssueBox = styled.div`
   border-radius: 3px;
@@ -422,6 +427,8 @@ const TeamSpace = ({
 
   useEffect(() => {
     if (!sprintInfo) return;
+    console.log(sprintInfo);
+
     getIssues();
   }, [sprintInfo]);
 
@@ -489,61 +496,69 @@ const TeamSpace = ({
 
           <DragDropContext onDragEnd={onDragEnd}>
             <WorkSpace>
-              <Droppable droppableId="todo">
-                {(provided) => (
-                  <StatusBox
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    <h2>To Do</h2>
-                    <IssueContainer>
-                      {toDoList
-                        ? toDoList.map((issue: any, index: number) => (
-                            <Draggable
-                              draggableId={`${issue.issueNo}`}
-                              index={index}
-                              key={index}
-                            >
-                              {(provided) => (
-                                <IssueBox
-                                  ref={provided.innerRef}
-                                  {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
-                                  {...provided.draggableProps} //드래그 되는 영역
-                                >
-                                  <IssueSubBox>
-                                    <p className="issue_number">
-                                      No. {issue.issueNo}
-                                    </p>
-                                    <p>{issue.title}</p>
-                                  </IssueSubBox>
-                                  <IssueSubBox>
-                                    <ImageBox>
-                                      <Image
-                                        src="/profileimg.png"
-                                        width={20}
-                                        height={20}
-                                      />
-                                    </ImageBox>
-                                    <p>{issue.assignee.nickname}</p>
-                                  </IssueSubBox>
-                                </IssueBox>
-                              )}
-                            </Draggable>
-                          ))
-                        : null}
-                    </IssueContainer>
-                    {provided.placeholder}
-                  </StatusBox>
-                )}
-              </Droppable>
+              <>
+                <Droppable droppableId="todo">
+                  {(provided) => (
+                    <StatusBox>
+                      <h2>To Do</h2>
+                      <IssueContainer
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {toDoList
+                          ? toDoList.map((issue: any, index: number) => (
+                              <Draggable
+                                draggableId={`${issue.issueNo}`}
+                                index={index}
+                                key={index}
+                              >
+                                {(provided) => (
+                                  <IssueBox
+                                    ref={provided.innerRef}
+                                    {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
+                                    {...provided.draggableProps} //드래그 되는 영역
+                                  >
+                                    <IssueSubBox>
+                                      <p className="issue_number">
+                                        No. {issue.issueNo}
+                                      </p>
+                                      <Link
+                                        href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                      >
+                                        <a>
+                                          <p>{issue.title}</p>
+                                        </a>
+                                      </Link>
+                                    </IssueSubBox>
+                                    <IssueSubBox>
+                                      <ImageBox>
+                                        <Image
+                                          src="/profileimg.png"
+                                          width={20}
+                                          height={20}
+                                        />
+                                      </ImageBox>
+                                      <p>{issue.assignee.nickname}</p>
+                                    </IssueSubBox>
+                                  </IssueBox>
+                                )}
+                              </Draggable>
+                            ))
+                          : null}
+                      </IssueContainer>
+                      {provided.placeholder}
+                    </StatusBox>
+                  )}
+                </Droppable>
+              </>
               <Droppable droppableId="inprogress">
                 {(provided) => (
-                  <StatusBox
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
+                  <StatusBox>
                     <h2>In Progress</h2>
-                    <IssueContainer>
+                    <IssueContainer
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
                       {inProgressList
                         ? inProgressList.map((issue: any, index: number) => (
                             <Draggable
@@ -561,7 +576,13 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.title}</p>
+                                    <Link
+                                      href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                    >
+                                      <a>
+                                        <p>{issue.title}</p>
+                                      </a>
+                                    </Link>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
@@ -585,12 +606,12 @@ const TeamSpace = ({
               </Droppable>
               <Droppable droppableId="done">
                 {(provided) => (
-                  <StatusBox
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
+                  <StatusBox>
                     <h2>Done</h2>
-                    <IssueContainer>
+                    <IssueContainer
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
                       {doneList
                         ? doneList.map((issue: any, index: number) => (
                             <Draggable
@@ -608,7 +629,13 @@ const TeamSpace = ({
                                     <p className="issue_number">
                                       No. {issue.issueNo}
                                     </p>
-                                    <p>{issue.title}</p>
+                                    <Link
+                                      href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                    >
+                                      <a>
+                                        <p>{issue.title}</p>
+                                      </a>
+                                    </Link>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>

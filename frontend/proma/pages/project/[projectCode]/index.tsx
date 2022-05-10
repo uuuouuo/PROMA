@@ -15,12 +15,8 @@ import { useRouter } from "next/router";
 
 import { connect } from "react-redux";
 import { RootState } from "../../../store/modules";
-import { getTeamList } from "../../../store/modules/team";
 import { switchViewOption } from "../../../store/modules/mode";
-import {
-  getSprintList,
-  getInProgressSprint,
-} from "../../../store/modules/sprint";
+import { getInProgressSprint } from "../../../store/modules/sprint";
 import {
   getProjectInfo,
   updateProjectInfo,
@@ -33,11 +29,6 @@ import {
   updateIssueSprint,
   setDndMoved,
 } from "../../../store/modules/issue";
-
-const backlog = {
-  sprintNo: null,
-  title: "Backlog",
-};
 
 //styled-components
 const Button = styled.button`
@@ -128,11 +119,8 @@ const SprintsBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     projectInfo: state.projectReducer.projectInfo,
-    teamList: state.teamReducer.teamList,
-    sprintList: state.sprintReducer.sprintList,
     issueList: state.issueReducer.issueList,
     isLogin: state.userReducer.isLogin,
-    userInfo: state.userReducer.userInfo,
     onlyMyIssue: state.modeReducer.onlyMyIssue,
   };
 };
@@ -143,8 +131,6 @@ const mapDispatchToProps = (dispatch: any) => {
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
     joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
-    getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
-    getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
     getProjectJoinStatus: (projectNo: string) =>
@@ -166,17 +152,11 @@ const ProjectSpace = ({
   getProjectJoinStatus,
   isLogin,
   joinProject,
-  getTeamList,
-  teamList,
-  sprintList,
-  getSprintList,
   getInProgressSprint,
   switchViewOption,
   onlyMyIssue,
-  userInfo,
   updateIssueSprint,
   getIssueList,
-  setDndMoved,
   issueList,
 }: {
   getProjectInfo: any;
@@ -186,17 +166,11 @@ const ProjectSpace = ({
   getProjectJoinStatus: any;
   isLogin: boolean;
   joinProject: any;
-  getTeamList: any;
-  sprintList: any;
-  teamList: any;
-  getSprintList: any;
   getInProgressSprint: any;
   switchViewOption: any;
   onlyMyIssue: boolean;
-  userInfo: any;
   updateIssueSprint: any;
   getIssueList: any;
-  setDndMoved: any;
   issueList: any;
 }) => {
   const router = useRouter();
@@ -205,7 +179,6 @@ const ProjectSpace = ({
   const [projectNo, setProjectNo] = useState<string>("");
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [teams, setTeams] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
@@ -242,20 +215,23 @@ const ProjectSpace = ({
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
     console.log(args);
-    const targetIssueNo = args.draggableId.split("_")[2];
+    const targetIssueNo = args.draggableId.split("_")[1];
     const fromSprint = args.source.droppableId.split("_")[0];
     const fromTeam = args.source.droppableId.split("_")[1];
     const fromIndex = args.source.index;
     const toSprint = args.destination.droppableId.split("_")[0];
     const toTeam = args.destination.droppableId.split("_")[1];
+    const targetSprintNo = args.destination.droppableId.split("_")[2];
     const toIndex = args.destination.index;
 
     const newDndMoved = {
       targetIssueNo,
-      teamNo: fromTeam,
       fromSprint,
-      toSprint,
+      fromTeam,
       fromIndex,
+      toSprint,
+      toTeam,
+      targetSprintNo,
       toIndex,
     };
 
@@ -269,16 +245,18 @@ const ProjectSpace = ({
         toSprint
           ? {
               issueNo: targetIssueNo,
-              sprintNo: toSprint,
+              sprintNo: targetSprintNo,
             }
           : { issueNo: targetIssueNo }
       ).then((res: any) => {
-        setDndMoved(newDndMoved);
+        getIssueList({
+          onlyMyIssue,
+          projectNo,
+        });
       });
     }
   };
 
-  //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
   useEffect(() => {
     if (!router.isReady) return;
     const value = router.query.projectCode as string;
@@ -298,7 +276,6 @@ const ProjectSpace = ({
       alert("Please login first");
       router.push("/");
     }
-    // getInProgressSprint(value);
   }, [router.asPath]);
 
   useEffect(() => {
@@ -308,9 +285,7 @@ const ProjectSpace = ({
       projectNo,
       onlyMyIssue,
     });
-    // getSprintList(projectNo);
-    // getTeamList(projectNo);
-    // getInProgressSprint(projectNo);
+    getInProgressSprint(projectNo);
   }, [projectNo]);
 
   useEffect(() => {
@@ -325,21 +300,6 @@ const ProjectSpace = ({
     if (!issueList) return;
     setIssueData(issueList);
   }, [issueList]);
-
-  //   useEffect(() => {
-  //     if (!teamList) return;
-  //     setTeams(teamList);
-  //   }, [teamList]);
-
-  //   useEffect(() => {
-  //     if (!sprintList) return;
-  //     setSprints(sprintList);
-  //     getIssueList({
-  //       onlyMyIssue,
-  //       sprintNo: 18,
-  //       teamNo: 26,
-  //     });
-  //   }, [sprintList]);
 
   return (
     <>
@@ -395,7 +355,7 @@ const ProjectSpace = ({
             </FlexBox>
             <SprintsBox>
               {issueData?.map((sprint: any, index: number) => (
-                <Sprint sprint={sprint} key={index} />
+                <Sprint sprint={sprint} key={index} sprintIndex={index} />
               ))}
             </SprintsBox>
             {isManager ? (
