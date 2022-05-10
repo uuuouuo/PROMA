@@ -104,7 +104,7 @@ export const updateIssueInfo = createAsyncThunk(
   "PUT/ISSUEINFO",
   async (issueInfo: any, thunkAPI) => {
     return await api
-      .put(`/issue/${issueInfo.issueNo}`, { params: issueInfo.params })
+      .put(`/issue/${issueInfo.issueNo}`, issueInfo.issueDetail)
       .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
@@ -142,11 +142,11 @@ const issueSlice = createSlice({
       //   console.log(issues);
       //   const newIssueList = issues.splice(payload.fromIndex, 1);
       //   console.log(newIssueList);
-    //   const issueData = [...state.issueList];
-    //   issueData[payload.fromSprint].teams[payload.fromTeam].issues.splice(
-    //     payload.fromIndex,
-    //     1
-    //   );
+      //   const issueData = [...state.issueList];
+      //   issueData[payload.fromSprint].teams[payload.fromTeam].issues.splice(
+      //     payload.fromIndex,
+      //     1
+      //   );
       state.issueList[payload.fromSprint].teams[payload.fromTeam].issues = {};
     },
     setMovedIssue(state: IssueState, { payload }) {

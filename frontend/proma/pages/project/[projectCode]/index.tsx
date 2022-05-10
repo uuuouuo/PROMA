@@ -72,17 +72,20 @@ const FlexBox = styled.div`
   align-items: center;
 `;
 const TopBar = styled(FlexBox)`
+  align-items: center;
   justify-content: flex-start;
   height: 70px;
   * {
-    font-size: 20px;
+    font-size: 15px;
     &:hover {
       cursor: pointer;
     }
   }
   h1 {
     margin-right: 15px;
+    margin-bottom: 25px;
     font-size: 30px;
+    font-weight: 600;
     &:hover {
       cursor: text;
     }
@@ -110,7 +113,6 @@ const ButtonBox = styled.div`
   }
 `;
 const SprintsBox = styled.div`
-  margin-top: 10px;
   height: 100%;
   overflow-y: scroll;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
@@ -328,7 +330,7 @@ const ProjectSpace = ({
             )}
             <FlexBox>
               <UnfilledButton onClick={switchViewOption}>
-                Only My Issues
+                {onlyMyIssue ? "View Every Issue" : "Only My Issues"}
               </UnfilledButton>
               <ButtonBox>
                 <FilledButton onClick={showSprintCreateModal}>

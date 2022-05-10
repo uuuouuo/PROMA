@@ -21,6 +21,8 @@ import {
   updateIssueStatus,
 } from "../../../../store/modules/issue";
 import { getSprintList, updateSprint } from "../../../../store/modules/sprint";
+import { getTeamMembers } from "../../../../store/modules/team";
+import { getTopicList } from "../../../../store/modules/topic";
 
 //styled-components
 const IssueContainer = styled.div`
@@ -118,8 +120,8 @@ const IssueDetailBox = styled(SubBox)`
   }
   ${OptionBox} {
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 20px;
+    right: 0px;
     color: ${(props: ThemeType) => props.theme.textColor};
   }
   p {
@@ -167,6 +169,8 @@ const mapStateToProps = (state: RootState) => {
   return {
     issueInfo: state.issueReducer.issueInfo,
     sprints: state.sprintReducer.sprintList,
+    teamMembers: state.teamReducer.teamMembers,
+    topics: state.topicReducer.topicList,
   };
 };
 
@@ -179,6 +183,8 @@ const mapDispatchToProps = (dispatch: any) => {
     updateIssueStatus: (issueInfo: any) =>
       dispatch(updateIssueStatus(issueInfo)),
     getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
+    getTeamMembers: (teamNo: number) => dispatch(getTeamMembers(teamNo)),
+    getTopicList: (projectNo: string) => dispatch(getTopicList(projectNo)),
   };
 };
 
@@ -190,6 +196,10 @@ const IssueDetail = ({
   getSprintList,
   updateIssueSprint,
   updateIssueStatus,
+  teamMembers,
+  getTeamMembers,
+  getTopicList,
+  topics,
 }: {
   issueInfo: any;
   getIssueInfo: any;
@@ -198,6 +208,10 @@ const IssueDetail = ({
   getSprintList: any;
   updateIssueSprint: any;
   updateIssueStatus: any;
+  teamMembers: any;
+  getTeamMembers: any;
+  getTopicList: any;
+  topics: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -209,6 +223,8 @@ const IssueDetail = ({
     topicNo: 0,
     userNo: "",
   });
+  const [memberList, setMemberList] = useState<any>([]);
+  const [topicList, setTopicList] = useState<any>([]);
   const [statusName, setStatusName] = useState<string>("");
   const [statusList, setStatusList] = useState<any>([]);
   const [sprintName, setSprintName] = useState<string>("");
@@ -249,7 +265,7 @@ const IssueDetail = ({
     updateIssueSprint({
       sprintNo: value,
       issueNo: issueInfo.issueNo,
-    });
+    }).then((res: any) => setSprint());
   };
 
   const onSelectStatus = (e: any) => {
@@ -279,7 +295,9 @@ const IssueDetail = ({
   };
 
   const onUpdateIssueInfo = () => {
-    updateIssueInfo(issueDetail);
+    updateIssueInfo({ issueNo: issueInfo.issueNo, issueDetail }).then(
+      (res: any) => getIssueInfo({ issueNo: issueInfo.issueNo })
+    );
     setUpdateIssue((cur) => !cur);
   };
 
@@ -300,10 +318,11 @@ const IssueDetail = ({
     getIssueInfo({ issueNo: parseInt(issueCode) }).then((res: any) =>
       setIsReady(true)
     );
+    getTopicList(projectCode);
   }, [router.asPath]);
 
   useEffect(() => {
-    if (!issueInfo || issueInfo === {}) return;
+    if (!issueInfo.topic || issueInfo === {}) return;
 
     setStatus();
 
@@ -315,12 +334,27 @@ const IssueDetail = ({
       userNo: issueInfo.assignee ? issueInfo.assignee.userNo : null,
     });
     setSprint();
+    getTeamMembers(issueInfo.team.teamNo);
   }, [issueInfo]);
 
-  //   useEffect(() => {
-  //     if (!sprints || !issueInfo) return;
-  //     setSprint();
-  //   }, [sprints, sprintNo]);
+  useEffect(() => {
+    if (!teamMembers) return;
+    setMemberList(
+      teamMembers.filter(
+        (element: any) => element.userNo !== issueInfo.assignee.userNo
+      )
+    );
+  }, [teamMembers]);
+
+  useEffect(() => {
+    if (!topics || !issueInfo.topic) return;
+
+    setTopicList(
+      topics.filter(
+        (element: any) => element.topicNo !== issueInfo.topic.topicNo
+      )
+    );
+  }, [topics, issueInfo]);
 
   return (
     <>
@@ -348,7 +382,7 @@ const IssueDetail = ({
             </SelectBox>
 
             <SelectBox>
-              <p>Status:</p>
+              <p>Status: </p>
               <select
                 name="statusList"
                 id="statusList"
@@ -420,27 +454,42 @@ const IssueDetail = ({
               <p>Topic</p>
               <ToggleBox>
                 {updateIssue ? (
-                  <input
-                    type="text"
-                    value={issueInfo ? issueInfo.topic.topicTitle : null}
+                  <select
+                    name="topicList"
+                    id="topicList"
                     onChange={onChangeIssueTopic}
-                    required
-                  />
+                  >
+                    <option value={issueInfo.topic.topicNo}>
+                      {issueInfo.topic.topicTitle}
+                    </option>
+                    {topicList?.map((topic: any, index: number) => (
+                      <option value={topic.topicNo} key={index}>
+                        {topic.title}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
-                  <p>{issueInfo ? issueInfo.topic.topicTitle : null}</p>
+                  <p>{issueInfo.topic ? issueInfo.topic.topicTitle : null}</p>
                 )}
               </ToggleBox>
 
               <p>Assignee</p>
               <ToggleBox>
                 {updateIssue ? (
-                  <input
-                    type="text"
-                    value={issueInfo ? issueInfo.assignee.nickname : null}
+                  <select
+                    name="memberList"
+                    id="memberList"
                     onChange={onChangeIssueAssignee}
-                    placeholder="Type Issue Description"
-                    required
-                  />
+                  >
+                    <option value={issueInfo.assignee.userNo}>
+                      {issueInfo.assignee.nickname}
+                    </option>
+                    {memberList?.map((member: any, index: number) => (
+                      <option value={member.userNo} key={index}>
+                        {member.nickName}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
                   <AssigneeInfo>
                     <ImageBox>
