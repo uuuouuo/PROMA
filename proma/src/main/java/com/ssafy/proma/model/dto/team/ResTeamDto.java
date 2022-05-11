@@ -54,6 +54,7 @@ public class ResTeamDto {
 
     Integer teamNo;
     String title;
+    Boolean isMember;
     List<IssueNoTitleDto> issues;
 
   }

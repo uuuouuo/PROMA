@@ -233,18 +233,4 @@ public class IssueController {
     return new ResponseEntity(resultMap, status);
   }
 
-//  @GetMapping
-//  @ApiOperation(value = "스프린트 혹은 백로그,팀에 속한 이슈 조회", notes = "스프린트 혹은 백로그, 팀에 속한 이슈를 조회한다. 이슈 번호, 이유 제목을 보낸다")
-//  public ResponseEntity<List<IssueNoTitleDto>> getIssue(
-//      @RequestParam(value="sprintNo",required = false) Integer sprintNo,
-//      @RequestParam(value="teamNo") Integer teamNo,
-//      @RequestParam(value="status") String status,
-//      @RequestParam(value="onlyMyIssue") Boolean onlyMyIssue) {
-//
-//    List<IssueNoTitleDto> issueList = issueService.getIssue(sprintNo,teamNo,status,onlyMyIssue);
-//
-//    return new ResponseEntity<>(issueList, HttpStatus.OK);
-//
-//  }
-
 }

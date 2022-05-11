@@ -20,12 +20,14 @@ import com.ssafy.proma.model.entity.issue.Issue;
 import com.ssafy.proma.model.entity.project.Project;
 import com.ssafy.proma.model.entity.sprint.Sprint;
 import com.ssafy.proma.model.entity.team.Team;
+import com.ssafy.proma.model.entity.team.UserTeam;
 import com.ssafy.proma.model.entity.topic.Topic;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
 import com.ssafy.proma.repository.sprint.SprintRepository;
 import com.ssafy.proma.repository.team.TeamRepository;
+import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -54,6 +57,7 @@ public class IssueService extends AbstractService {
   private final UserRepository userRepository;
   private final SecurityUtil securityUtil;
   private final ProjectRepository projectRepository;
+  private final UserTeamRepository userTeamRepository;
 
   @Transactional
   public Map<String, Object> createIssue(IssueCreateDto issueCreateDto) throws Exception {
@@ -123,9 +127,13 @@ public class IssueService extends AbstractService {
     List<Team> teamList = getTeamList(project);
     sprintList.add(null);
 
+    Map<Team, Boolean> userTeamList = getUserTeamList(project, teamList);
+
     for(Sprint sprint : sprintList) {
       List<TeamIssueListDto> teams = new ArrayList<>();
       for(Team team : teamList) {
+        Boolean isMember = userTeamList.get(team) == null ? false : true;
+
         Optional<List<Issue>> sprintOp = issueRepository.findBySprintAndTeam(sprint,team);
         List<Issue> issueEntityList = takeOp(sprintOp);
 
@@ -144,7 +152,7 @@ public class IssueService extends AbstractService {
                   , new UserDto(issue.getUser().getNo(), issue.getUser().getNickname(),issue.getUser().getProfileImage()), issue.getTitle(),issue.getStatus()))
               .collect(Collectors.toList());
         }
-        teams.add(new TeamIssueListDto(team.getNo(), team.getName(), issues));
+        teams.add(new TeamIssueListDto(team.getNo(), team.getName(),isMember, issues));
       }
       if(sprint == null) {
         issueList.add(new SprintTeamDto(teams));
@@ -157,6 +165,25 @@ public class IssueService extends AbstractService {
     resultMap.put("message", Message.ISSUE_FIND_SUCCESS_MESSAGE);
 
     return resultMap;
+  }
+
+  private Map<Team,Boolean> getUserTeamList(Project project, List<Team> teamList) {
+
+    // 유저가 속한 팀 확인
+    String userNo = securityUtil.getCurrentUserNo();
+    Optional<User> userOp = userRepository.findByNo(userNo);
+    User user = takeOp(userOp);
+
+    Map<Team,Boolean> userTeamList = new HashMap<>();
+
+    for(Team team : teamList) {
+
+      Optional<UserTeam> byUserAndTeam = userTeamRepository.findByUserAndTeam(user, team);
+      UserTeam userTeam = takeOp(byUserAndTeam);
+      if(userTeam != null ) userTeamList.put(userTeam.getTeam(),true);
+    }
+
+    return userTeamList;
   }
 
 

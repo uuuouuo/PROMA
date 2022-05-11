@@ -23,22 +23,7 @@ public class ResIssueDto {
       this.status = status;
     }
   }
-//  @Getter
-//  @NoArgsConstructor
-//  public static class IssueNoTitleDto{
-//
-//    Integer issueNo;
-//    UserDto assignee;
-//    String title;
-//    String status;
-//
-//    public IssueNoTitleDto(Integer issueNo, UserDto assignee, String title, String status) {
-//      this.issueNo = issueNo;
-//      this.assignee = assignee;
-//      this.title = title;
-//      this.status = status;
-//    }
-//  }
+
 
   @Getter
   @NoArgsConstructor
