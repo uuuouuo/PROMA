@@ -75,15 +75,6 @@ export const userInstance = () => {
 };
 
 const userApi = userInstance();
-
-const getRefresh = async () => {
-  return await userApi
-    .post(`/user/refresh`)
-    .then((res: any) => {
-      localStorage.setItem("Authorization", res.data.newJwtToken);
-    })
-    .catch((err: any) => console.log(err));
-};
 // setInterval(() => getRefresh(), 3000);
 
 // axios 객체 생성
@@ -131,8 +122,8 @@ export const apiInstance = () => {
           console.log(accessTokenExpiredCode);
           //access token 만료 시
           if (accessTokenExpiredCode === "C004") {
-            console.log("에러에러");
-            getRefresh();
+            console.log("엑세스 만료 에러에러");
+            // getRefresh();
           }
           //refresh token 만료 시
           else if (accessTokenExpiredCode === "C006") {

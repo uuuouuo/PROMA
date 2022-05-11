@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React from "react";
+import React, { useEffect } from "react";
 import wrapper from "../store/configureStore";
 import styled, {
   createGlobalStyle,
@@ -15,6 +15,8 @@ import { connect } from "react-redux";
 import { RootState } from "../store/modules";
 import ErrorPage from "./404";
 import ErrorBoundary from "../ErrorBoundary";
+import { userInstance } from "../api";
+const userApi = userInstance();
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -65,11 +67,26 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
+const getRefresh = async () => {
+  return await userApi
+    .post(`/user/refresh`)
+    .then((res: any) => {
+      localStorage.setItem("Authorization", res.data.newJwtToken);
+    })
+    .catch((err: any) => console.log(err));
+};
+
 function MyApp({
   Component,
   pageProps,
+  isLogin,
   darkModeState,
-}: AppProps & { darkModeState: boolean }) {
+}: AppProps & { darkModeState: boolean; isLogin: boolean }) {
+  useEffect(() => {
+    if (!isLogin) return;
+    setInterval(() => getRefresh(), 850000);
+  }, [isLogin]);
+
   return (
     <>
       <Head>
