@@ -14,11 +14,20 @@ import {
 
 import { connect } from "react-redux";
 import { createNewTeam } from "../../store/modules/team";
+import { getIssueList } from "../../store/modules/issue";
+import { RootState } from "../../store/modules";
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     createNewTeam: (newProjectInfo: any) =>
       dispatch(createNewTeam(newProjectInfo)),
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
   };
 };
 
@@ -27,11 +36,15 @@ const TeamCreateModal = ({
   showTeamCreateModal,
   projectNo,
   createNewTeam,
+  onlyMyIssue,
+  getIssueList,
 }: {
   teamCreateModal: boolean;
   showTeamCreateModal: any;
   projectNo: string;
   createNewTeam?: any;
+  onlyMyIssue?: boolean;
+  getIssueList?: any;
 }) => {
   const [teamName, setTeamName] = useState<string>("");
 
@@ -40,8 +53,10 @@ const TeamCreateModal = ({
       projectNo,
       title: teamName,
     };
-    createNewTeam(newProjectInfo);
-
+    createNewTeam(newProjectInfo).then((res: any) =>
+      getIssueList({ projectNo, onlyMyIssue })
+    );
+    setTeamName("");
     showTeamCreateModal();
   };
 
@@ -75,4 +90,4 @@ const TeamCreateModal = ({
   );
 };
 
-export default connect(null, mapDispatchToProps)(TeamCreateModal);
+export default connect(mapStateToProps, mapDispatchToProps)(TeamCreateModal);

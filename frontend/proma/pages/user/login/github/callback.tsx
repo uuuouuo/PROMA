@@ -1,35 +1,59 @@
 /* eslint-disable */
 import { useEffect } from "react";
-import { getLogin } from "../../../../store/modules/member";
+import {
+  getLogin,
+  withdrawUser,
+  getLogout,
+} from "../../../../store/modules/member";
 import { connect } from "react-redux";
 import { RootState } from "../../../../store/modules";
 import { useRouter } from "next/router";
-import { getProjectList } from "../../../../store/modules/project";
 
 const mapStateToProps = (state: RootState) => {
-  return {
-    userInfo: state.userReducer.userInfo,
-  };
+    return {
+        userInfo: state.userReducer.userInfo,
+    };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getLogin: () => dispatch(getLogin()),
-  };
+    return {
+        getLogin: () => dispatch(getLogin()),
+        getLogout: () => dispatch(getLogout()),
+        withdrawUser: (code: string) => dispatch(withdrawUser(code)),
+    };
 };
 
-const Callback = ({ getLogin, userInfo }: { getLogin: any; userInfo: any }) => {
-  const router = useRouter();
+const Callback = ({
+    getLogin,
+    userInfo,
+    getLogout,
+    withdrawUser,
+}: {
+    getLogin: any;
+    userInfo: any;
+    getLogout: any;
+    withdrawUser: any;
+}) => {
+    const router = useRouter();
+    useEffect(() => {
+        const code = localStorage.getItem("code");
+        console.log(code);
 
-  useEffect(() => {
-    const code = window.location.search.replace("?code=", "");
-    localStorage.setItem("code", code);
-    getLogin().then((res: any) => {
-      router.push("/");
-    });
-  }, []);
+        if (code === null) {
+        const newCode = window.location.search.replace("?code=", "");
+        localStorage.setItem("code", newCode);
+        getLogin().then((res: any) => router.push("/"));
+        } else {
+        withdrawUser(code)
+            .then((res: any) => {
+            router.push("/");
+            getLogout();
+            })
+            .catch((err: any) => console.log(err));
+        }
+    }, []);
 
-  return <></>;
+    return <></>;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Callback);

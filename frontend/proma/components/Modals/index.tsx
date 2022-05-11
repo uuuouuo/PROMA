@@ -36,7 +36,8 @@ export const ModalBox = styled(Modal)`
     overflow: hidden;
     background-color: ${(props: ThemeType) => props.theme.bgColor};
     input,
-    textarea {
+    textarea,
+    select {
       padding: 5px 10px;
       border: none;
       outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
@@ -50,6 +51,9 @@ export const ModalBox = styled(Modal)`
     }
     textarea {
       height: 100px;
+    }
+    select{
+        width: 106%;
     }
     button {
       &:hover {
@@ -216,133 +220,6 @@ export const UserProfileBox = styled(InputArea)`
     }
   }
 `;
-
-export const IssueCreateModal = ({
-  issueCreateModal,
-  showIssueCreateModal,
-}: {
-  issueCreateModal: boolean;
-  showIssueCreateModal: any;
-}) => {
-  //dummy data
-  const topicList = ["Topic1", "Topic2", "Topic3"];
-  const memberList = ["Kim", "Park", "Choi", "Seo", "Jang"];
-
-  interface issueType {
-    title: string;
-    desc: string;
-    topic: string;
-    assignee: string;
-  }
-
-  const [newIssueInfo, setNewIssueInfo] = useState<issueType>({
-    title: "",
-    desc: "",
-    topic: "",
-    assignee: "",
-  });
-
-  const onSelectTopic = (e: any) => {
-    const value = e.target.value as string;
-    setNewIssueInfo((cur) => ({ ...cur, topic: value }));
-  };
-
-  const onSelectAssignee = (e: any) => {
-    const value = e.target.value as string;
-    setNewIssueInfo((cur) => ({ ...cur, assignee: value }));
-  };
-
-  const cancelCreateIssue = () => showIssueCreateModal();
-
-  const createNewIssue = () => {
-    //topic, assignee 리스트 내 존재하는 value인지 확인
-    if (topicList.indexOf(newIssueInfo.topic) === -1) {
-      alert("Please select an existing topic name in the list.");
-      return;
-    }
-    if (memberList.indexOf(newIssueInfo.assignee) === -1) {
-      alert("Please select an existing assignee name in the list.");
-      return;
-    }
-
-    //post new issue api
-
-    showIssueCreateModal();
-  };
-
-  return (
-    <ModalBox
-      open={issueCreateModal}
-      onClose={showIssueCreateModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Header>Create Issue</Header>
-
-        <BodyContainer>
-          <InputArea>
-            <p>Title</p>
-            <input
-              type="text"
-              value={newIssueInfo.title}
-              placeholder="Type New Issue Title.."
-            />
-
-            <p>Description</p>
-            <textarea
-              value={newIssueInfo.desc}
-              placeholder="Type New Issue Description.."
-            />
-
-            <p>Topic</p>
-            <form>
-              <input
-                type="text"
-                list="topicList"
-                value={newIssueInfo.topic}
-                placeholder="Choose Topic"
-                onChange={onSelectTopic}
-                onInput={onSelectTopic}
-              />
-              <datalist id="topicList">
-                {topicList.map((topic, index) => (
-                  <option value={topic} key={index}>
-                    {topic}
-                  </option>
-                ))}
-              </datalist>
-            </form>
-
-            <p>Assignee</p>
-            <form>
-              <input
-                type="text"
-                list="memberList"
-                value={newIssueInfo.assignee}
-                placeholder="Choose Issue Assignee"
-                onChange={onSelectAssignee}
-                onInput={onSelectAssignee}
-              />
-              <datalist id="memberList">
-                {memberList.map((member, index) => (
-                  <option value={member} key={index}>
-                    {member}
-                  </option>
-                ))}
-              </datalist>
-            </form>
-          </InputArea>
-
-          <ButtonBox>
-            <CancelButton onClick={cancelCreateIssue}>Cancel</CancelButton>
-            <CreateButton onClick={createNewIssue}>Create</CreateButton>
-          </ButtonBox>
-        </BodyContainer>
-      </Box>
-    </ModalBox>
-  );
-};
 
 export const LoginModal = ({
   loginModal,

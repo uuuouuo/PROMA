@@ -59,12 +59,12 @@ const MainComponent = styled.div`
 `;
 
 // let sock = new SockJS("http://k6c107.p.ssafy.io:8080/ws-stomp");
-let sock = new SockJS("http://k6c107.p.ssafy.io:8081/ws-stomp");
+let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
 
 const mapStateToProps = (state: RootState) => {
   return {
-    darkModeState: state.themeReducer.darkMode,
+    darkModeState: state.modeReducer.darkMode,
   };
 };
 
@@ -75,12 +75,12 @@ function MyApp({
 }: AppProps & { darkModeState: boolean }) {
   useEffect(() => {
     //알림 연결 로직
-    client.connect({}, () => {
-      //   client.send(
-      //     "http://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-      //   );
+    client.connect({"Authorization" : localStorage.getItem("Authorization")?.toString()}, () => {
+    //   client.send(
+    //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+    //   );
       // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-      client.subscribe("/queue/notification/U001", (res) => {
+      client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
         const messagedto = JSON.parse(res.body);
         console.log(messagedto);
         alert(messagedto.message);

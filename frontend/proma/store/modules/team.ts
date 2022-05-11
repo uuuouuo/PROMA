@@ -44,6 +44,8 @@ export const getTeamInfo = createAsyncThunk(
 export const createNewTeam = createAsyncThunk(
   "POST/TEAM",
   async (newTeamInfo: any, thunkAPI) => {
+    console.log(newTeamInfo);
+
     return await api
       .post(`/team`, newTeamInfo)
       .then((res) => {
@@ -106,7 +108,7 @@ export const joinTeam = createAsyncThunk(
 //get team members api
 export const getTeamMembers = createAsyncThunk(
   "GET/TEAMMEMBER",
-  async (teamNo: string, thunkAPI) => {
+  async (teamNo: number, thunkAPI) => {
     return await api
       .get(`/team/user/${teamNo}`)
       .then((res) => res.data)

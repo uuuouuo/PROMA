@@ -5,12 +5,17 @@ import { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { ThemeType } from "../../interfaces/style";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface IssueType {
   issueNo: number;
-  issueTitle: string;
+  title: string;
   description: string;
-  assignee: string;
+  assignee: {
+    userNo: string;
+    nickname: string;
+  };
 }
 
 //styled-components
@@ -20,16 +25,25 @@ const IssueBox = styled.div`
   color: black;
   padding: 0 15px;
   margin-bottom: 7px;
-  display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 `;
-
 const FlexBox = styled.div`
   display: flex;
   align-items: center;
 `;
-
+const TitleBox = styled(FlexBox)`
+  p {
+    &:first-child {
+      width: 70px;
+    }
+  }
+  a {
+    text-decoration: none;
+    color: black;
+  }
+`;
 const ImageBox = styled.div`
   width: 20px;
   height: 20px;
@@ -41,23 +55,33 @@ const ImageBox = styled.div`
 const Issue = ({
   issue,
   droppableId,
+  issueIndex,
 }: {
   issue: IssueType;
   droppableId: string;
+  issueIndex: number;
 }) => {
-  //DOM 준비되었을 때 렌더링
+  const router = useRouter();
+
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [projectNo, setProjectNo] = useState<string>("");
+
   useEffect(() => {
     setIsReady(true);
   }, []);
 
-  const draggableId = `${droppableId}_${issue.issueTitle}`;
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectCode = router.query.projectCode as string;
+    setProjectNo(projectCode);
+  }, [router.asPath]);
+
   return (
     <>
       {isReady ? (
         <Draggable
-          draggableId={draggableId}
-          index={issue.issueNo}
+          draggableId={`${issueIndex}_${issue.issueNo}`}
+          index={issueIndex}
           key={issue.issueNo}
         >
           {(provided) => (
@@ -66,13 +90,19 @@ const Issue = ({
               {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
               {...provided.draggableProps} //드래그 되는 영역
             >
-              <p>No. {issue.issueNo}</p>
-              <p>{issue.issueTitle}</p>
+              <TitleBox>
+                <p>No. {issue.issueNo}</p>
+                <Link href={`/project/${projectNo}/issue/${issue.issueNo}`}>
+                  <a>
+                    <p>{issue.title}</p>
+                  </a>
+                </Link>
+              </TitleBox>
               <FlexBox>
                 <ImageBox>
                   <Image src="/profileimg.png" width={20} height={20}></Image>
                 </ImageBox>
-                <p>{issue.assignee}</p>
+                <p>{issue.assignee.nickname}</p>
               </FlexBox>
             </IssueBox>
           )}

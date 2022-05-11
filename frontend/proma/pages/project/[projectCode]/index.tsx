@@ -1,16 +1,22 @@
 /* eslint-disable */
 import styled from "styled-components";
-import Sprint from "../../../components/project/Sprint";
-import { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ThemeType } from "../../../interfaces/style";
 import { FaPen, FaCheck } from "react-icons/fa";
+
+import Sprint from "../../../components/project/Sprint";
 import TopicCreateModal from "../../../components/Modals/TopicCreateModal";
 import WarningModal from "../../../components/Modals/WarningModal";
 import TopicListModal from "../../../components/Modals/TopicListModal";
 import SprintCreateModal from "../../../components/Modals/SprintCreateModal";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+
 import { connect } from "react-redux";
+import { RootState } from "../../../store/modules";
+import { switchViewOption } from "../../../store/modules/mode";
+import { getInProgressSprint } from "../../../store/modules/sprint";
 import {
   getProjectInfo,
   updateProjectInfo,
@@ -18,18 +24,11 @@ import {
   getProjectJoinStatus,
   joinProject,
 } from "../../../store/modules/project";
-import { getTeamList } from "../../../store/modules/team";
 import {
-  getSprintList,
-  getInProgressSprint,
-} from "../../../store/modules/sprint";
-import { RootState } from "../../../store/modules";
-import { useRouter } from "next/router";
-
-const backlog = {
-  sprintNo: null,
-  title: "Backlog",
-};
+  getIssueList,
+  updateIssueSprint,
+  setDndMoved,
+} from "../../../store/modules/issue";
 
 //styled-components
 const Button = styled.button`
@@ -73,17 +72,20 @@ const FlexBox = styled.div`
   align-items: center;
 `;
 const TopBar = styled(FlexBox)`
+  align-items: center;
   justify-content: flex-start;
   height: 70px;
   * {
-    font-size: 20px;
+    font-size: 15px;
     &:hover {
       cursor: pointer;
     }
   }
   h1 {
     margin-right: 15px;
+    margin-bottom: 25px;
     font-size: 30px;
+    font-weight: 600;
     &:hover {
       cursor: text;
     }
@@ -111,7 +113,6 @@ const ButtonBox = styled.div`
   }
 `;
 const SprintsBox = styled.div`
-  margin-top: 10px;
   height: 100%;
   overflow-y: scroll;
   background-color: ${(props: ThemeType) => props.theme.bgColor};
@@ -120,25 +121,28 @@ const SprintsBox = styled.div`
 const mapStateToProps = (state: RootState) => {
   return {
     projectInfo: state.projectReducer.projectInfo,
-    teamList: state.teamReducer.teamList,
-    sprintList: state.sprintReducer.sprintList,
+    issueList: state.issueReducer.issueList,
     isLogin: state.userReducer.isLogin,
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    switchViewOption: () => dispatch(switchViewOption()),
     getProjectInfo: (projectNo: string) => dispatch(getProjectInfo(projectNo)),
     deleteProject: (projectNo: string) => dispatch(deleteProject(projectNo)),
     joinProject: (projectInfo: any) => dispatch(joinProject(projectInfo)),
-    getTeamList: (projectNo: string) => dispatch(getTeamList(projectNo)),
-    getSprintList: (projectNo: string) => dispatch(getSprintList(projectNo)),
     updateProjectInfo: (projectNewInfo: any) =>
       dispatch(updateProjectInfo(projectNewInfo)),
     getProjectJoinStatus: (projectNo: string) =>
       dispatch(getProjectJoinStatus(projectNo)),
     getInProgressSprint: (projectNo: string) =>
       dispatch(getInProgressSprint(projectNo)),
+    updateIssueSprint: (issueInfo: any) =>
+      dispatch(updateIssueSprint(issueInfo)),
+    getIssueList: (params: any) => dispatch(getIssueList(params)),
+    setDndMoved: (dndInfo: any) => dispatch(setDndMoved(dndInfo)),
   };
 };
 
@@ -150,11 +154,12 @@ const ProjectSpace = ({
   getProjectJoinStatus,
   isLogin,
   joinProject,
-  getTeamList,
-  teamList,
-  sprintList,
-  getSprintList,
   getInProgressSprint,
+  switchViewOption,
+  onlyMyIssue,
+  updateIssueSprint,
+  getIssueList,
+  issueList,
 }: {
   getProjectInfo: any;
   projectInfo: any;
@@ -163,21 +168,19 @@ const ProjectSpace = ({
   getProjectJoinStatus: any;
   isLogin: boolean;
   joinProject: any;
-  getTeamList: any;
-  sprintList: any;
-  teamList: any;
-  getSprintList: any;
   getInProgressSprint: any;
+  switchViewOption: any;
+  onlyMyIssue: boolean;
+  updateIssueSprint: any;
+  getIssueList: any;
+  issueList: any;
 }) => {
   const router = useRouter();
-
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const [projectNo, setProjectNo] = useState<string>("");
   const [isManager, setIsManager] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [teams, setTeams] = useState<Array<Object>>([]);
-  const [sprints, setSprints] = useState<Array<Object>>([]);
   const [comment] = useState<string>(
     "프로젝트 종료 시<br/> 프로젝트 내 활동 정보가 모두 삭제되며, <br/> 삭제된 데이터는 복구가 불가합니다.<br/><br/> 정말 종료하시겠습니까?"
   );
@@ -192,6 +195,7 @@ const ProjectSpace = ({
   const showTopicCreateModal = () => setTopicCreateModal((cur) => !cur);
   const showSprintCreateModal = () => setSprintCreateModal((cur) => !cur);
   const showWarningModal = () => setWarningModal((cur) => !cur);
+  const [issueData, setIssueData] = useState<any>([]);
 
   //update project
   const onKeyUpProjectName = (e: any) => {
@@ -213,14 +217,50 @@ const ProjectSpace = ({
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
     console.log(args);
-    //이슈 옮겨졌을 때 이슈 수정 post api 로직 필요
-    //그 후 재렌더링 로직 필요
+    const targetIssueNo = args.draggableId.split("_")[1];
+    const fromSprint = args.source.droppableId.split("_")[0];
+    const fromTeam = args.source.droppableId.split("_")[1];
+    const fromIndex = args.source.index;
+    const toSprint = args.destination.droppableId.split("_")[0];
+    const toTeam = args.destination.droppableId.split("_")[1];
+    const targetSprintNo = args.destination.droppableId.split("_")[2];
+    const toIndex = args.destination.index;
+
+    const newDndMoved = {
+      targetIssueNo,
+      fromSprint,
+      fromTeam,
+      fromIndex,
+      toSprint,
+      toTeam,
+      targetSprintNo,
+      toIndex,
+    };
+
+    if (fromTeam !== toTeam) {
+      alert("Issues can only be moved within the same team.");
+      return;
+    } else if (fromSprint === toSprint) {
+      return;
+    } else {
+      updateIssueSprint(
+        toSprint
+          ? {
+              issueNo: targetIssueNo,
+              sprintNo: targetSprintNo,
+            }
+          : { issueNo: targetIssueNo }
+      ).then((res: any) => {
+        getIssueList({
+          onlyMyIssue,
+          projectNo,
+        });
+      });
+    }
   };
 
-  //DOM 준비되었는지, login 상태인지, project에 속한 멤버인지 확인 후 렌더링
   useEffect(() => {
     if (!router.isReady) return;
-
     const value = router.query.projectCode as string;
     setProjectNo(value);
 
@@ -242,16 +282,16 @@ const ProjectSpace = ({
 
   useEffect(() => {
     if (!projectNo) return;
-
     getProjectInfo(projectNo);
-    getSprintList(projectNo);
-    getTeamList(projectNo);
+    getIssueList({
+      projectNo,
+      onlyMyIssue,
+    });
     getInProgressSprint(projectNo);
   }, [projectNo]);
 
   useEffect(() => {
     if (!projectInfo) return;
-
     setTitle(projectInfo.title);
 
     if (projectInfo.role === "MANAGER") setIsManager(true);
@@ -259,16 +299,9 @@ const ProjectSpace = ({
   }, [projectInfo]);
 
   useEffect(() => {
-    if (!teamList) return;
-
-    setTeams(teamList);
-  }, [teamList]);
-
-  useEffect(() => {
-    if (!sprintList) return;
-
-    setSprints(sprintList);
-  }, [sprintList]);
+    if (!issueList) return;
+    setIssueData(issueList);
+  }, [issueList]);
 
   return (
     <>
@@ -296,7 +329,9 @@ const ProjectSpace = ({
               </TopBar>
             )}
             <FlexBox>
-              <UnfilledButton>Only My Issues</UnfilledButton>
+              <UnfilledButton onClick={switchViewOption}>
+                {onlyMyIssue ? "View Every Issue" : "Only My Issues"}
+              </UnfilledButton>
               <ButtonBox>
                 <FilledButton onClick={showSprintCreateModal}>
                   Create Sprint
@@ -321,10 +356,9 @@ const ProjectSpace = ({
               </ButtonBox>
             </FlexBox>
             <SprintsBox>
-              {sprints?.map((sprint, index) => (
-                <Sprint sprint={sprint} key={index} teamList={teams} />
+              {issueData?.map((sprint: any, index: number) => (
+                <Sprint sprint={sprint} key={index} sprintIndex={index} />
               ))}
-              <Sprint sprint={backlog} teamList={teams} />
             </SprintsBox>
             {isManager ? (
               <WarnButton onClick={showWarningModal}>프로젝트 종료</WarnButton>

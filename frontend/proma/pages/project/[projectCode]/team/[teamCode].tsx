@@ -6,9 +6,18 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaPen, FaCheck } from "react-icons/fa";
 import { ThemeType } from "../../../../interfaces/style";
 import Image from "next/image";
+import Link from "next/link";
 
 import WarningModal from "../../../../components/Modals/WarningModal";
-import { IssueCreateModal } from "../../../../components/common/Modal";
+import IssueCreateModal from "../../../../components/Modals/IssueCreateModal";
+import {
+  getToDoIssues,
+  getInProgressIssues,
+  getDoneIssues,
+  updateIssueStatus,
+} from "../../../../store/modules/issue";
+import { switchViewOption } from "../../../../store/modules/mode";
+import { getInProgressSprint } from "../../../../store/modules/sprint";
 
 import { connect } from "react-redux";
 import {
@@ -19,8 +28,6 @@ import {
 } from "../../../../store/modules/team";
 import { RootState } from "../../../../store/modules";
 
-//team info get api 필요
-
 //styled-components
 const TeamSpaceContainer = styled.div`
   width: 100%;
@@ -29,7 +36,6 @@ const TeamSpaceContainer = styled.div`
   color: ${(props: ThemeType) => props.theme.textColor};
   position: relative;
 `;
-
 const FlexBox = styled.div`
   display: flex;
   align-items: center;
@@ -53,7 +59,7 @@ const TopBar = styled(FlexBox)`
   justify-content: flex-start;
   height: 70px;
   * {
-    font-size: 25px;
+    font-size: 18px;
     &:hover {
       cursor: pointer;
     }
@@ -156,6 +162,10 @@ const IssueContainer = styled(StatusBox)`
 const IssueSubBox = styled.div`
   display: flex;
   align-items: center;
+  a {
+    text-decoration: none;
+    color: black;
+  }
 `;
 const IssueBox = styled.div`
   border-radius: 3px;
@@ -199,25 +209,15 @@ const ImageBox = styled.div`
   margin-right: 5px;
 `;
 
-//더미 데이터
-const issueData = [
-  {
-    issueNo: 0,
-    issueTitle: "컴포넌트 구성",
-    description: "컴포넌트 구성합니다.",
-    assignee: "Sue",
-  },
-  {
-    issueNo: 1,
-    issueTitle: "db 설계",
-    description: "db 설계합니다.",
-    assignee: "Eus",
-  },
-];
-
 const mapStateToProps = (state: RootState) => {
   return {
     teamInfo: state.teamReducer.teamInfo,
+    isInProgress: state.sprintReducer.isInProgress,
+    inProgressSprintInfo: state.sprintReducer.inProgressSprintInfo,
+    onlyMyIssue: state.modeReducer.onlyMyIssue,
+    toDoIssues: state.issueReducer.toDoList,
+    inProgressIssues: state.issueReducer.inProgressList,
+    doneIssues: state.issueReducer.doneList,
   };
 };
 
@@ -227,6 +227,14 @@ const mapDispatchToProps = (dispatch: any) => {
     updateTeamInfo: (teamInfo: any) => dispatch(updateTeamInfo(teamInfo)),
     deleteTeam: (teamInfo: any) => dispatch(deleteTeam(teamInfo)),
     outTeam: (teamInfo: any) => dispatch(outTeam(teamInfo)),
+    switchViewOption: () => dispatch(switchViewOption()),
+    getToDoIssues: (params: any) => dispatch(getToDoIssues(params)),
+    getInProgressIssues: (params: any) => dispatch(getInProgressIssues(params)),
+    getDoneIssues: (params: any) => dispatch(getDoneIssues(params)),
+    getInProgressSprint: (projectNo: string) =>
+      dispatch(getInProgressSprint(projectNo)),
+    updateIssueStatus: (issueInfo: any) =>
+      dispatch(updateIssueStatus(issueInfo)),
   };
 };
 
@@ -236,24 +244,48 @@ const TeamSpace = ({
   updateTeamInfo,
   deleteTeam,
   outTeam,
+  switchViewOption,
+  getInProgressSprint,
+  isInProgress,
+  inProgressSprintInfo,
+  onlyMyIssue,
+  toDoIssues,
+  inProgressIssues,
+  doneIssues,
+  getToDoIssues,
+  getInProgressIssues,
+  getDoneIssues,
+  updateIssueStatus,
 }: {
   getTeamInfo: any;
   teamInfo: any;
   updateTeamInfo: any;
   deleteTeam: any;
   outTeam: any;
+  switchViewOption: any;
+  getInProgressSprint: any;
+  isInProgress: boolean;
+  inProgressSprintInfo: any;
+  onlyMyIssue: boolean;
+  toDoIssues: any;
+  inProgressIssues: any;
+  doneIssues: any;
+  getToDoIssues: any;
+  getInProgressIssues: any;
+  getDoneIssues: any;
+  updateIssueStatus: any;
 }) => {
   const router = useRouter();
 
-  const [isReady, setIsReady] = useState<boolean>(false);
-
   const [updateTitle, setUpdateTitle] = useState<boolean>(false);
-  const [projectNo, setProejctNo] = useState<string>("");
-  const [teamNo, setTeamNo] = useState<string>("");
-  const [teamName, setTeamName] = useState<string>("Team Name");
-  const [updateSprintName, setUpdateSprintName] = useState<boolean>(false);
-  const [sprintName, setSprintName] = useState<string>("Sprint Name");
+  const [projectNo, setProjectNo] = useState<string>("");
+  const [teamNo, setTeamNo] = useState<number>(0);
+  const [teamName, setTeamName] = useState<string>("");
+  const [sprintInfo, setSprintInfo] = useState<any>({});
   const [isMember, setIsMember] = useState<boolean>(false);
+  const [toDoList, setToDoList] = useState<any>([]);
+  const [inProgressList, setInProgressList] = useState<any>([]);
+  const [doneList, setDoneList] = useState<any>([]);
 
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
   const [warningTeamOutModal, setWarningTeamOutModal] =
@@ -271,11 +303,6 @@ const TeamSpace = ({
   const showWarningTeamOutModal = () => setWarningTeamOutModal((cur) => !cur);
   const showWarningTeamDeleteModal = () =>
     setWarningTeamDeleteModal((cur) => !cur);
-
-  //유저가 드래그를 끝낸 시점에 불리는 함수
-  const onDragEnd = (args: any) => {
-    console.log(args);
-  };
 
   //update team
   const onKeyUpTeamName = (e: any) => {
@@ -296,10 +323,69 @@ const TeamSpace = ({
     );
   const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
-  //DOM 준비되었을 때 렌더링
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
+  const getIssues = () => {
+    const params = {
+      onlyMyIssue,
+      sprintNo: sprintInfo.sprintNo,
+      status: "todo",
+      teamNo,
+    };
+    console.log(params);
+
+    getToDoIssues(params);
+    getInProgressIssues({ ...params, status: "inprogress" });
+    getDoneIssues({ ...params, status: "done" });
+  };
+
+  //유저가 드래그를 끝낸 시점에 불리는 함수
+  const onDragEnd = (args: any) => {
+    const targetIssueNo = args.draggableId;
+    const fromStatus = args.source.droppableId;
+    const fromIndex = args.source.index;
+    const toStatus = args.destination.droppableId;
+    const toIndex = args.destination.index;
+
+    let targetIssue = {};
+    if (fromStatus === toStatus) {
+      return;
+    } else {
+      if (fromStatus === "todo") {
+        targetIssue = toDoList[fromIndex];
+        const newToDoList = [...toDoList];
+        newToDoList.splice(fromIndex, 1);
+        setToDoList(newToDoList);
+      } else if (fromStatus === "inprogress") {
+        targetIssue = inProgressList[fromIndex];
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(fromIndex, 1);
+        setInProgressList(newInProgressList);
+      } else {
+        targetIssue = doneList[fromIndex];
+        const newDoneList = [...doneList];
+        newDoneList.splice(fromIndex, 1);
+        setDoneList(newDoneList);
+      }
+
+      if (toStatus === "todo") {
+        const newToDoList = [...toDoList];
+        newToDoList.splice(toIndex, 0, targetIssue);
+        setToDoList(newToDoList);
+      } else if (toStatus === "inprogress") {
+        const newInProgressList = [...inProgressList];
+        newInProgressList.splice(toIndex, 0, targetIssue);
+        setInProgressList(newInProgressList);
+      } else {
+        const newDoneList = [...doneList];
+        newDoneList.splice(toIndex, 0, targetIssue);
+        setDoneList(newDoneList);
+      }
+
+      updateIssueStatus({
+        issueNo: targetIssueNo,
+        status: toStatus,
+      }).then((res: any) => getIssues());
+    }
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -307,228 +393,337 @@ const TeamSpace = ({
     const projectCode = router.query.projectCode as string;
     const teamCode = router.query.teamCode as string;
 
-    setProejctNo(projectCode);
-    setTeamNo(teamCode);
+    setProjectNo(projectCode);
+    setTeamNo(parseInt(teamCode));
 
     getTeamInfo(teamCode);
   }, [router.asPath]);
 
   useEffect(() => {
-    setTeamName(teamInfo.title);
+    if (!projectNo) return;
+    getInProgressSprint(projectNo).then((res: any) => {
+      const status = res.payload;
+      if (!status) {
+        // router.push(`/project/${router.query.projectCode}`);
+        alert(
+          "Issue management is only available for sprints in progress. Start the sprint first."
+        );
+      } else {
+        console.log("sprint is active");
+      }
+    });
+  }, [projectNo]);
+
+  useEffect(() => {
+    if (!teamInfo) return;
     setIsMember(teamInfo.isMember);
+    setTeamName(teamInfo.title);
   }, [teamInfo]);
 
+  useEffect(() => {
+    if (!inProgressSprintInfo) return;
+    setSprintInfo(inProgressSprintInfo);
+  }, [inProgressSprintInfo]);
+
+  useEffect(() => {
+    if (!sprintInfo) return;
+    console.log(sprintInfo);
+    getIssues();
+  }, [sprintInfo]);
+
+  useEffect(() => {
+    if (!toDoIssues) return;
+    setToDoList(toDoIssues);
+  }, [toDoIssues]);
+
+  useEffect(() => {
+    if (!inProgressIssues) return;
+    setInProgressList(inProgressIssues);
+  }, [inProgressIssues]);
+
+  useEffect(() => {
+    if (!doneIssues) return;
+    setDoneList(doneIssues);
+  }, [doneIssues]);
+
   return (
-    <TeamSpaceContainer>
-      <TopBar>
-        {updateTitle ? (
-          <FlexBox>
-            <input
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              onKeyUp={onKeyUpTeamName}
-              placeholder="Type Team Name"
-              required
-              autoFocus
-            />
-            <FaCheck onClick={() => updateTeamName} />
-          </FlexBox>
-        ) : (
-          <FlexBox>
-            <h1>{teamName}</h1>
+    <>
+      {isInProgress ? (
+        <TeamSpaceContainer>
+          <TopBar>
+            {updateTitle ? (
+              <FlexBox>
+                <input
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  onKeyUp={onKeyUpTeamName}
+                  placeholder="Type Team Name"
+                  required
+                  autoFocus
+                />
+                <FaCheck onClick={updateTeamName} />
+              </FlexBox>
+            ) : (
+              <FlexBox>
+                <h1>{teamName}</h1>
+                {isMember ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
+              </FlexBox>
+            )}
+          </TopBar>
+
+          <SubTopBar>
+            <FlexBox>
+              <span>Active Sprint: </span>
+              <h2>{inProgressSprintInfo.title}</h2>
+            </FlexBox>
             {isMember ? (
-              <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+              <ButtonBox>
+                <button onClick={switchViewOption}>Only My Issue</button>
+                <button onClick={showIssueCreateModal}>+ Add Issue</button>
+                <IssueCreateModal
+                  issueCreateModal={issueCreateModal}
+                  showIssueCreateModal={showIssueCreateModal}
+                  teamNo={teamNo}
+                  sprintNo={sprintInfo.sprintNo}
+                  getIssues={getIssues}
+                />
+              </ButtonBox>
             ) : null}
-          </FlexBox>
-        )}
-      </TopBar>
+          </SubTopBar>
 
-      <SubTopBar>
-        {updateSprintName ? (
-          <FlexBox>
-            <span>Active: </span>
-            <input
-              value={sprintName}
-              onChange={(e) => setSprintName(e.target.value)}
-              placeholder="Type Sprint Name"
-              required
-              autoFocus
-            />
-            <FaCheck onClick={() => setUpdateSprintName((cur) => !cur)} />
-          </FlexBox>
-        ) : (
-          <FlexBox>
-            <span>Active: </span>
-            <h2>{sprintName}</h2>
-            {isMember ? (
-              <FaPen onClick={() => setUpdateSprintName((cur) => !cur)} />
-            ) : null}
-          </FlexBox>
-        )}
-        {isMember ? (
-          <ButtonBox>
-            <button>Only My Issue</button>
-            <button onClick={showIssueCreateModal}>+ Add Issue</button>
-            <IssueCreateModal
-              issueCreateModal={issueCreateModal}
-              showIssueCreateModal={showIssueCreateModal}
-            />
-          </ButtonBox>
-        ) : null}
-      </SubTopBar>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <WorkSpace>
+              <>
+                <Droppable droppableId="todo">
+                  {(provided) => (
+                    <StatusBox>
+                      <h2>To Do</h2>
+                      <IssueContainer
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {toDoList
+                          ? toDoList.map((issue: any, index: number) => (
+                              <Draggable
+                                draggableId={`${issue.issueNo}`}
+                                index={index}
+                                key={index}
+                              >
+                                {(provided) => (
+                                  <IssueBox
+                                    ref={provided.innerRef}
+                                    {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
+                                    {...provided.draggableProps} //드래그 되는 영역
+                                  >
+                                    <IssueSubBox>
+                                      <p className="issue_number">
+                                        No. {issue.issueNo}
+                                      </p>
+                                      <Link
+                                        href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                      >
+                                        <a>
+                                          <p>{issue.title}</p>
+                                        </a>
+                                      </Link>
+                                    </IssueSubBox>
+                                    <IssueSubBox>
+                                      <ImageBox>
+                                        <Image
+                                          src="/profileimg.png"
+                                          width={20}
+                                          height={20}
+                                        />
+                                      </ImageBox>
+                                      <p>{issue.assignee.nickname}</p>
+                                    </IssueSubBox>
+                                  </IssueBox>
+                                )}
+                              </Draggable>
+                            ))
+                          : null}
+                      </IssueContainer>
+                      {provided.placeholder}
+                    </StatusBox>
+                  )}
+                </Droppable>
+              </>
+              <Droppable droppableId="inprogress">
+                {(provided) => (
+                  <StatusBox>
+                    <h2>In Progress</h2>
+                    <IssueContainer
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {inProgressList
+                        ? inProgressList.map((issue: any, index: number) => (
+                            <Draggable
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
+                              key={index}
+                            >
+                              {(provided) => (
+                                <IssueBox
+                                  ref={provided.innerRef}
+                                  {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
+                                  {...provided.draggableProps} //드래그 되는 영역
+                                >
+                                  <IssueSubBox>
+                                    <p className="issue_number">
+                                      No. {issue.issueNo}
+                                    </p>
+                                    <Link
+                                      href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                    >
+                                      <a>
+                                        <p>{issue.title}</p>
+                                      </a>
+                                    </Link>
+                                  </IssueSubBox>
+                                  <IssueSubBox>
+                                    <ImageBox>
+                                      <Image
+                                        src="/profileimg.png"
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </ImageBox>
+                                    <p>{issue.assignee.nickname}</p>
+                                  </IssueSubBox>
+                                </IssueBox>
+                              )}
+                            </Draggable>
+                          ))
+                        : null}
+                    </IssueContainer>
+                    {provided.placeholder}
+                  </StatusBox>
+                )}
+              </Droppable>
+              <Droppable droppableId="done">
+                {(provided) => (
+                  <StatusBox>
+                    <h2>Done</h2>
+                    <IssueContainer
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {doneList
+                        ? doneList.map((issue: any, index: number) => (
+                            <Draggable
+                              draggableId={`${issue.issueNo}`}
+                              index={index}
+                              key={index}
+                            >
+                              {(provided) => (
+                                <IssueBox
+                                  ref={provided.innerRef}
+                                  {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
+                                  {...provided.draggableProps} //드래그 되는 영역
+                                >
+                                  <IssueSubBox>
+                                    <p className="issue_number">
+                                      No. {issue.issueNo}
+                                    </p>
+                                    <Link
+                                      href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                                    >
+                                      <a>
+                                        <p>{issue.title}</p>
+                                      </a>
+                                    </Link>
+                                  </IssueSubBox>
+                                  <IssueSubBox>
+                                    <ImageBox>
+                                      <Image
+                                        src="/profileimg.png"
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </ImageBox>
+                                    <p>{issue.assignee.nickname}</p>
+                                  </IssueSubBox>
+                                </IssueBox>
+                              )}
+                            </Draggable>
+                          ))
+                        : null}
+                    </IssueContainer>
+                    {provided.placeholder}
+                  </StatusBox>
+                )}
+              </Droppable>
+            </WorkSpace>
+          </DragDropContext>
+          {isMember ? (
+            <WarnButtonBox>
+              <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+              <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
 
-      {isReady ? (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <WorkSpace>
-            <Droppable droppableId="todo">
-              {(provided) => (
-                <StatusBox ref={provided.innerRef} {...provided.droppableProps}>
-                  <h2>To Do</h2>
-                  <IssueContainer>
-                    {issueData.map((issue, index) => (
-                      <Draggable
-                        draggableId={`todo_${issue.issueTitle}`}
-                        index={issue.issueNo}
-                        key={index}
-                      >
-                        {(provided) => (
-                          <IssueBox
-                            ref={provided.innerRef}
-                            {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
-                            {...provided.draggableProps} //드래그 되는 영역
-                          >
-                            <IssueSubBox>
-                              <p className="issue_number">
-                                No. {issue.issueNo}
-                              </p>
-                              <p>{issue.issueTitle}</p>
-                            </IssueSubBox>
-                            <IssueSubBox>
-                              <ImageBox>
-                                <Image
-                                  src="/profileimg.png"
-                                  width={20}
-                                  height={20}
-                                />
-                              </ImageBox>
-                              <p>{issue.assignee}</p>
-                            </IssueSubBox>
-                          </IssueBox>
-                        )}
-                      </Draggable>
-                    ))}
-                  </IssueContainer>
-                  {provided.placeholder}
-                </StatusBox>
-              )}
-            </Droppable>
-            <Droppable droppableId="inprogress">
-              {(provided) => (
-                <StatusBox ref={provided.innerRef} {...provided.droppableProps}>
-                  <h2>In Progress</h2>
-                  <IssueContainer>
-                    {issueData.map((issue, index) => (
-                      <Draggable
-                        draggableId={`inprogress_${issue.issueTitle}`}
-                        index={issue.issueNo}
-                        key={index}
-                      >
-                        {(provided) => (
-                          <IssueBox
-                            ref={provided.innerRef}
-                            {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
-                            {...provided.draggableProps} //드래그 되는 영역
-                          >
-                            <IssueSubBox>
-                              <p className="issue_number">
-                                No. {issue.issueNo}
-                              </p>
-                              <p>{issue.issueTitle}</p>
-                            </IssueSubBox>
-                            <IssueSubBox>
-                              <ImageBox>
-                                <Image
-                                  src="/profileimg.png"
-                                  width={20}
-                                  height={20}
-                                />
-                              </ImageBox>
-                              <p>{issue.assignee}</p>
-                            </IssueSubBox>
-                          </IssueBox>
-                        )}
-                      </Draggable>
-                    ))}
-                  </IssueContainer>
-                  {provided.placeholder}
-                </StatusBox>
-              )}
-            </Droppable>
-            <Droppable droppableId="done">
-              {(provided) => (
-                <StatusBox ref={provided.innerRef} {...provided.droppableProps}>
-                  <h2>Done</h2>
-                  <IssueContainer>
-                    {issueData.map((issue, index) => (
-                      <Draggable
-                        draggableId={`done_${issue.issueTitle}`}
-                        index={issue.issueNo}
-                        key={index}
-                      >
-                        {(provided) => (
-                          <IssueBox
-                            ref={provided.innerRef}
-                            {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
-                            {...provided.draggableProps} //드래그 되는 영역
-                          >
-                            <IssueSubBox>
-                              <p className="issue_number">
-                                No. {issue.issueNo}
-                              </p>
-                              <p>{issue.issueTitle}</p>
-                            </IssueSubBox>
-                            <IssueSubBox>
-                              <ImageBox>
-                                <Image
-                                  src="/profileimg.png"
-                                  width={20}
-                                  height={20}
-                                />
-                              </ImageBox>
-                              <p>{issue.assignee}</p>
-                            </IssueSubBox>
-                          </IssueBox>
-                        )}
-                      </Draggable>
-                    ))}
-                  </IssueContainer>
-                  {provided.placeholder}
-                </StatusBox>
-              )}
-            </Droppable>
-          </WorkSpace>
-        </DragDropContext>
-      ) : null}
-      {isMember ? (
-        <WarnButtonBox>
-          <button onClick={showWarningTeamOutModal}>팀 나가기</button>
-          <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
+              <WarningModal
+                warningModal={warningTeamOutModal}
+                showWarningModal={showWarningTeamOutModal}
+                comment={teamOutComment}
+                deleteFunc={onOutTeam}
+              />
+              <WarningModal
+                warningModal={warningTeamDeleteModal}
+                showWarningModal={showWarningTeamDeleteModal}
+                comment={teamDeleteComment}
+                deleteFunc={onDeleteTeam}
+              />
+            </WarnButtonBox>
+          ) : null}
+        </TeamSpaceContainer>
+      ) : (
+        <TeamSpaceContainer>
+          <TopBar>
+            {updateTitle ? (
+              <FlexBox>
+                <input
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  onKeyUp={onKeyUpTeamName}
+                  placeholder="Type Team Name"
+                  required
+                  autoFocus
+                />
+                <FaCheck onClick={updateTeamName} />
+              </FlexBox>
+            ) : (
+              <FlexBox>
+                <h1>{teamName}</h1>
+                {isMember ? (
+                  <FaPen onClick={() => setUpdateTitle((cur) => !cur)} />
+                ) : null}
+              </FlexBox>
+            )}
+          </TopBar>
+          {isMember ? (
+            <WarnButtonBox>
+              <button onClick={showWarningTeamOutModal}>팀 나가기</button>
+              <button onClick={showWarningTeamDeleteModal}>팀 삭제</button>
 
-          <WarningModal
-            warningModal={warningTeamOutModal}
-            showWarningModal={showWarningTeamOutModal}
-            comment={teamOutComment}
-            deleteFunc={onOutTeam}
-          />
-          <WarningModal
-            warningModal={warningTeamDeleteModal}
-            showWarningModal={showWarningTeamDeleteModal}
-            comment={teamDeleteComment}
-            deleteFunc={onDeleteTeam}
-          />
-        </WarnButtonBox>
-      ) : null}
-    </TeamSpaceContainer>
+              <WarningModal
+                warningModal={warningTeamOutModal}
+                showWarningModal={showWarningTeamOutModal}
+                comment={teamOutComment}
+                deleteFunc={onOutTeam}
+              />
+              <WarningModal
+                warningModal={warningTeamDeleteModal}
+                showWarningModal={showWarningTeamDeleteModal}
+                comment={teamDeleteComment}
+                deleteFunc={onDeleteTeam}
+              />
+            </WarnButtonBox>
+          ) : null}
+        </TeamSpaceContainer>
+      )}
+    </>
   );
 };
 
