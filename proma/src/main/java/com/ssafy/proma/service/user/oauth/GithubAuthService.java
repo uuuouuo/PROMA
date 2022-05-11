@@ -68,8 +68,8 @@ public class GithubAuthService extends AbstractService {
 
     public Map<String, Object> refreshToken(String jwtToken, String refToken) {
         Map<String, Object> resultMap = new HashMap<>();
-        if (!jwtTokenService.validateJwt(jwtToken))
-            throw new IllegalStateException("Token 만료되지 않음");
+//        if (!jwtTokenService.validateJwt(jwtToken))
+//            throw new IllegalStateException("Token 만료되지 않음");
         Optional<User> findUserOptional = userRepository.findByRefresh(refToken);
         if (findUserOptional.isEmpty())
             throw new IllegalStateException("Refresh Token 유효하지 않음");
