@@ -75,12 +75,12 @@ function MyApp({
 }: AppProps & { darkModeState: boolean }) {
   useEffect(() => {
     //알림 연결 로직
-    client.connect({}, () => {
-      // client.send(
-      //   "http://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-      // );
+    client.connect({"Authorization" : localStorage.getItem("Authorization")?.toString()}, () => {
+    //   client.send(
+    //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+    //   );
       // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-      client.subscribe("/queue/notification/U001", (res) => {
+      client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
         const messagedto = JSON.parse(res.body);
         console.log(messagedto);
         alert(messagedto.message);
