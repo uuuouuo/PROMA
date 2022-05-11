@@ -45,14 +45,16 @@ export const userInstance = () => {
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
+      console.dir(response);
       console.log(response.data.message);
+
       if (
         response.data &&
         response.data.message &&
         response.data.message === "사용자 로그인 성공"
       ) {
-        const Authorization = response.data.loginRes.jwtToken;
-        const RefreshToken = response.data.loginRes.refToken;
+        const Authorization = response.headers.authorization;
+        const RefreshToken = response.headers.refresh;
         if (Authorization) localStorage.setItem("Authorization", Authorization);
         if (RefreshToken) localStorage.setItem("RefreshToken", RefreshToken);
       }

@@ -71,7 +71,7 @@ const getRefresh = async () => {
   return await userApi
     .post(`/user/refresh`)
     .then((res: any) => {
-      localStorage.setItem("Authorization", res.data.newJwtToken);
+      localStorage.setItem("Authorization", res.headers.authorization);
     })
     .catch((err: any) => console.log(err));
 };
