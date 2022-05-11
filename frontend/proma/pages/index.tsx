@@ -97,7 +97,7 @@ const Home = ({ isLogin }: { isLogin: boolean }) => {
       console.log("not yet");
       let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
       let client = Stomp.over(sock);
-      client.disconnect();
+      // client.disconnect();
     } else {
       console.log("ready");
       const Authorization = localStorage.getItem("Authorization");
@@ -118,6 +118,14 @@ const Home = ({ isLogin }: { isLogin: boolean }) => {
             console.log(messagedto);
             alert(messagedto.message);
           });
+
+          // 채팅 주소 구독
+          client.subscribe(`/sub/chat/room/project/${localStorage.getItem("projectNo")}`, (res) => {
+            console.log(res)
+          });
+        
+          // 채팅 전송 
+          client.send(`/pub/chat/project-msg`);
         }
       );
       // return () => client.disconnect();
