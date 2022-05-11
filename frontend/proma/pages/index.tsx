@@ -86,9 +86,6 @@ function notify() {
   });
 }
 
-let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-let client = Stomp.over(sock);
-
 const Home = ({ isLogin }: { isLogin: boolean }) => {
   //   useEffect(() => {
   //     getRefresh();
@@ -98,13 +95,16 @@ const Home = ({ isLogin }: { isLogin: boolean }) => {
     //알림 연결 로직
     if (!isLogin) {
       console.log("not yet");
-
+      let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+      let client = Stomp.over(sock);
       client.disconnect();
     } else {
       console.log("ready");
       const Authorization = localStorage.getItem("Authorization");
       if (!Authorization) return;
       console.log(Authorization);
+      let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+      let client = Stomp.over(sock);
 
       client.connect(
         { Authorization: localStorage.getItem("Authorization")?.toString() },
