@@ -41,7 +41,6 @@ export const userInstance = () => {
       return Promise.reject(error);
     }
   );
-
   // 응답 인터셉터 추가
   instance.interceptors.response.use(
     // 응답 데이터를 가공
@@ -85,6 +84,7 @@ const getRefresh = async () => {
     })
     .catch((err: any) => console.log(err));
 };
+// setInterval(() => getRefresh(), 3000);
 
 // axios 객체 생성
 export const apiInstance = () => {
@@ -136,7 +136,11 @@ export const apiInstance = () => {
           }
           //refresh token 만료 시
           else if (accessTokenExpiredCode === "C006") {
-            //logout
+            localStorage.removeItem("code");
+            localStorage.removeItem("Authorization");
+            localStorage.removeItem("RefreshToken");
+            window.location.reload();
+            window.location.href = "/";
           }
         }
       } else if (error.request) {
