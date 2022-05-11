@@ -97,48 +97,29 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
   //   }, []);
 
   useEffect(() => {
-    if (!router.isReady || !userInfo) return;
-
-    //알림 연결 로직
-    const Authorization = localStorage.getItem("Authorization")?.toString();
-    const SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+    if (!router.isReady) return;
+    if (!userInfo) return;
     if (isLogin) {
       let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
       let client = Stomp.over(sock);
-      // client.disconnect();
-    } else {
-      console.log("ready");
-      const Authorization = localStorage.getItem("Authorization");
-      if (!Authorization) return;
-      console.log(Authorization);
-      let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-      let client = Stomp.over(sock);
 
-      client.connect(
-        { Authorization: localStorage.getItem("Authorization")?.toString() },
-        () => {
-          //   client.send(
-          //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-          //   );
-          // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-          client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
-            const messagedto = JSON.parse(res.body);
-            console.log(messagedto);
-            alert(messagedto.message);
-          });
+      const Authorization = localStorage.getItem("Authorization")?.toString();
+      const SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+      client.connect({ Authorization }, (res) => {
+        console.dir(res);
 
-          // 채팅 주소 구독
-          client.subscribe(`/sub/chat/room/project/${localStorage.getItem("projectNo")}`, (res) => {
-            console.log(res)
-          });
-        
-          // 채팅 전송 
-          client.send(`/pub/chat/project-msg`);
-        }
-      );
-      // return () => client.disconnect();
+        //   client.send(
+        //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+        //   );
+        // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
+        client.subscribe(SUBSCRIBE_URL, (res) => {
+          const messagedto = JSON.parse(res.body);
+
+          alert(messagedto.message);
+        });
+      });
     }
-  }, [isLogin, userInfo]);
+  }, [userInfo]);
 
   return (
     <MainContainer>

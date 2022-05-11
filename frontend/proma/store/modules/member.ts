@@ -60,10 +60,11 @@ const memberSlice = createSlice({
   reducers: {
     getLogout(state: UserState) {
       state.isLogin = false;
-    //   state.userInfo = {};
+      state.userInfo = {};
       localStorage.removeItem("code");
-    //   localStorage.removeItem("Authorization");
+      localStorage.removeItem("Authorization");
       localStorage.removeItem("RefreshToken");
+      window.location.reload();
     },
   },
   extraReducers: (builder) => {

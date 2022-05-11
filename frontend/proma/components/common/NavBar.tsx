@@ -11,6 +11,9 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { getLogout } from "../../store/modules/member";
+import { BACKEND_URL } from "../../config";
+import SockJS from "sockjs-client";
+import { useRouter } from "next/router";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -74,6 +77,7 @@ const NavBar = ({
   isLogin: boolean;
   getLogout: any;
 }) => {
+  const router = useRouter();
   // const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
@@ -83,6 +87,11 @@ const NavBar = ({
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
+
+  const onLogOut = () => {
+    router.push("/");
+    getLogout();
+  };
 
   return (
     <NavBarContainer>
@@ -118,7 +127,7 @@ const NavBar = ({
               showUserProfileModal={showUserProfileModal}
               userInfo={userInfo}
             />
-            <MenuButton onClick={() => getLogout()}>Logout</MenuButton>
+            <MenuButton onClick={onLogOut}>Logout</MenuButton>
           </MenuToggleBox>
         )}
 
