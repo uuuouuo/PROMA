@@ -3,6 +3,9 @@ import { BACKEND_URL } from "../../config";
 import axios from "axios";
 import { apiInstance, userInstance } from "../../api";
 import { getProjectList } from "./project";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+
 const api = apiInstance();
 const userApi = userInstance();
 
@@ -15,6 +18,8 @@ const initialState: UserState = {
   userInfo: [],
   isLogin: false,
 };
+// let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+// let client = Stomp.over(sock);
 
 export const getLogin = createAsyncThunk(
   "USER/LOGIN/GITHUB",
@@ -24,7 +29,23 @@ export const getLogin = createAsyncThunk(
       .get(`/user/login/github?code=${code}`)
       .then((res) => {
         thunkAPI.dispatch(getProjectList());
-        res.data;
+
+        // client.connect(
+        //   { Authorization: localStorage.getItem("Authorization")?.toString() },
+        //   () => {
+        //     //   client.send(
+        //     //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+        //     //   );
+        //     // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
+        //     client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
+        //       const messagedto = JSON.parse(res.body);
+        //       console.log(messagedto);
+        //       alert(messagedto.message);
+        //     });
+        //   }
+        // );
+
+        return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }

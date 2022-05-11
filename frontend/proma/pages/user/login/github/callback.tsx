@@ -42,7 +42,10 @@ const Callback = ({
         if (code === null) {
         const newCode = window.location.search.replace("?code=", "");
         localStorage.setItem("code", newCode);
-        getLogin().then((res: any) => router.push("/"));
+        getLogin().then((res: any) => {
+            console.log(res);
+            
+            router.push("/")});
         } else {
         withdrawUser(code)
             .then((res: any) => {
