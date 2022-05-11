@@ -71,6 +71,7 @@ public class NotificationController {
 
     // 임시 알림 화면
     @GetMapping("/{userNo}")
+    @ApiOperation(value = "임시 알림 화면", notes = "localhost:8080/notification/{userNo}")
     public String notificationMain(Model model, @PathVariable String userNo) {
         model.addAttribute("userNo", userNo);
         return "/test/notification";
@@ -78,6 +79,7 @@ public class NotificationController {
 
     // 임시 알림 전송
     @PostMapping("/send")
+    @ApiOperation(value = "임시 알림 전송", notes = "해당 회원에게 임시 알림 전송")
     @ResponseBody
     public void sendNotification(@RequestParam String userNo) {
 
@@ -93,6 +95,7 @@ public class NotificationController {
 
     // 임시 채팅 화면
     @GetMapping("/chatting/{roomNo}/{userNo}")
+    @ApiOperation(value = "임시 채팅 화면", notes = "localhost:8080/notification/chatting/{roomNo}/{userNo}")
     public String chattingMain(Model model, @PathVariable String roomNo, @PathVariable String userNo) {
         model.addAttribute("roomNo", roomNo);
         model.addAttribute("userNo", userNo);
