@@ -6,20 +6,21 @@ import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
 import Image from "next/image";
-import { projectChat } from "../../store/modules/chat";
+import { chatSend, projectChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 
 const mapStateToProps = (state: RootState) => {
   return {
     projectList: state.projectReducer.projectList,
-    chatList: state.chatReducer.chatList,
+    chatInfo: state.chatReducer.chatInfo,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+    chatSend: () => dispatch(chatSend())
   };
 };
 
@@ -83,12 +84,13 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 
-const Chatting = ({ state, showChat, projectList, chatList }: { state: boolean; showChat: any; projectList: any; chatList: any; }) => {
+const Chatting = ({ state, showChat, projectList, chatInfo, chatSend }: { state: boolean; showChat: any; projectList: any; chatInfo: any; chatSend: any;}) => {
 
   useEffect(() => {
-    console.log(chatList);
     projectChat(projectList[0].projectNo);
-  }, [chatList])
+  }, [chatInfo])
+
+  const [dummy, setDummy] = useState(chatInfo.messageList);
 
   const [dummy2, setDummy2] = useState([
     {
@@ -126,16 +128,11 @@ const Chatting = ({ state, showChat, projectList, chatList }: { state: boolean; 
   const [chat, setChat] = useState<string>("");
 
   const onSubmitChat = (e: any) => {
-    const value = {
-      name: "박주한",
-      image:
-        "https://cdn.pixabay.com/photo/2021/10/24/21/34/profile-pic-6739366_960_720.png",
-      content: chat,
-    };
-
     if (e.key === "Enter") {
-      setDummy2([...dummy2, value]);
-      setChat("");
+      // setDummy([...dummy, value]);
+      // setChat("");
+      localStorage.setItem("chatContent", chat)
+      chatSend();
     }
   };
 
@@ -155,8 +152,8 @@ const Chatting = ({ state, showChat, projectList, chatList }: { state: boolean; 
       onRequestClose={showChat}
     >
       <ChatContainer>
-        {/* {dummy2.map((element, idx) => {
-          if (element.name !== "박주한")
+      {dummy.map((element: any, idx: any) => {
+          if (element.name !== localStorage.getItem("userNo"))
             return (
               <>
                 <div style={{ display: "flex", marginBottom: "2%" }} key={idx}>
@@ -230,7 +227,7 @@ const Chatting = ({ state, showChat, projectList, chatList }: { state: boolean; 
                 </div>
               </>
             );
-        })} */}
+        })}
       </ChatContainer>
 
       <InputChat>

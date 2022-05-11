@@ -117,6 +117,25 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
 
           alert(messagedto.message);
         });
+
+        // 채팅 주소 구독
+        client.subscribe(`/sub/chat/room/project/${localStorage.getItem("projectNo")}`, (res) => {
+          const messagedto = JSON.parse(res.body);
+          console.log(messagedto);
+          alert(messagedto.message);
+        });
+
+        // // 채팅 전송
+        // let chat = {
+        //   // 채팅장 번호
+        //   roomNo: localStorage.getItem("roomNo"),
+        //   // 채팅 작성자 코드
+        //   pubNo: localStorage.getItem("userNo"),
+        //   // 채팅 내용
+        //   content: localStorage.getItem("chatContent"),
+        // }
+        
+        // client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
       });
     }
   }, [userInfo]);
