@@ -428,7 +428,6 @@ const TeamSpace = ({
   useEffect(() => {
     if (!sprintInfo) return;
     console.log(sprintInfo);
-
     getIssues();
   }, [sprintInfo]);
 
