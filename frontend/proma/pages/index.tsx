@@ -7,8 +7,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import { RootState } from "../store/modules";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
+import { BACKEND_URL } from "../config";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import { userInfo } from "os";
 
 const animation = keyframes`
     0% {
@@ -70,6 +73,7 @@ const StyledContainer = styled(ToastContainer)`
 const mapStateToProps = (state: RootState) => {
   return {
     isLogin: state.userReducer.isLogin,
+    userInfo: state.userReducer.userInfo,
   };
 };
 
@@ -86,43 +90,41 @@ function notify() {
   });
 }
 
-const Home = ({ isLogin }: { isLogin: boolean }) => {
+const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
+  const router = useRouter();
   //   useEffect(() => {
   //     getRefresh();
   //   }, []);
 
   useEffect(() => {
-    //알림 연결 로직
-    if (!isLogin) {
-      console.log("not yet");
-      let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-      let client = Stomp.over(sock);
-      client.disconnect();
-    } else {
-      console.log("ready");
-      const Authorization = localStorage.getItem("Authorization");
-      if (!Authorization) return;
-      console.log(Authorization);
-      let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-      let client = Stomp.over(sock);
+    if (!router.isReady || !userInfo) return;
 
-      client.connect(
-        { Authorization: localStorage.getItem("Authorization")?.toString() },
-        () => {
-          //   client.send(
-          //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-          //   );
-          // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-          client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
-            const messagedto = JSON.parse(res.body);
-            console.log(messagedto);
-            alert(messagedto.message);
-          });
-        }
-      );
-      // return () => client.disconnect();
+    //알림 연결 로직
+    const Authorization = localStorage.getItem("Authorization")?.toString();
+    const SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+    if (isLogin) {
+      let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
+      let client = Stomp.over(sock);
+      client.connect({ Authorization }, () => {
+        //   client.send(
+        //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+        //   );
+        // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
+        client.subscribe(SUBSCRIBE_URL, (res) => {
+          const messagedto = JSON.parse(res.body);
+          // console.log(messagedto);
+          // console.dir(messagedto);
+          alert(messagedto.message);
+        });
+      });
+    } else {
+    //   new SockJS(`${BACKEND_URL}/ws-stomp`).close();
+    //   let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
+    //   let client = Stomp.over(sock);
+      //   client.disconnect(() => alert("disconnected"), { Authorization });
     }
-  }, [isLogin]);
+  }, [isLogin, userInfo]);
+
   return (
     <MainContainer>
       <StyledContainer

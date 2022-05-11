@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import wrapper from "../store/configureStore";
 import styled, {
   createGlobalStyle,
@@ -11,11 +11,10 @@ import NavBar from "../components/common/NavBar";
 import SideBar from "../components/common/SideBar/SideBar";
 import Footer from "../components/common/Footer";
 import Head from "next/head";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
 import { connect } from "react-redux";
 import { RootState } from "../store/modules";
-import { useRouter } from "next/router";
+import ErrorPage from "./404";
+import ErrorBoundary from "../ErrorBoundary";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -59,19 +58,18 @@ const MainComponent = styled.div`
   height: 92%;
 `;
 
-
 const mapStateToProps = (state: RootState) => {
-    return {
-        darkModeState: state.modeReducer.darkMode,
-        isLogin: state.userReducer.isLogin,
-    };
+  return {
+    darkModeState: state.modeReducer.darkMode,
+    isLogin: state.userReducer.isLogin,
+  };
 };
 
 function MyApp({
   Component,
   pageProps,
   darkModeState,
-}: AppProps & { darkModeState: boolean;}) {
+}: AppProps & { darkModeState: boolean }) {
   return (
     <>
       <Head>
@@ -81,14 +79,16 @@ function MyApp({
       </Head>
       <GlobalStyle />
       <ThemeProvider theme={darkModeState ? darkTheme : lightTheme}>
-        <Container>
-          <NavBar />
-          <MainComponent>
-            <SideBar />
-            <Component {...pageProps} />
-          </MainComponent>
-          <Footer />
-        </Container>
+        <ErrorBoundary fallback={<ErrorPage />}>
+          <Container>
+            <NavBar />
+            <MainComponent>
+              <SideBar />
+              <Component {...pageProps} />
+            </MainComponent>
+            <Footer />
+          </Container>
+        </ErrorBoundary>
       </ThemeProvider>
     </>
   );

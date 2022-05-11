@@ -125,6 +125,7 @@ export const apiInstance = () => {
     (error: AxiosError) => {
       if (error.response) {
         console.log(error.response.status);
+        console.log(error.response.data);
         if (error.response.status === 401) {
           let accessTokenExpiredCode = error.response.data.code;
           console.log(accessTokenExpiredCode);

@@ -15,23 +15,9 @@ export type UserState = {
 };
 
 const initialState: UserState = {
-  userInfo: [],
+  userInfo: {},
   isLogin: false,
 };
-
-export const getLogin = createAsyncThunk(
-  "USER/LOGIN/GITHUB",
-  async (_, thunkAPI) => {
-    const code = localStorage.getItem("code");
-    return await userApi
-      .get(`/user/login/github?code=${code}`)
-      .then((res) => {
-        thunkAPI.dispatch(getProjectList());
-        res.data;
-      })
-      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
-  }
-);
 
 export const getUserInfo = createAsyncThunk(
   "USER/DATA",
@@ -40,6 +26,21 @@ export const getUserInfo = createAsyncThunk(
       .get(`/user/data`)
       .then((res) => res.data)
       .catch((err) => rejectWithValue(err.response.data));
+  }
+);
+
+export const getLogin = createAsyncThunk(
+  "USER/LOGIN/GITHUB",
+  async (_, thunkAPI) => {
+    const code = localStorage.getItem("code");
+    return await userApi
+      .get(`/user/login/github?code=${code}`)
+      .then((res) => {
+        thunkAPI.dispatch(getUserInfo());
+        thunkAPI.dispatch(getProjectList());
+        res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -59,19 +60,17 @@ const memberSlice = createSlice({
   reducers: {
     getLogout(state: UserState) {
       state.isLogin = false;
+    //   state.userInfo = {};
       localStorage.removeItem("code");
-      localStorage.removeItem("Authorization");
+    //   localStorage.removeItem("Authorization");
       localStorage.removeItem("RefreshToken");
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(
-        getUserInfo.fulfilled,
-        (state, { payload }: { payload: { userInfo: any } }) => {
-          state.userInfo = payload;
-        }
-      )
+      .addCase(getUserInfo.fulfilled, (state, { payload }) => {
+        state.userInfo = payload.userRes;
+      })
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
       });
