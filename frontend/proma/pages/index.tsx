@@ -5,7 +5,10 @@ import { FaHandPointLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
-import axios from "axios";
+import { RootState } from "../store/modules";
+import { connect } from "react-redux";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
 
 const animation = keyframes`
     0% {
@@ -64,6 +67,12 @@ const StyledContainer = styled(ToastContainer)`
   }
 `;
 
+const mapStateToProps = (state: RootState) => {
+  return {
+    isLogin: state.userReducer.isLogin,
+  };
+};
+
 // let toastId = null;
 function notify() {
   toast("PROMA", {
@@ -77,10 +86,43 @@ function notify() {
   });
 }
 
-const Home = () => {
-//   useEffect(() => {
-//     getRefresh();
-//   }, []);
+let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+let client = Stomp.over(sock);
+
+const Home = ({ isLogin }: { isLogin: boolean }) => {
+  //   useEffect(() => {
+  //     getRefresh();
+  //   }, []);
+
+  useEffect(() => {
+    //알림 연결 로직
+    if (!isLogin) {
+      console.log("not yet");
+    //   client.disconnect();
+      return;
+    } else {
+      console.log("ready");
+    }
+    const Authorization = localStorage.getItem("Authorization");
+    if (!Authorization) return;
+    console.log(Authorization);
+
+    client.connect(
+      { Authorization: localStorage.getItem("Authorization")?.toString() },
+      () => {
+        //   client.send(
+        //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
+        //   );
+        // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
+        client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
+          const messagedto = JSON.parse(res.body);
+          console.log(messagedto);
+          alert(messagedto.message);
+        });
+      }
+    );
+    // return () => client.disconnect();
+  }, [isLogin]);
   return (
     <MainContainer>
       <StyledContainer
@@ -108,4 +150,5 @@ const Home = () => {
     </MainContainer>
   );
 };
-export default Home;
+
+export default connect(mapStateToProps, null)(Home);

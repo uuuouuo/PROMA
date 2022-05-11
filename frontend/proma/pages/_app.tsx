@@ -15,6 +15,7 @@ import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { connect } from "react-redux";
 import { RootState } from "../store/modules";
+import { useRouter } from "next/router";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -58,39 +59,19 @@ const MainComponent = styled.div`
   height: 92%;
 `;
 
-// let sock = new SockJS("http://k6c107.p.ssafy.io:8080/ws-stomp");
-let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-let client = Stomp.over(sock);
 
 const mapStateToProps = (state: RootState) => {
-  return {
-    darkModeState: state.modeReducer.darkMode,
-  };
+    return {
+        darkModeState: state.modeReducer.darkMode,
+        isLogin: state.userReducer.isLogin,
+    };
 };
 
 function MyApp({
   Component,
   pageProps,
   darkModeState,
-}: AppProps & { darkModeState: boolean }) {
-  useEffect(() => {
-    //알림 연결 로직
-    client.connect({"Authorization" : localStorage.getItem("Authorization")?.toString()}, () => {
-    //   client.send(
-    //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-    //   );
-      // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-      client.subscribe("/queue/notification/FISZ6HYHc6NwLYF", (res) => {
-        const messagedto = JSON.parse(res.body);
-        console.log(messagedto);
-        alert(messagedto.message);
-      });
-    });
-    // return () => client.disconnect();
-  }, []);
-
-  const timeOut = 2000;
-
+}: AppProps & { darkModeState: boolean;}) {
   return (
     <>
       <Head>
