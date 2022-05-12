@@ -9,6 +9,9 @@ import Image from "next/image";
 import { chatSend, projectChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+import { reverse } from "dns/promises";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -82,11 +85,12 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 
-const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; showChat: any; projectList: any; chatInfo: any; }) => {
+const Chatting = ({ state, showChat, projectNo, projectChat, chatInfo }: { state: boolean; showChat: any; projectNo: any; projectChat: any; chatInfo: any; }) => {
 
   let output = localStorage.getItem("messageList");
   let arr = JSON.parse(output as string);
-  const [dummy, setDummy] = useState(arr);
+  const [messageList, setMessageList] = useState<any>([]);
+  const [newMessage, setNewMessage] = useState<Object>({});
   const [chat, setChat] = useState<string>("");
 
   const onSubmitChat = (e: any) => {
@@ -95,17 +99,42 @@ const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; 
       chatSend();
     }
   };
+  
+  const chatSubscribe = (roomNo: number) => {
+    const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
+    if (!Authorization) return;
+    let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+    let client = Stomp.over(sock);
+
+    client.connect(
+        { Authorization },
+        () => {
+                // 채팅 주소 구독
+                client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
+                const messagedto = JSON.parse(res.body);
+                console.log(messagedto)
+                setNewMessage(messagedto)
+            });
+        }
+    );
+  }
+  
+  useEffect(() => {
+    if (!projectNo) return
+    
+    projectChat(projectNo).then((res: any) => {
+      chatSubscribe(res.payload.response.roomNo)
+      const messagelist = res.payload.response.messageList
+      const arr = [...messagelist].reverse();
+      setMessageList(arr)
+    });
+  }, [projectNo])
 
   useEffect(() => {
-    // projectChat(projectList[0].projectNo);
-    let output = localStorage.getItem("messageList");
-    let arr = JSON.parse(output as string);
-    setDummy(arr);
-    console.log(dummy)
-  }, [output])
+    setMessageList([...messageList, newMessage]);
+  }, [newMessage])
 
-  console.log(chatInfo)
-  
+
   return (
     <SlidingPaneBox
       isOpen={state}
@@ -113,14 +142,14 @@ const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; 
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          <span>{dummy?.length}</span>
+          {/* <span>{messageList?.length}</span> */}
         </ChatInfo>
       }
       width="500px"
       onRequestClose={showChat}
     >
       <ChatContainer>
-      {dummy?.map((element: any, idx: any) => {
+      {messageList.map((element: any, idx: any) => {
           if (element.name !== localStorage.getItem("userNo"))
             return (
               <>

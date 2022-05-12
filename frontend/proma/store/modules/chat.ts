@@ -25,11 +25,9 @@ export const projectChat = createAsyncThunk(
         return await api
             .get(`/chat/room/project/${projectNo}`)
             .then((res) => {
-                console.log(res.data.response)
                 localStorage.setItem("messageList", JSON.stringify(res.data.response.messageList));
                 return res.data
             })
-            // .then((res) => console.log(res.data))
             .catch((err) => thunkAPI.rejectWithValue(err.response.data));
     }
 );

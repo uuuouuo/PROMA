@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
-import { chatSubscribe, projectChat } from "../../../store/modules/chat";
+import { projectChat } from "../../../store/modules/chat";
 import { connect } from "react-redux";
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -121,11 +121,8 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
         <div>
           <ChatButton onClick={() => {
             setState(true)
-            localStorage.setItem("projectNo", projectInfo.projectNo)
-            projectChat(projectInfo.projectNo)
-            chatSubscribe()
           }}>Chat</ChatButton>
-          <Chatting state={state} showChat={showChat} />
+          <Chatting state={state} showChat={showChat} projectNo={projectInfo.projectNo}/>
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
           </ArrowButton>
