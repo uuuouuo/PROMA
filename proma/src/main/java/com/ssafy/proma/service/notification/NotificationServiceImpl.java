@@ -71,8 +71,8 @@ public class NotificationServiceImpl implements NotificationService{
 
         //SprintService startSprint에서 notificationService.sendSprintNotification(sprint);
 
-        String message = "[ " + sprint.getProject().getName() + " ]\n"
-                + "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus() == 1 ? "시작" : "종료") + "되었습니다.";
+        String message = sprint.getProject().getName() + "\n"
+                + "스프린트 " +sprint.getName() + " 가 " + (sprint.getStatus() == 1 ? "시작" : "종료") + "되었습니다.";
         log.debug(message);
 
         List<UserProject> userProjectList = userProjectRepository.findByProject(sprint.getProject());
@@ -98,8 +98,8 @@ public class NotificationServiceImpl implements NotificationService{
 
         Topic topic = issue.getTopic(); //이슈는 무조건 토픽 가짐!
 
-        String message =  "[ " + topic.getProject().getName() + " ]\n"
-                + "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
+        String message =  topic.getProject().getName() + "\n"
+                + "토픽 " + topic.getTitle() + " 의 이슈 " +  issue.getTitle() + " 이/가 완료되었습니다.";
         log.debug(message);
 
         List<Issue> issueList = issueRepository.findByTopic(topic).get();
