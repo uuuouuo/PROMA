@@ -31,6 +31,7 @@ import com.ssafy.proma.repository.team.UserTeamRepository;
 import com.ssafy.proma.repository.topic.TopicRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.AbstractService;
+import com.ssafy.proma.service.notification.NotificationService;
 import com.ssafy.proma.util.SecurityUtil;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class IssueService extends AbstractService {
   private final SecurityUtil securityUtil;
   private final ProjectRepository projectRepository;
   private final UserTeamRepository userTeamRepository;
+  private final NotificationService notificationService;
 
   @Transactional
   public Map<String, Object> createIssue(IssueCreateDto issueCreateDto) throws Exception {
@@ -255,6 +257,9 @@ public class IssueService extends AbstractService {
     Issue issue = takeOp(issueOp);
 
     issue.changeStatus(status);
+
+    if("done".equals(issue.getStatus()))
+      notificationService.sendTopicNotification(issue);
 
     resultMap.put("message", Message.ISSUE_UPDATE_SUCCESS_MESSAGE);
 

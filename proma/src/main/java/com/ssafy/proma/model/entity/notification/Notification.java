@@ -32,7 +32,7 @@ public class Notification {
     @ApiModelProperty(value = "유저 정보")
     private User user;
 
-    @Column(length = 45)
+    @Column(length = 100)
     @ApiModelProperty(value = "알림 내용")
     private String message;
 

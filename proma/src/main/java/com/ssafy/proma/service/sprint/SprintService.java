@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.ssafy.proma.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +39,10 @@ public class SprintService extends AbstractService {
   private final SprintRepository sprintRepository;
   private final ProjectRepository projectRepository;
   private final IssueRepository issueRepository;
+  private final NotificationService notificationService;
 
   @Transactional
-  public Map<String, Object> createSprint(SprintCreateDto sprintCreateDto) {
+  public Map<String, Object> createSprint(SprintCreateDto sprintCreateDto) throws Exception {
 
     Map<String, Object> resultMap = new HashMap<>();
 
@@ -61,7 +64,7 @@ public class SprintService extends AbstractService {
   }
 
   @Transactional
-  public Map<String, Object> startSprint(Integer sprintNo) {
+  public Map<String, Object> startSprint(Integer sprintNo) throws Exception {
     Map<String, Object> resultMap = new HashMap<>();
 
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
@@ -72,6 +75,9 @@ public class SprintService extends AbstractService {
     }
     else {
       sprint.toggleStatus();
+
+      notificationService.sendSprintNotification(sprint);
+
       resultMap.put("message",SPRINT_GET_SUCCESS_MESSAGE);
 
     }
@@ -79,7 +85,7 @@ public class SprintService extends AbstractService {
   }
 
   @Transactional
-  public Map<String, Object> updateSprint(Integer sprintNo, SprintUpdateDto sprintUpdateDto) {
+  public Map<String, Object> updateSprint(Integer sprintNo, SprintUpdateDto sprintUpdateDto) throws Exception {
 
     Map<String, Object> resultMap = new HashMap<>();
 
@@ -100,7 +106,7 @@ public class SprintService extends AbstractService {
     return resultMap;
   }
 
-  public Map<String, Object> getSprintList(String projectNo) {
+  public Map<String, Object> getSprintList(String projectNo) throws Exception {
 
     Map<String, Object> resultMap = new HashMap<>();
 
@@ -126,7 +132,7 @@ public class SprintService extends AbstractService {
     return resultMap;
   }
 
-  public Map<String, Object> getDoingSprint(String projectNo) {
+  public Map<String, Object> getDoingSprint(String projectNo) throws Exception {
 
     Map<String, Object> resultMap = new HashMap<>();
 
@@ -150,7 +156,7 @@ public class SprintService extends AbstractService {
   }
 
   @Transactional
-  public Map<String, Object> getDeleteSprint(Integer sprintNo){
+  public Map<String, Object> getDeleteSprint(Integer sprintNo) throws Exception {
 
     Map<String, Object> resultMap = new HashMap<>();
     Optional<Sprint> sprintOp = sprintRepository.findByNo(sprintNo);
