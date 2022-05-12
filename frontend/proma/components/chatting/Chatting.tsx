@@ -20,7 +20,6 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
-    chatSend: () => dispatch(chatSend())
   };
 };
 
@@ -84,7 +83,7 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 
-const Chatting = ({ state, showChat, projectList, chatInfo, chatSend }: { state: boolean; showChat: any; projectList: any; chatInfo: any; chatSend: any;}) => {
+const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; showChat: any; projectList: any; chatInfo: any; }) => {
 
   useEffect(() => {
     projectChat(projectList[0].projectNo);

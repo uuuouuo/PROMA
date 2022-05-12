@@ -34,14 +34,14 @@ export const projectChat = createAsyncThunk(
 );
 
 export function chatSend() {
-    const Authorization = localStorage.getItem("Authorization");
+    const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
     if (!Authorization) return;
     console.log(Authorization);
     let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
     let client = Stomp.over(sock);
 
     client.connect(
-        { Authorization: localStorage.getItem("Authorization")?.toString() },
+        { Authorization },
         () => {
             // // 채팅 전송 
             let chat = {
