@@ -61,10 +61,12 @@ public class UserService extends AbstractService implements UserDetailsService {
     @Transactional
     public Map<String, Object> update(MultipartFile multipartFile, String nickname, String dirName, String userNo) throws IOException {
         Map<String, Object> resultMap = new HashMap<>();
-        String imgUrl = s3UploaderService.upload(multipartFile, dirName, userNo);
+        String imgUrl = "https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png";
+        if(!multipartFile.isEmpty()){
+            imgUrl = s3UploaderService.upload(multipartFile, dirName, userNo);
+        }
         Optional<User> userOp = userRepository.findByNo(userNo);
         User findUser = takeOp(userOp);
-        s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
         findUser.updateUser(nickname, imgUrl);
         UserRes userRes = new UserRes();
         userRes.setNo(findUser.getNo());
