@@ -5,13 +5,11 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
-import Image from "next/image";
 import { projectChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { reverse } from "dns/promises";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -102,8 +100,6 @@ const Chatting = ({
   projectChat: any;
   userInfo: any;
 }) => {
-//   let output = localStorage.getItem("messageList");
-//   let arr = JSON.parse(output as string);
   const [messageList, setMessageList] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<Object>({});
   const [chat, setChat] = useState<string>("");
@@ -112,12 +108,9 @@ const Chatting = ({
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
       let chat = {
-        // 채팅장 번호
-        roomNo,
-        // 채팅 작성자 코드
-        pubNo: userInfo.no,
-        // 채팅 내용
-        content: e.target.value,
+        roomNo,                       // 채팅장 번호
+        pubNo: userInfo.no,           // 채팅 작성자 코드
+        content: e.target.value,      // 채팅 내용
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
