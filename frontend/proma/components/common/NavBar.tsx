@@ -11,8 +11,6 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { getLogout } from "../../store/modules/member";
-import { BACKEND_URL } from "../../config";
-import SockJS from "sockjs-client";
 import { useRouter } from "next/router";
 
 const NavBarContainer = styled.div`
@@ -55,16 +53,16 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getLogout: () => dispatch(getLogout()),
-  };
-};
-
 const mapStateToProps = (state: RootState) => {
   return {
     userInfo: state.userReducer.userInfo,
     isLogin: state.userReducer.isLogin,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getLogout: () => dispatch(getLogout()),
   };
 };
 
@@ -78,12 +76,11 @@ const NavBar = ({
   getLogout: any;
 }) => {
   const router = useRouter();
-  // const [isLogin, setIsLogin] = useState<boolean>(false);
+
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
   const [userProfileModal, setUserProfileModal] = useState<boolean>(false);
 
-  // const toggleLoginStatus = () => setIsLogin((cur) => !cur);
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);

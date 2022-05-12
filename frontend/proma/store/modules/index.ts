@@ -17,7 +17,7 @@ const persistConfig = {
   // localStorage에 저장
   storage,
   //  localstorage에 저장헐 reducer 배열로 넣기
-  whitelist: ["themeReducer", "userReducer", "chatReducer"],
+  whitelist: ["modeReducer", "userReducer", "chatReducer"],
 };
 
 export const rootReducer = combineReducers({
