@@ -23,7 +23,6 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-
 const InputChat = styled.div`
   width: 420px;
   display: flex;
@@ -85,66 +84,36 @@ const ChatContainer = styled.div`
 
 const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; showChat: any; projectList: any; chatInfo: any; }) => {
 
-  useEffect(() => {
-    projectChat(projectList[0].projectNo);
-  }, [chatInfo])
-
-  const [dummy, setDummy] = useState(chatInfo.messageList);
-
-  const [dummy2, setDummy2] = useState([
-    {
-      name: "김일환",
-      image:
-        "https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_960_720.png",
-      content: "커밋했습니다! 확인해주세요!",
-    },
-    {
-      name: "장소명",
-      image:
-        "https://cdn.pixabay.com/photo/2014/03/24/17/19/teacher-295387_960_720.png",
-      content: "확인했습니다!",
-    },
-    {
-      name: "장다빈",
-      image:
-        "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png",
-      content: "이거 뭔가 이상한데? 확인 좀!",
-    },
-    {
-      name: "박주한",
-      image:
-        "https://cdn.pixabay.com/photo/2021/10/24/21/34/profile-pic-6739366_960_720.png",
-      content: "자네! 이게 뭔가!!!!!!!",
-    },
-    {
-      name: "서은민",
-      image:
-        "https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397_960_720.png",
-      content: "확인했습니다!",
-    },
-  ]);
-
+  let output = localStorage.getItem("messageList");
+  let arr = JSON.parse(output as string);
+  const [dummy, setDummy] = useState(arr);
   const [chat, setChat] = useState<string>("");
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
-      // setDummy([...dummy, value]);
-      // setChat("");
       localStorage.setItem("chatContent", chat)
       chatSend();
     }
   };
 
+  useEffect(() => {
+    // projectChat(projectList[0].projectNo);
+    let output = localStorage.getItem("messageList");
+    let arr = JSON.parse(output as string);
+    setDummy(arr);
+    console.log(dummy)
+  }, [output])
+
+  console.log(chatInfo)
+  
   return (
     <SlidingPaneBox
-      // className="some-custom-class"
-      // overlayClassName="some-custom-overlay-class"
       isOpen={state}
       title="DB"
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          <span>{dummy2.length}</span>
+          <span>{dummy?.length}</span>
         </ChatInfo>
       }
       width="500px"
