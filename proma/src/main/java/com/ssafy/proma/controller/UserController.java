@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class UserController {
         try {
             resultMap = githubAuthService.login(code);
             LoginRes loginRes = (LoginRes) resultMap.get("loginRes");
-            if(loginRes != null && resultMap.get("message").equals(Message.USER_LOGIN_SUCCESS_MESSAGE)){
+            if (loginRes != null && resultMap.get("message").equals(Message.USER_LOGIN_SUCCESS_MESSAGE)) {
                 response.addHeader(JwtProperties.JWT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + loginRes.getJwtToken());
                 response.addHeader(JwtProperties.REF_HEADER_STRING, JwtProperties.TOKEN_PREFIX + loginRes.getRefToken());
                 status = HttpStatus.OK;
@@ -58,7 +59,7 @@ public class UserController {
         try {
             String userNo = securityUtil.getCurrentUserNo();
             resultMap = githubAuthService.logout(userNo);
-            if(resultMap.get("message").equals(Message.USER_LOGOUT_SUCCESS_MESSAGE)){
+            if (resultMap.get("message").equals(Message.USER_LOGOUT_SUCCESS_MESSAGE)) {
                 status = HttpStatus.OK;
             }
         } catch (Exception e) {
@@ -66,6 +67,24 @@ public class UserController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
+        return new ResponseEntity(resultMap, status);
+    }
+
+    @PutMapping("/update")
+    @ApiOperation(value = "회원 정보 수정", notes = "회원의 이미지와 닉네임을 수정한다. 수정 성공 시 http code ok를 반환한다.", response = Map.class)
+    public ResponseEntity upload(@RequestPart("images") MultipartFile multipartFile, @RequestPart("nickname") String nickname) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            String userNo = securityUtil.getCurrentUserNo();
+            resultMap = userService.update(multipartFile, nickname, "image", userNo);
+            if (resultMap.get("message").equals(Message.USER_UPDATE_SUCCESS_MESSAGE)) {
+                status = HttpStatus.OK;
+            }
+        } catch (Exception e) {
+            resultMap.put("message", Message.USER_UPDATE_ERROR_MESSAGE);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
         return new ResponseEntity(resultMap, status);
     }
 
@@ -78,7 +97,7 @@ public class UserController {
         try {
             String userNo = securityUtil.getCurrentUserNo();
             resultMap = githubAuthService.revoke(code, userNo);
-            if(resultMap.get("message").equals(Message.USER_WITHDRAWAL_SUCCESS_MESSAGE)){
+            if (resultMap.get("message").equals(Message.USER_WITHDRAWAL_SUCCESS_MESSAGE)) {
                 status = HttpStatus.OK;
             }
         } catch (Exception e) {
@@ -103,7 +122,7 @@ public class UserController {
         resultMap = githubAuthService.refreshToken(jwt, refresh);
         String newToken = resultMap.get("newJwtToken").toString();
         System.out.println(newToken);
-        if(resultMap.get("message").equals(Message.USER_REFRESH_SUCCESS_MESSAGE)){
+        if (resultMap.get("message").equals(Message.USER_REFRESH_SUCCESS_MESSAGE)) {
             status = HttpStatus.OK;
         }
         response.addHeader(JwtProperties.JWT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + newToken);
@@ -120,7 +139,7 @@ public class UserController {
         try {
             String userNo = securityUtil.getCurrentUserNo();
             resultMap = userService.getByUserNo(userNo);
-            if(resultMap.get("message").equals(Message.USER_FIND_SUCCESS_MESSAGE)){
+            if (resultMap.get("message").equals(Message.USER_FIND_SUCCESS_MESSAGE)) {
                 status = HttpStatus.OK;
             }
         } catch (Exception e) {

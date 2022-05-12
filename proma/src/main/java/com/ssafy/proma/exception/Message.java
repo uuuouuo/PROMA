@@ -74,6 +74,9 @@ public class Message {
   public static final String USER_LOGIN_ERROR_MESSAGE = "사용자 로그인 실패";
   public static final String USER_LOGOUT_SUCCESS_MESSAGE = "사용자 로그아웃 성공";
   public static final String USER_LOGOUT_ERROR_MESSAGE = "사용자 로그아웃 실패";
+  public static final String USER_UPDATE_SUCCESS_MESSAGE = "사용자 업데이트 성공";
+  public static final String USER_UPDATE_ERROR_MESSAGE = "사용자 업데이트 실패";
+  public static final String USER_IMAGE_SIZE_ERROR_MESSAGE = "사진 용량 초과 실패";
   public static final String USER_WITHDRAWAL_SUCCESS_MESSAGE = "사용자 회원탈퇴 성공";
   public static final String USER_WITHDRAWAL_ERROR_MESSAGE = "사용자 회원탈퇴 실패";
   public static final String USER_FIND_SUCCESS_MESSAGE = "사용자 조회 성공";

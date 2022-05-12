@@ -2,21 +2,15 @@ package com.ssafy.proma.config.auth.provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.proma.model.entity.user.User;
-import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.user.UserService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
