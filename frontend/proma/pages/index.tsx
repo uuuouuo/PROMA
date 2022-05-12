@@ -103,7 +103,10 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
       let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
       let client = Stomp.over(sock);
 
-      const Authorization = localStorage.getItem("Authorization")?.toString();
+      const Authorization = localStorage
+        .getItem("Authorization")
+        ?.split(" ")[1]
+        .toString();
       const SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
       client.connect({ Authorization }, (res) => {
         console.dir(res);

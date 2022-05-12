@@ -30,8 +30,8 @@ export const userInstance = () => {
       const Refresh = localStorage.getItem("RefreshToken");
       if (Authorization) {
         const header = config.headers as AxiosRequestHeaders;
-        header.Authorization = "Bearer " + Authorization;
-        header.Refresh = "Bearer " + Refresh;
+        header.Authorization = Authorization;
+        header.Refresh = Refresh as string;
       }
 
       return config;
@@ -96,7 +96,7 @@ export const apiInstance = () => {
       const Authorization = localStorage.getItem("Authorization");
       if (Authorization) {
         const header = config.headers as AxiosRequestHeaders;
-        header.Authorization = "Bearer " + Authorization;
+        header.Authorization = Authorization;
       }
 
       return config;
