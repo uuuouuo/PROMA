@@ -11,13 +11,13 @@ import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { reverse } from "dns/promises";
 
 const mapStateToProps = (state: RootState) => {
   return {
     projectList: state.projectReducer.projectList,
     chatInfo: state.chatReducer.chatInfo,
     userInfo: state.userReducer.userInfo,
+    isLogin: state.userReducer.isLogin,
   };
 };
 
@@ -88,16 +88,30 @@ const ChatContainer = styled.div`
 
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
-const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
-  
-const Chatting = ({ state, showChat, projectNo, projectChat, userInfo }: { state: boolean; showChat: any; projectNo: any; projectChat: any; userInfo: any; }) => {
 
-  let output = localStorage.getItem("messageList");
-  let arr = JSON.parse(output as string);
+const Chatting = ({
+  state,
+  showChat,
+  projectNo,
+  projectChat,
+  userInfo,
+  isLogin,
+}: {
+  state: boolean;
+  showChat: any;
+  projectNo: any;
+  projectChat: any;
+  userInfo: any;
+  isLogin: boolean;
+}) => {
+  //   let output = localStorage.getItem("messageList");
+  //   let arr = JSON.parse(output as string);
   const [messageList, setMessageList] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<Object>({});
   const [chat, setChat] = useState<string>("");
   const [roomNo, setRoomNo] = useState<number>(0);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [authorization, setAuthorization] = useState<string>("");
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
@@ -108,150 +122,157 @@ const Chatting = ({ state, showChat, projectNo, projectChat, userInfo }: { state
         pubNo: userInfo.no,
         // 채팅 내용
         content: e.target.value,
-      }
+      };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
-    };
-  }
-  
+    }
+  };
+
   const chatSubscribe = (roomNo: number) => {
-    const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
-    if (!Authorization) return;
-    let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-    let client = Stomp.over(sock);
-
-    client.connect(
-        { Authorization },
-        () => {
-                // 채팅 주소 구독
-                client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
-                const messagedto = JSON.parse(res.body);
-                console.log(messagedto)
-                setNewMessage(messagedto)
-            });
-        }
-    );
-  }
-  
-  useEffect(() => {
-    if (!projectNo) return
-    
-    projectChat(projectNo).then((res: any) => {
-      setRoomNo(res.payload.response.roomNo)
-      chatSubscribe(res.payload.response.roomNo)
-      const messagelist = res.payload.response.messageList
-      const arr = [...messagelist].reverse();
-      setMessageList(arr)
+    // const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
+    client.connect({ Authorization: authorization }, () => {
+      // 채팅 주소 구독
+      client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
+        const messagedto = JSON.parse(res.body);
+        console.log(messagedto);
+        setNewMessage(messagedto);
+      });
     });
-  }, [projectNo])
+  };
 
   useEffect(() => {
-    setMessageList([...messageList, newMessage]);
-  }, [newMessage])
+    if (!isLogin) return;
+    setIsReady(true);
+    let accessToken = localStorage.getItem("Authorization")?.split(" ")[1];
+    setAuthorization(accessToken as string);
+  }, [isLogin]);
 
+  useEffect(() => {
+    if (!projectNo) return;
+
+    projectChat(projectNo).then((res: any) => {
+      setRoomNo(res.payload.response.roomNo);
+      chatSubscribe(res.payload.response.roomNo);
+      const messagelist = res.payload.response.messageList;
+      const arr = [...messagelist].reverse();
+      setMessageList(arr);
+    });
+  }, [projectNo]);
+
+  useEffect(() => {
+    if (!newMessage) return;
+    setMessageList([...messageList, newMessage]);
+  }, [newMessage]);
 
   return (
-    <SlidingPaneBox
-      isOpen={state}
-      title="DB"
-      subtitle={
-        <ChatInfo>
-          <BsFillPeopleFill />
-          {/* <span>{messageList?.length}</span> */}
-        </ChatInfo>
-      }
-      width="500px"
-      onRequestClose={showChat}
-    >
-      <ChatContainer>
-      {messageList.map((element: any, idx: any) => {
-          if (element.name !== localStorage.getItem("userNo"))
-            return (
-              <>
-                <div style={{ display: "flex", marginBottom: "2%" }} key={idx}>
-                  <img
-                    style={{
-                      width: "3%",
-                      height: "3%",
-                      borderRadius: "50%",
-                      marginRight: "1%",
-                    }}
-                    src={`${element.image}`}
-                  />
-                  <a style={{ fontWeight: "bold", alignSelf: "center" }}>
-                    {element.name}
-                  </a>{" "}
-                </div>
+    <>
+      {isReady ? (
+        <SlidingPaneBox
+          isOpen={state}
+          title="DB"
+          subtitle={
+            <ChatInfo>
+              <BsFillPeopleFill />
+              {/* <span>{messageList?.length}</span> */}
+            </ChatInfo>
+          }
+          width="500px"
+          onRequestClose={showChat}
+        >
+          <ChatContainer>
+            {messageList.map((element: any, idx: any) => {
+              if (element.name !== userInfo.no)
+                return (
+                  <>
+                    <div
+                      style={{ display: "flex", marginBottom: "2%" }}
+                      key={idx}
+                    >
+                      <img
+                        style={{
+                          width: "3%",
+                          height: "3%",
+                          borderRadius: "50%",
+                          marginRight: "1%",
+                        }}
+                        src={`${element.image}`}
+                      />
+                      <a style={{ fontWeight: "bold", alignSelf: "center" }}>
+                        {element.name}
+                      </a>{" "}
+                    </div>
 
-                <div style={{ marginBottom: "4%" }}>
-                  <a
-                    style={{
-                      background: "white",
-                      width: "fit-content",
-                      height: "100px",
-                      padding: "1.5% 1% 1.5% 1%",
-                      borderRadius: "5px 5px 5px 0px / 5px 5px 5px 0px",
-                    }}
-                  >
-                    {element.content}
-                  </a>
-                </div>
-              </>
-            );
-          else
-            return (
-              <>
-                <div
-                  style={{
-                    display: "flex",
-                    marginBottom: "2%",
-                    justifyContent: "right",
-                  }}
-                  key={idx}
-                >
-                  <img
-                    style={{
-                      width: "3%",
-                      height: "3%",
-                      borderRadius: "50%",
-                      marginRight: "1%",
-                    }}
-                    src={`${element.image}`}
-                  />
-                  <a style={{ fontWeight: "bold", alignSelf: "center" }}>
-                    {element.name}
-                  </a>{" "}
-                </div>
+                    <div style={{ marginBottom: "4%" }}>
+                      <a
+                        style={{
+                          background: "white",
+                          width: "fit-content",
+                          height: "100px",
+                          padding: "1.5% 1% 1.5% 1%",
+                          borderRadius: "5px 5px 5px 0px / 5px 5px 5px 0px",
+                        }}
+                      >
+                        {element.content}
+                      </a>
+                    </div>
+                  </>
+                );
+              else
+                return (
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        marginBottom: "2%",
+                        justifyContent: "right",
+                      }}
+                      key={idx}
+                    >
+                      <img
+                        style={{
+                          width: "3%",
+                          height: "3%",
+                          borderRadius: "50%",
+                          marginRight: "1%",
+                        }}
+                        src={`${element.image}`}
+                      />
+                      <a style={{ fontWeight: "bold", alignSelf: "center" }}>
+                        {element.name}
+                      </a>{" "}
+                    </div>
 
-                <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
-                  <a
-                    style={{
-                      background: "#6667AB",
-                      color: "white",
-                      width: "fit-content",
-                      height: "100px",
-                      padding: "1.5% 1% 1.5% 1%",
-                      borderRadius: "5px 5px 0px 5px / 5px 5px 0px 5px",
-                    }}
-                  >
-                    {element.content}
-                  </a>
-                </div>
-              </>
-            );
-        })}
-      </ChatContainer>
+                    <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
+                      <a
+                        style={{
+                          background: "#6667AB",
+                          color: "white",
+                          width: "fit-content",
+                          height: "100px",
+                          padding: "1.5% 1% 1.5% 1%",
+                          borderRadius: "5px 5px 0px 5px / 5px 5px 0px 5px",
+                        }}
+                      >
+                        {element.content}
+                      </a>
+                    </div>
+                  </>
+                );
+            })}
+          </ChatContainer>
 
-      <InputChat>
-        <input
-          type="text"
-          value={chat}
-          placeholder="Chat.."
-          onChange={(e) => setChat(e.target.value)}
-          onKeyPress={onSubmitChat}
-          autoFocus
-        />
-      </InputChat>
-    </SlidingPaneBox>
+          <InputChat>
+            <input
+              type="text"
+              value={chat}
+              placeholder="Chat.."
+              onChange={(e) => setChat(e.target.value)}
+              onKeyPress={onSubmitChat}
+              autoFocus
+            />
+          </InputChat>
+        </SlidingPaneBox>
+      ) : null}
+    </>
   );
 };
 
