@@ -7,12 +7,10 @@ import { ThemeType } from "../../interfaces/style";
 import Link from "next/link";
 import Toggle from "./Toggle";
 import { LoginModal, JoinModal, UserProfileModal } from "./Modal";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegUserCircle, FaRegBell } from "react-icons/fa";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { getLogout } from "../../store/modules/member";
-import { BACKEND_URL } from "../../config";
-import SockJS from "sockjs-client";
 import { useRouter } from "next/router";
 
 const NavBarContainer = styled.div`
@@ -23,11 +21,24 @@ const NavBarContainer = styled.div`
   align-items: center;
   padding: 10px 30px;
   color: white;
+  position: relative;
   button {
     &:hover {
       cursor: pointer;
     }
   }
+`;
+const NotiBox = styled.div`
+  position: absolute;
+  width: 300px;
+  height: 400px;
+  right: 0;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
+  z-index: 2;
 `;
 const Logo = styled.a`
   &:hover {
@@ -55,16 +66,16 @@ const MenuToggleBox = styled.div`
   font-size: 25px;
 `;
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getLogout: () => dispatch(getLogout()),
-  };
-};
-
 const mapStateToProps = (state: RootState) => {
   return {
     userInfo: state.userReducer.userInfo,
     isLogin: state.userReducer.isLogin,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getLogout: () => dispatch(getLogout()),
   };
 };
 
@@ -78,15 +89,16 @@ const NavBar = ({
   getLogout: any;
 }) => {
   const router = useRouter();
-  // const [isLogin, setIsLogin] = useState<boolean>(false);
+
   const [loginModal, setLoginModal] = useState<boolean>(false);
   const [joinModal, setJoinModal] = useState<boolean>(false);
   const [userProfileModal, setUserProfileModal] = useState<boolean>(false);
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
 
-  // const toggleLoginStatus = () => setIsLogin((cur) => !cur);
   const showLoginModal = () => setLoginModal((cur) => !cur);
   const showJoinModal = () => setJoinModal((cur) => !cur);
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
+  const showNotificationBox = () => setShowNotifications((cur) => !cur);
 
   const onLogOut = () => {
     router.push("/");
@@ -127,6 +139,10 @@ const NavBar = ({
               showUserProfileModal={showUserProfileModal}
               userInfo={userInfo}
             />
+            <MenuIconButton>
+              <FaRegBell onClick={showNotificationBox} />
+              {showNotifications ? <NotiBox>sdfd</NotiBox> : null}
+            </MenuIconButton>
             <MenuButton onClick={onLogOut}>Logout</MenuButton>
           </MenuToggleBox>
         )}

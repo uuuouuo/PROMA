@@ -1,11 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { BACKEND_URL } from "../../config";
-import axios from "axios";
 import { apiInstance, userInstance } from "../../api";
 import { getProjectList } from "./project";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-
 const api = apiInstance();
 const userApi = userInstance();
 
@@ -14,7 +9,7 @@ export type UserState = {
   isLogin: boolean;
 };
 
-const initialState: UserState = {
+export const initialState: UserState = {
   userInfo: {},
   isLogin: false,
 };

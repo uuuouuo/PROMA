@@ -120,7 +120,7 @@ const Chatting = ({ state, showChat, projectList, chatInfo }: { state: boolean; 
       onRequestClose={showChat}
     >
       <ChatContainer>
-      {dummy.map((element: any, idx: any) => {
+      {dummy?.map((element: any, idx: any) => {
           if (element.name !== localStorage.getItem("userNo"))
             return (
               <>

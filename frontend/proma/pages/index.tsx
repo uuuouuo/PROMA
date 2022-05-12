@@ -8,10 +8,11 @@ import { useEffect } from "react";
 import { RootState } from "../store/modules";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { BACKEND_URL } from "../config";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { userInfo } from "os";
+import { BACKEND_URL } from "../config";
+let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
+let client = Stomp.over(sock);
 
 const animation = keyframes`
     0% {
@@ -78,52 +79,41 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-// let toastId = null;
-function notify() {
-  toast("PROMA", {
-    position: toast.POSITION.TOP_RIGHT,
-    autoClose: 3000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  });
-}
-
-const Home = ({ isLogin, userInfo, chatInfo }: { isLogin: boolean; userInfo: any; chatInfo: any; }) => {
+const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
   const router = useRouter();
-  //   useEffect(() => {
-  //     getRefresh();
-  //   }, []);
+
+  const notify = () => {
+    toast("PROMA", {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
     if (!userInfo) return;
-    if (isLogin) {
-      let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-      let client = Stomp.over(sock);
 
+    if (isLogin) {
       const Authorization = localStorage
         .getItem("Authorization")
         ?.split(" ")[1]
         .toString();
-      const SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      client.connect({ Authorization }, (res) => {
-        console.dir(res);
 
-        //   client.send(
-        //     "https://j6c103.p.ssafy.io:8081/notification/send?userNo=U001"
-        //   );
-        // client.send(`/app/chat/${(메세지받을대상)user.id}`,{},JSON.stringify(res.data));
-        client.subscribe(SUBSCRIBE_URL, (res) => {
+      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+      client.connect({ Authorization }, () => {
+        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
           const messagedto = JSON.parse(res.body);
           console.log(messagedto);
           alert(messagedto.message);
         });
       });
     }
-  }, [userInfo, chatInfo]);
+  }, [userInfo]);
 
   return (
     <MainContainer>
