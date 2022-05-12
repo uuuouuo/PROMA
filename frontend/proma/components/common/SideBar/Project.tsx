@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Chatting from "../../chatting/Chatting";
 import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
-import { projectChat, test } from "../../../store/modules/chat";
+import { projectChat } from "../../../store/modules/chat";
 import { connect } from "react-redux";
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -121,7 +121,7 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
         <div>
           <ChatButton onClick={() => {
             setState(true)
-            console.log(projectInfo.projectNo)
+            localStorage.setItem("projectNo", projectInfo.projectNo)
             projectChat(projectInfo.projectNo)
           }}>Chat</ChatButton>
           <Chatting state={state} showChat={showChat} />

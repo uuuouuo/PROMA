@@ -71,6 +71,7 @@ const memberSlice = createSlice({
     builder
       .addCase(getUserInfo.fulfilled, (state, { payload }) => {
         state.userInfo = payload.userRes;
+        localStorage.setItem("userNo", payload.userRes.no);
       })
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
