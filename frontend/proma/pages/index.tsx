@@ -107,6 +107,7 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
       client.connect({ Authorization }, () => {
         client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
           const messagedto = JSON.parse(res.body);
+          console.log(messagedto);
           alert(messagedto.message);
         });
       });

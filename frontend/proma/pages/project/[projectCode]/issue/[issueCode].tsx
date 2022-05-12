@@ -348,9 +348,10 @@ const IssueDetail = ({
 
   useEffect(() => {
     if (!teamMembers) return;
+    console.log(teamMembers);
     setMemberList(
       teamMembers.filter(
-        (element: any) => element.userNo !== issueInfo.assignee.userNo
+        (element: any) => element?.userNo !== issueInfo.assignee.userNo
       )
     );
   }, [teamMembers]);
