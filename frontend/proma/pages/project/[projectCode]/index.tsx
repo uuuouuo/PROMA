@@ -30,7 +30,7 @@ import {
   setDndMoved,
 } from "../../../store/modules/issue";
 
-//styled-components
+//styled-component
 const Button = styled.button`
   font-size: 15px;
   &:hover {
