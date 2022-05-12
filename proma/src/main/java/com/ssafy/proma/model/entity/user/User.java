@@ -52,7 +52,7 @@ public class User {
         this.no = userNo;
         this.nickname = userNickname;
         this.nodeId = userNodeId;
-        this.profileImage = null;
+        this.profileImage = "https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png";
         this.isDeleted = false;
         this.refresh = null;
     }
