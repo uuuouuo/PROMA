@@ -80,18 +80,32 @@ public class NotificationController {
     // 임시 알림 전송
     @PostMapping("/send")
     @ApiOperation(value = "임시 알림 전송", notes = "해당 회원에게 임시 알림 전송")
-    @ResponseBody
-    public void sendNotification(@RequestParam String userNo) {
+    public ResponseEntity sendNotification(@RequestParam String userNo) {
 
         //알림 전송
-        NotificationDto notification = new NotificationDto();
-        notification.setUserNo(userNo);
-        notification.setMessage(userNo + "님 알림 왔음");
-        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+//        NotificationDto notification = new NotificationDto();
+//        notification.setUserNo(userNo);
+//        notification.setMessage(userNo + "님 알림 왔음");
+//        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+//
+//        log.debug(userNo + " 알림 전송 완료");
 
-        log.debug(userNo + " 알림 전송 완료");
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            resultMap = notificationService.sendNotification(userNo);
+
+            if(resultMap.get("message").equals("알림 전송 성공")) {
+                status = HttpStatus.OK;
+            }
+        } catch (Exception e) {
+            log.error("알림 전송 실패 : {}", e.getMessage());
+
+            resultMap.put("message", "알림 전송 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity(resultMap, status);
     }
-
 
     // 임시 채팅 화면
     @GetMapping("/chatting/{roomNo}/{userNo}")

@@ -10,6 +10,7 @@ import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.Notification.NotificationRepository;
 import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
+import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.topic.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +34,13 @@ public class NotificationServiceImpl implements NotificationService{
     private final UserProjectRepository userProjectRepository;
     private final IssueRepository issueRepository;
     private final TopicService topicService;
+    private final UserRepository userRepository;
 
     @Override
     public Map<String, Object> getNotificationList(String userNo) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
-        List<Notification> notifications = notificationRepository.findByUserNoOrderByCheckedAscNotificationTimeDesc(userNo);
+        List<Notification> notifications = notificationRepository.findByUserNoAndCheckedFalseOrderByNotificationTimeDesc(userNo);
 
         List<NotificationDto>  notificationList = notifications.stream().map(
             notification -> new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime())
@@ -65,6 +67,8 @@ public class NotificationServiceImpl implements NotificationService{
 
         return resultMap;
     }
+
+    //메세지 수신자 중복 없애기!
 
     @Override
     @Transactional
@@ -107,5 +111,27 @@ public class NotificationServiceImpl implements NotificationService{
 
             log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
         }
+    }
+
+    public Map<String, Object> sendNotification(String userNo) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<User> userOp = userRepository.findById(userNo);
+        if(!userOp.isPresent()){
+            resultMap.put("message", "존재하지 않는 회원입니다.");
+            return resultMap;
+        }
+
+        String message = userNo + "님 임시 알림 왔음";
+        notificationRepository.save(Notification.builder().user(userOp.get()).message(message).build());
+
+        //알림 전송
+        NotificationDto notification = new NotificationDto();
+        notification.setMessage(message);
+        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+
+        resultMap.put("message", "알림 전송 성공");
+        return resultMap;
     }
 }
