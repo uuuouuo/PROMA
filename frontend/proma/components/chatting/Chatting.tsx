@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
 import Image from "next/image";
-import { chatSend, projectChat } from "../../store/modules/chat";
+import { projectChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
@@ -17,6 +17,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     projectList: state.projectReducer.projectList,
     chatInfo: state.chatReducer.chatInfo,
+    userInfo: state.userReducer.userInfo,
   };
 };
 
@@ -85,20 +86,32 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 
-const Chatting = ({ state, showChat, projectNo, projectChat, chatInfo }: { state: boolean; showChat: any; projectNo: any; projectChat: any; chatInfo: any; }) => {
+let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
+let client = Stomp.over(sock);
+const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
+  
+const Chatting = ({ state, showChat, projectNo, projectChat, userInfo }: { state: boolean; showChat: any; projectNo: any; projectChat: any; userInfo: any; }) => {
 
   let output = localStorage.getItem("messageList");
   let arr = JSON.parse(output as string);
   const [messageList, setMessageList] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<Object>({});
   const [chat, setChat] = useState<string>("");
+  const [roomNo, setRoomNo] = useState<number>(0);
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
-      localStorage.setItem("chatContent", chat)
-      chatSend();
-    }
-  };
+      let chat = {
+        // 채팅장 번호
+        roomNo,
+        // 채팅 작성자 코드
+        pubNo: userInfo.no,
+        // 채팅 내용
+        content: e.target.value,
+      }
+      client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
+    };
+  }
   
   const chatSubscribe = (roomNo: number) => {
     const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
@@ -123,6 +136,7 @@ const Chatting = ({ state, showChat, projectNo, projectChat, chatInfo }: { state
     if (!projectNo) return
     
     projectChat(projectNo).then((res: any) => {
+      setRoomNo(res.payload.response.roomNo)
       chatSubscribe(res.payload.response.roomNo)
       const messagelist = res.payload.response.messageList
       const arr = [...messagelist].reverse();

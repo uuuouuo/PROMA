@@ -32,25 +32,6 @@ export const projectChat = createAsyncThunk(
     }
 );
 
-export function chatSubscribe() {
-    const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
-    if (!Authorization) return;
-    let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-    let client = Stomp.over(sock);
-
-    client.connect(
-        { Authorization },
-        () => {
-                // 채팅 주소 구독
-                client.subscribe(`/sub/chat/room/project/${localStorage.getItem("roomNo")}`, (res) => {
-                const messagedto = JSON.parse(res.body);
-                console.log(messagedto);
-                alert(messagedto.nickname + "이 " + messagedto.roomNo + "번방에 채팅을 작성했습니다.");
-            });
-        }
-    );
-}
-
 export function chatSend() {
     const Authorization = localStorage.getItem("Authorization")?.split(" ")[1].toString();
     if (!Authorization) return;
