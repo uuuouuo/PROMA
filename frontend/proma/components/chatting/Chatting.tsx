@@ -123,6 +123,10 @@ const Chatting = ({
     }
   };
 
+  const onReset = () => {
+    setChat('');
+  }
+
   const chatSubscribe = (roomNo: number) => {
     const Authorization = localStorage
       .getItem("Authorization")
