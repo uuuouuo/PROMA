@@ -18,10 +18,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -68,15 +65,14 @@ public class NotificationServiceImpl implements NotificationService{
         return resultMap;
     }
 
-    //메세지 수신자 중복 없애기!
-
     @Override
     @Transactional
-    public void sendSprintNotification(Sprint sprint) {
+    public void sendSprintNotification(Sprint sprint) throws Exception {
 
-        //SprintService에서 notificationService.sendSprintNotification(sprint);
+        //SprintService startSprint에서 notificationService.sendSprintNotification(sprint);
 
-        String message = "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus()==1 ? "시작" : "종료") + "되었습니다.";
+        String message = "[ " + sprint.getProject().getName() + " ]\n"
+                + "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus() == 1 ? "시작" : "종료") + "되었습니다.";
         log.debug(message);
 
         List<UserProject> userProjectList = userProjectRepository.findByProject(sprint.getProject());
@@ -94,25 +90,43 @@ public class NotificationServiceImpl implements NotificationService{
         }
     }
 
-    public void sendTopicNotification(Issue issue) {
+    @Override
+    @Transactional
+    public void sendTopicNotification(Issue issue) throws Exception {
 
-        Topic topic = issueRepository.findById(issue.getNo()).get().getTopic();
+        //IssueService changeStatusIssue에서 notificationService.sendTopicNotification(issue);
 
-        String message = "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
+        Topic topic = issue.getTopic(); //이슈는 무조건 토픽 가짐!
+
+        String message =  "[ " + topic.getProject().getName() + " ]\n"
+                + "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
         log.debug(message);
 
         List<Issue> issueList = issueRepository.findByTopic(topic).get();
-        for(Issue relatedIssue : issueList){
+//        for(Issue relatedIssue : issueList){
+//
+//            notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());
+//            NotificationDto notification = new NotificationDto();
+//            notification.setMessage(message);
+//            messagingTemplate.convertAndSend("/queue/notification/" + relatedIssue.getUser().getNo(), notification);
+//
+//            log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
+//        }
 
-            notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());
+        //중복 수신 제거!
+        Set<User> userList = issueList.stream().map(Issue::getUser).collect(Collectors.toSet());
+
+        for(User user : userList) {
+            notificationRepository.save(Notification.builder().user(user).message(message).build());
             NotificationDto notification = new NotificationDto();
             notification.setMessage(message);
-            messagingTemplate.convertAndSend("/queue/notification/" + relatedIssue.getUser().getNo(), notification);
+            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notification);
 
-            log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
+            log.debug(user.getNickname() + " 알림 전송 완료");
         }
     }
 
+    @Override
     public Map<String, Object> sendNotification(String userNo) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
