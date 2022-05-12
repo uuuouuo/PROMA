@@ -10,6 +10,7 @@ import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.Notification.NotificationRepository;
 import com.ssafy.proma.repository.issue.IssueRepository;
 import com.ssafy.proma.repository.project.UserProjectRepository;
+import com.ssafy.proma.repository.user.UserRepository;
 import com.ssafy.proma.service.topic.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,12 +31,13 @@ public class NotificationServiceImpl implements NotificationService{
     private final UserProjectRepository userProjectRepository;
     private final IssueRepository issueRepository;
     private final TopicService topicService;
+    private final UserRepository userRepository;
 
     @Override
     public Map<String, Object> getNotificationList(String userNo) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
-        List<Notification> notifications = notificationRepository.findByUserNoOrderByCheckedAscNotificationTimeDesc(userNo);
+        List<Notification> notifications = notificationRepository.findByUserNoAndCheckedFalseOrderByNotificationTimeDesc(userNo);
 
         List<NotificationDto>  notificationList = notifications.stream().map(
             notification -> new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime())
@@ -68,11 +67,12 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     @Transactional
-    public void sendSprintNotification(Sprint sprint) {
+    public void sendSprintNotification(Sprint sprint) throws Exception {
 
-        //SprintService에서 notificationService.sendSprintNotification(sprint);
+        //SprintService startSprint에서 notificationService.sendSprintNotification(sprint);
 
-        String message = "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus()==1 ? "시작" : "종료") + "되었습니다.";
+        String message = "[ " + sprint.getProject().getName() + " ]\n"
+                + "스프린트 [ " +sprint.getName() + " ] 가 " + (sprint.getStatus() == 1 ? "시작" : "종료") + "되었습니다.";
         log.debug(message);
 
         List<UserProject> userProjectList = userProjectRepository.findByProject(sprint.getProject());
@@ -90,22 +90,62 @@ public class NotificationServiceImpl implements NotificationService{
         }
     }
 
-    public void sendTopicNotification(Issue issue) {
+    @Override
+    @Transactional
+    public void sendTopicNotification(Issue issue) throws Exception {
 
-        Topic topic = issueRepository.findById(issue.getNo()).get().getTopic();
+        //IssueService changeStatusIssue에서 notificationService.sendTopicNotification(issue);
 
-        String message = "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
+        Topic topic = issue.getTopic(); //이슈는 무조건 토픽 가짐!
+
+        String message =  "[ " + topic.getProject().getName() + " ]\n"
+                + "토픽 [ " + topic.getTitle() + " ] 의 이슈 [ " +  issue.getTitle() + " ] 이/가 완료되었습니다.";
         log.debug(message);
 
         List<Issue> issueList = issueRepository.findByTopic(topic).get();
-        for(Issue relatedIssue : issueList){
+//        for(Issue relatedIssue : issueList){
+//
+//            notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());
+//            NotificationDto notification = new NotificationDto();
+//            notification.setMessage(message);
+//            messagingTemplate.convertAndSend("/queue/notification/" + relatedIssue.getUser().getNo(), notification);
+//
+//            log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
+//        }
 
-            notificationRepository.save(Notification.builder().user(relatedIssue.getUser()).message(message).build());
+        //중복 수신 제거!
+        Set<User> userList = issueList.stream().map(Issue::getUser).collect(Collectors.toSet());
+
+        for(User user : userList) {
+            notificationRepository.save(Notification.builder().user(user).message(message).build());
             NotificationDto notification = new NotificationDto();
             notification.setMessage(message);
-            messagingTemplate.convertAndSend("/queue/notification/" + relatedIssue.getUser().getNo(), notification);
+            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notification);
 
-            log.debug(relatedIssue.getUser().getNickname() + " 알림 전송 완료");
+            log.debug(user.getNickname() + " 알림 전송 완료");
         }
+    }
+
+    @Override
+    public Map<String, Object> sendNotification(String userNo) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<User> userOp = userRepository.findById(userNo);
+        if(!userOp.isPresent()){
+            resultMap.put("message", "존재하지 않는 회원입니다.");
+            return resultMap;
+        }
+
+        String message = userNo + "님 임시 알림 왔음";
+        notificationRepository.save(Notification.builder().user(userOp.get()).message(message).build());
+
+        //알림 전송
+        NotificationDto notification = new NotificationDto();
+        notification.setMessage(message);
+        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+
+        resultMap.put("message", "알림 전송 성공");
+        return resultMap;
     }
 }
