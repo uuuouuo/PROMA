@@ -4,15 +4,12 @@ import { ThemeType } from "../interfaces/style";
 import { FaHandPointLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import { useEffect } from "react";
+import { useRouter } from "next/router";
+
 import { RootState } from "../store/modules";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { BACKEND_URL } from "../config";
-let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-let client = Stomp.over(sock);
 
 const animation = keyframes`
     0% {
@@ -75,7 +72,6 @@ const mapStateToProps = (state: RootState) => {
   return {
     isLogin: state.userReducer.isLogin,
     userInfo: state.userReducer.userInfo,
-    chatInfo: state.chatReducer.chatInfo,
   };
 };
 
@@ -93,27 +89,6 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
       progress: undefined,
     });
   };
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    if (!userInfo) return;
-
-    if (isLogin) {
-      const Authorization = localStorage
-        .getItem("Authorization")
-        ?.split(" ")[1]
-        .toString();
-
-      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      client.connect({ Authorization }, () => {
-        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
-          const messagedto = JSON.parse(res.body);
-          console.log(messagedto);
-          alert(messagedto.message);
-        });
-      });
-    }
-  }, [userInfo]);
 
   return (
     <MainContainer>

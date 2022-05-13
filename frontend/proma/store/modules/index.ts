@@ -11,6 +11,7 @@ import chatReducer from "./chat";
 import sprintReducer from "./sprint";
 import topicReducer from "./topic";
 import issueReducer from "./issue";
+import notifyReducer from "./notify";
 
 const persistConfig = {
   key: "root",
@@ -30,6 +31,7 @@ export const rootReducer = combineReducers({
   topicReducer,
   issueReducer,
   chatReducer,
+  notifyReducer,
   // 모듈 추가시 여기에 추가
 });
 
