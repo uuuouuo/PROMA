@@ -53,7 +53,7 @@ public class S3UploaderService {
         log.info("File delete fail");
     }
 
-    public void deleteFile(String fileName) throws IOException {
+    public void deleteFile(String fileName) {
         DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
         amazonS3Client.deleteObject(deleteObjectRequest);
     }

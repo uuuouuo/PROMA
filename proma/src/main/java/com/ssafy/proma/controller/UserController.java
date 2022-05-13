@@ -72,7 +72,7 @@ public class UserController {
 
     @PutMapping("/update")
     @ApiOperation(value = "회원 정보 수정", notes = "회원의 이미지와 닉네임을 수정한다. 수정 성공 시 http code ok를 반환한다.", response = Map.class)
-    public ResponseEntity upload(@RequestPart("images") MultipartFile multipartFile, @RequestPart("nickname") String nickname) {
+    public ResponseEntity upload(@RequestParam("images") MultipartFile multipartFile, @RequestParam("nickname") String nickname) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
