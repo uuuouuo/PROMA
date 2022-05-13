@@ -5,11 +5,12 @@ import { ThemeType } from "../../../interfaces/style";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Chatting from "../../chatting/Chatting";
+import TeamChatting from "../../chatting/TeamChatting";
 
 import { connect } from "react-redux";
 import { joinTeam } from "../../../store/modules/team";
 import { RootState } from "../../../store/modules";
+import { projectChat } from "../../../store/modules/chat";
 
 //styled-components
 const TeamContainer = styled.div`
@@ -62,6 +63,7 @@ const MemberBox = styled.div`
 const mapDispatchToProps = (dispatch: any) => {
   return {
     joinTeam: (teamInfo: any) => dispatch(joinTeam(teamInfo)),
+    projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
   };
 };
 
@@ -96,8 +98,6 @@ const Team = ({
     }
   };
 
-  const onShowChat = () => {};
-
   return (
     <TeamContainer>
       <Header>
@@ -110,7 +110,7 @@ const Team = ({
               <ChatJoinButton onClick={() => setState(true)}>
                 Chat
               </ChatJoinButton>
-              <Chatting state={state} showChat={showChat} />
+              <TeamChatting state={state} showChat={showChat} teamNo={teamInfo.teamNo}/>
             </>
           ) : (
             <ChatJoinButton onClick={onJoinTeam}>Join</ChatJoinButton>
@@ -124,7 +124,11 @@ const Team = ({
         <MemberBox>
           {members
             ? members.map((member, index) => (
-                <Member memberInfo={member} key={index} />
+              <Member
+                memberInfo={member}
+                key={index}
+                projectNo={projectNo}
+              />
               ))
             : null}
         </MemberBox>
