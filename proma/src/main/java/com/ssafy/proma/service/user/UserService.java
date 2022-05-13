@@ -67,6 +67,9 @@ public class UserService extends AbstractService implements UserDetailsService {
         }
         Optional<User> userOp = userRepository.findByNo(userNo);
         User findUser = takeOp(userOp);
+        if(!findUser.getProfileImage().equals("https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png")) {
+            s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
+        }
         findUser.updateUser(nickname, imgUrl);
         UserRes userRes = new UserRes();
         userRes.setNo(findUser.getNo());
