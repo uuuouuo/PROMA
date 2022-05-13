@@ -15,14 +15,10 @@ import Image from "next/image";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { getLogout } from "../../store/modules/member";
-import { getNotificationList } from "../../store/modules/notify";
-
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { BACKEND_URL } from "../../config";
-
-const sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-const client = Stomp.over(sock);
+import {
+  getNotificationList,
+  updateNotificationConfirmed,
+} from "../../store/modules/notify";
 
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
@@ -51,7 +47,13 @@ const NotiElement = styled.div`
   }
   p {
     align-self: flex-start;
+    margin: 0;
+    text-decoration: underline;
+  }
+  .mainText {
     font-weight: 500;
+    padding: 10px 0;
+    text-decoration: none;
   }
   button {
     color: ${(props: ThemeType) => props.theme.mainColor};
@@ -65,7 +67,7 @@ const NotiElement = styled.div`
 const NotiBox = styled.div`
   position: absolute;
   width: 300px;
-  height: 400px;
+  max-height: 400px;
   right: 0;
   top: 80px;
   display: flex;
@@ -122,6 +124,8 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     getLogout: () => dispatch(getLogout()),
     getNotificationList: () => dispatch(getNotificationList()),
+    updateNotificationConfirmed: (notificationNo: number) =>
+      dispatch(updateNotificationConfirmed(notificationNo)),
   };
 };
 
@@ -131,12 +135,14 @@ const NavBar = ({
   getLogout,
   notificationList,
   getNotificationList,
+  updateNotificationConfirmed,
 }: {
   userInfo: any;
   isLogin: boolean;
   getLogout: any;
   notificationList: any;
   getNotificationList: any;
+  updateNotificationConfirmed: any;
 }) => {
   const router = useRouter();
 
@@ -156,32 +162,16 @@ const NavBar = ({
     getLogout();
   };
 
+  const confirmNotification = (notificationNo: number) => {
+    updateNotificationConfirmed(notificationNo).then((res: any) =>
+      getNotificationList()
+    );
+  };
+
   useEffect(() => {
     if (!router.isReady) return;
     getNotificationList();
   }, [router.isReady]);
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    if (!userInfo) return;
-
-    if (isLogin) {
-      const Authorization = localStorage
-        .getItem("Authorization")
-        ?.split(" ")[1]
-        .toString();
-
-      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      client.connect({ Authorization }, () => {
-        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
-          const messagedto = JSON.parse(res.body);
-          console.log(messagedto);
-          alert(messagedto.message);
-          getNotificationList();
-        });
-      });
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     if (!notificationList) return;
@@ -231,14 +221,23 @@ const NavBar = ({
             </MenuIconButton>
             {showNotifications ? (
               <NotiBox>
-                {notifications ? (
+                {notifications && notifications.length > 0 ? (
                   notifications?.map((notification: any) => (
-                    <NotiElement>
+                    <NotiElement key={notification.notificationNo}>
                       <span>
                         {notification.notificationTime.split("T").join(" / ")}
                       </span>
-                      <p>{notification.message}</p>
-                      <button>Confirm</button>
+                      <p>{notification.message.split("\n")[0]}</p>
+                      <p className="mainText">
+                        {notification.message.split("\n")[1]}
+                      </p>
+                      <button
+                        onClick={() =>
+                          confirmNotification(notification.notificationNo)
+                        }
+                      >
+                        Confirm
+                      </button>
                     </NotiElement>
                   ))
                 ) : (

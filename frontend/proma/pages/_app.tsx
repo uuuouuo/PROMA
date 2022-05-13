@@ -16,7 +16,15 @@ import { RootState } from "../store/modules";
 import ErrorPage from "./404";
 import ErrorBoundary from "../ErrorBoundary";
 import { userInstance } from "../api";
+import { getNotificationList } from "../store/modules/notify";
 const userApi = userInstance();
+
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+import { BACKEND_URL } from "../config";
+
+const sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
+const client = Stomp.over(sock);
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -64,6 +72,13 @@ const mapStateToProps = (state: RootState) => {
   return {
     darkModeState: state.modeReducer.darkMode,
     isLogin: state.userReducer.isLogin,
+    userInfo: state.userReducer.userInfo,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getNotificationList: () => dispatch(getNotificationList()),
   };
 };
 
@@ -80,11 +95,35 @@ function MyApp({
   Component,
   pageProps,
   isLogin,
+  userInfo,
   darkModeState,
-}: AppProps & { darkModeState: boolean; isLogin: boolean }) {
+  getNotificationList,
+}: AppProps & {
+  darkModeState: boolean;
+  isLogin: boolean;
+  userInfo: any;
+  getNotificationList: any;
+}) {
   useEffect(() => {
     if (!isLogin) return;
     setInterval(() => getRefresh(), 850000);
+
+    if (isLogin) {
+      const Authorization = localStorage
+        .getItem("Authorization")
+        ?.split(" ")[1]
+        .toString();
+
+      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+      client.connect({ Authorization }, () => {
+        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
+          const messagedto = JSON.parse(res.body);
+          console.log(messagedto);
+          alert(messagedto.message);
+          getNotificationList();
+        });
+      });
+    }
   }, [isLogin]);
 
   return (
@@ -111,4 +150,6 @@ function MyApp({
   );
 }
 
-export default wrapper.withRedux(connect(mapStateToProps, null)(MyApp));
+export default wrapper.withRedux(
+  connect(mapStateToProps, mapDispatchToProps)(MyApp)
+);
