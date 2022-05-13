@@ -57,9 +57,12 @@ public class User {
         this.refresh = null;
     }
 
-    public void updateUser(String nickname, String profileImage) {
-        this.nickname = nickname;
+    public void updateUserImg(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void updateUserNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void deleteUser(){

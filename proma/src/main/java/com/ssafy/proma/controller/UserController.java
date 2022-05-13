@@ -2,12 +2,14 @@ package com.ssafy.proma.controller;
 
 import com.ssafy.proma.config.auth.jwt.JwtProperties;
 import com.ssafy.proma.exception.Message;
+import com.ssafy.proma.model.dto.user.UserDto.UpdateReq;
 import com.ssafy.proma.model.dto.user.UserDto.LoginRes;
 import com.ssafy.proma.service.user.UserService;
 import com.ssafy.proma.service.user.oauth.GithubAuthService;
 import com.ssafy.proma.util.SecurityUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,14 +72,32 @@ public class UserController {
         return new ResponseEntity(resultMap, status);
     }
 
-    @PutMapping("/update")
-    @ApiOperation(value = "회원 정보 수정", notes = "회원의 이미지와 닉네임을 수정한다. 수정 성공 시 http code ok를 반환한다.", response = Map.class)
-    public ResponseEntity upload(@RequestParam("images") MultipartFile multipartFile, @RequestParam("nickname") String nickname) {
+    @PutMapping("/update/image")
+    @ApiOperation(value = "회원 이미지 수정", notes = "회원의 이미지를 수정한다. 수정 성공 시 http code ok를 반환한다.", response = Map.class)
+    public ResponseEntity updateImage(@RequestParam(value = "images", required = false) MultipartFile multipartFile) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             String userNo = securityUtil.getCurrentUserNo();
-            resultMap = userService.update(multipartFile, nickname, "image", userNo);
+            resultMap = userService.updateImage(multipartFile, "image", userNo);
+            if (resultMap.get("message").equals(Message.USER_UPDATE_SUCCESS_MESSAGE)) {
+                status = HttpStatus.OK;
+            }
+        } catch (Exception e) {
+            resultMap.put("message", Message.USER_UPDATE_ERROR_MESSAGE);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity(resultMap, status);
+    }
+
+    @PutMapping("/update/nickname")
+    @ApiOperation(value = "회원 닉네임 수정", notes = "회원의 닉네임을 수정한다. 수정 성공 시 http code ok를 반환한다.", response = Map.class)
+    public ResponseEntity updateNickname(@RequestBody UpdateReq updateReq) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            String userNo = securityUtil.getCurrentUserNo();
+            resultMap = userService.updateNickname(updateReq.getNickname(), userNo);
             if (resultMap.get("message").equals(Message.USER_UPDATE_SUCCESS_MESSAGE)) {
                 status = HttpStatus.OK;
             }
