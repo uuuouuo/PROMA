@@ -76,7 +76,7 @@ public class ChatService {
     // 해당 chatroom 의 messageList 가져오기
     if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
     List<PrivateChatMessage> msgList = new ArrayList<>();
-    msgList = privateChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,10)).getContent();
+    msgList = privateChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,15)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
     if(msgList.size() != 0) {
@@ -109,7 +109,7 @@ public class ChatService {
     // 해당 chatroom 의 messageList 가져오기
     if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
     List<TeamChatMessage> msgList = new ArrayList<>();
-    msgList = teamChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,10)).getContent();
+    msgList = teamChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0,15)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
     if(msgList.size() != 0) {
@@ -142,7 +142,7 @@ public class ChatService {
     // 해당 chatroom 의 messageList 가져오기
     if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
     List<ProjectChatMessage> msgList
-            = projectChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0, 10)).getContent();
+            = projectChatMessageRepository.findByChatRoomAndNoLessThanOrderByTimeDesc(chatRoom, lastMsgNo, PageRequest.of(0, 15)).getContent();
 
     List<ChatMessageListRes> msgResList = new ArrayList<>();
     if(msgList.size() != 0) {
