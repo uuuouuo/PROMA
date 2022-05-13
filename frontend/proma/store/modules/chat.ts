@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiInstance, userInstance } from "../../api";
+import { apiInstance } from "../../api";
 const api = apiInstance();
 
 export type UserState = {

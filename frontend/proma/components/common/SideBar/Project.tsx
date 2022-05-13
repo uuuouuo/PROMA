@@ -5,7 +5,7 @@ import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Team from "./Team";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Chatting from "../../chatting/Chatting";
+import ProjectChatting from "../../chatting/ProjectChatting";
 import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
 import { projectChat } from "../../../store/modules/chat";
@@ -122,7 +122,7 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
           <ChatButton onClick={() => {
             setState(true)
           }}>Chat</ChatButton>
-          <Chatting state={state} showChat={showChat} projectNo={projectInfo.projectNo}/>
+          <ProjectChatting state={state} showChat={showChat} projectNo={projectInfo.projectNo}/>
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
           </ArrowButton>
