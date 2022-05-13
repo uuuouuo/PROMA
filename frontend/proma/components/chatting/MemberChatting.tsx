@@ -5,7 +5,7 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
-import { projectChat } from "../../store/modules/chat";
+import { memberChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
@@ -21,7 +21,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+        memberChat: (userNo: string) => dispatch(memberChat(userNo)),
     };
 };
 
@@ -87,17 +87,17 @@ const ChatContainer = styled.div`
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
 
-    const Chatting = ({
+const MemberChatting = ({
     state,
     showChat,
-    projectNo,
-    projectChat,
+    userNo,
+    memberChat,
     userInfo,
     }: {
     state: boolean;
     showChat: any;
-    projectNo: any;
-    projectChat: any;
+    userNo: any;
+    memberChat: any;
     userInfo: any;
     }) => {
     const [messageList, setMessageList] = useState<any>([]);
@@ -112,7 +112,7 @@ let client = Stomp.over(sock);
             pubNo: userInfo.no,           // 채팅 작성자 코드
             content: e.target.value,      // 채팅 내용
         };
-        client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
+        client.send(`/pub/chat/private-msg`, JSON.stringify(chat));
         }
     };
 
@@ -131,7 +131,7 @@ let client = Stomp.over(sock);
 
         client.connect({ Authorization }, () => {
         // 채팅 주소 구독
-        client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
+        client.subscribe(`/sub/chat/room/user/${roomNo}`, (res) => {
             const messagedto = JSON.parse(res.body);
             console.log(messagedto);
             setNewMessage(messagedto);
@@ -140,16 +140,17 @@ let client = Stomp.over(sock);
     };
 
     useEffect(() => {
-        if (!projectNo) return;
+        if (!userNo) return;
 
-        projectChat(projectNo).then((res: any) => {
+        memberChat(userNo).then((res: any) => {
+            console.log(res)
         setRoomNo(res.payload.response.roomNo);
         chatSubscribe(res.payload.response.roomNo);
         const messagelist = res.payload.response.messageList;
         const arr = [...messagelist].reverse();
         setMessageList(arr);
         });
-    }, [projectNo]);
+    }, [userNo]);
 
     useEffect(() => {
         if (!newMessage) return;
@@ -262,4 +263,4 @@ let client = Stomp.over(sock);
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chatting);
+export default connect(mapStateToProps, mapDispatchToProps)(MemberChatting);

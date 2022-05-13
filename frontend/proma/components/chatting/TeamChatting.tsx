@@ -142,7 +142,6 @@ const TeamChatting = ({
     if (!teamNo) return;
 
     teamChat(teamNo).then((res: any) => {
-      console.log(res)
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
       const messagelist = res.payload.response.messageList;

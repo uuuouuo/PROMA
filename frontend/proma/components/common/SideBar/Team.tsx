@@ -98,8 +98,6 @@ const Team = ({
     }
   };
 
-  console.log(teamInfo)
-  
   return (
     <TeamContainer>
       <Header>
@@ -126,7 +124,11 @@ const Team = ({
         <MemberBox>
           {members
             ? members.map((member, index) => (
-                <Member memberInfo={member} key={index} projectNo={projectNo} />
+              <Member
+                memberInfo={member}
+                key={index}
+                projectNo={projectNo}
+              />
               ))
             : null}
         </MemberBox>

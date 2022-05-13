@@ -44,6 +44,22 @@ export const teamChat = createAsyncThunk(
   }
 );
 
+export const memberChat = createAsyncThunk(
+  "CHAT/ROOM/USER",
+  async (memberNo: string, thunkAPI) => {
+    return await api
+      .get(`/chat/room/user/${memberNo}`)
+      .then((res) => {
+        localStorage.setItem(
+          "messageList",
+          JSON.stringify(res.data.response.messageList)
+        );
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -55,7 +71,10 @@ const chatSlice = createSlice({
     })
       .addCase(teamChat.fulfilled, (state, { payload }) => {
       state.chatInfo = payload.response;
-    });
+    })
+      .addCase(memberChat.fulfilled, (state, { payload }) => {
+      state.chatInfo = payload.response;
+    })
   },
 });
 
