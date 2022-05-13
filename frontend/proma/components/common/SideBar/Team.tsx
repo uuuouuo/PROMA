@@ -110,7 +110,7 @@ const Team = ({
               <ChatJoinButton onClick={() => setState(true)}>
                 Chat
               </ChatJoinButton>
-              <TeamChatting state={state} showChat={showChat} teamNo={teamInfo.teamNo}/>
+              <TeamChatting state={state} showChat={showChat} teamNo={teamInfo.teamNo} teamInfo={teamInfo}/>
             </>
           ) : (
             <ChatJoinButton onClick={onJoinTeam}>Join</ChatJoinButton>

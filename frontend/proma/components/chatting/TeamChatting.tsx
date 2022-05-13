@@ -92,12 +92,14 @@ const TeamChatting = ({
   teamNo,
   teamChat,
   userInfo,
+  teamInfo,
 }: {
   state: boolean;
   showChat: any;
   teamNo: any;
   teamChat: any;
   userInfo: any;
+  teamInfo: any;
 }) => {
   const [messageList, setMessageList] = useState<any>([]);
   const [newMessage, setNewMessage] = useState<Object>({});
@@ -162,7 +164,7 @@ const TeamChatting = ({
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          {/* <span>{messageList?.length}</span> */}
+          <span>{teamInfo.memberList.length}</span>
         </ChatInfo>
       }
       width="500px"
