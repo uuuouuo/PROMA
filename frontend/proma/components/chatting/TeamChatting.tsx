@@ -5,7 +5,7 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { useEffect, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
-import { projectChat } from "../../store/modules/chat";
+import { teamChat } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
@@ -20,7 +20,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+    teamChat: (teamNo: string) => dispatch(teamChat(teamNo)),
   };
 };
 
@@ -86,17 +86,17 @@ const ChatContainer = styled.div`
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
 
-const Chatting = ({
+const TeamChatting = ({
   state,
   showChat,
-  projectNo,
-  projectChat,
+  teamNo,
+  teamChat,
   userInfo,
 }: {
   state: boolean;
   showChat: any;
-  projectNo: any;
-  projectChat: any;
+  teamNo: any;
+  teamChat: any;
   userInfo: any;
 }) => {
   const [messageList, setMessageList] = useState<any>([]);
@@ -111,7 +111,7 @@ const Chatting = ({
         pubNo: userInfo.no,           // 채팅 작성자 코드
         content: e.target.value,      // 채팅 내용
       };
-      client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
+      client.send(`/pub/chat/team-msg`, JSON.stringify(chat));
     }
   };
 
@@ -130,7 +130,7 @@ const Chatting = ({
 
     client.connect({ Authorization }, () => {
       // 채팅 주소 구독
-      client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
+      client.subscribe(`/sub/chat/room/team/${roomNo}`, (res) => {
         const messagedto = JSON.parse(res.body);
         console.log(messagedto);
         setNewMessage(messagedto);
@@ -139,9 +139,9 @@ const Chatting = ({
   };
 
   useEffect(() => {
-    if (!projectNo) return;
+    if (!teamNo) return;
 
-    projectChat(projectNo).then((res: any) => {
+    teamChat(teamNo).then((res: any) => {
       console.log(res)
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
@@ -149,7 +149,7 @@ const Chatting = ({
       const arr = [...messagelist].reverse();
       setMessageList(arr);
     });
-  }, [projectNo]);
+  }, [teamNo]);
 
   useEffect(() => {
     if (!newMessage) return;
@@ -262,4 +262,4 @@ const Chatting = ({
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chatting);
+export default connect(mapStateToProps, mapDispatchToProps)(TeamChatting);
