@@ -93,12 +93,12 @@ const memberSlice = createSlice({
   initialState,
   reducers: {
     getLogout(state: UserState) {
+      window.location.href = "/";
       state.isLogin = false;
       state.userInfo = {};
       localStorage.removeItem("code");
       localStorage.removeItem("Authorization");
       localStorage.removeItem("RefreshToken");
-      window.location.reload();
     },
   },
   extraReducers: (builder) => {

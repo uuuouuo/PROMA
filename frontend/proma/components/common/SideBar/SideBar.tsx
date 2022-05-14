@@ -73,8 +73,9 @@ const SideBar = ({
   const showProjectCreateModal = () => setProjectCreateModal((cur) => !cur);
 
   useEffect(() => {
+    if (!isLogin) return;
     getProjects();
-  }, []);
+  }, [isLogin]);
 
   return (
     <SideBarContainer>

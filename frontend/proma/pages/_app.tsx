@@ -15,16 +15,7 @@ import { connect } from "react-redux";
 import { RootState } from "../store/modules";
 import ErrorPage from "./404";
 import ErrorBoundary from "../ErrorBoundary";
-import { userInstance } from "../api";
 import { getNotificationList } from "../store/modules/notify";
-const userApi = userInstance();
-
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { BACKEND_URL } from "../config";
-
-const sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-const client = Stomp.over(sock);
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -82,15 +73,6 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-const getRefresh = async () => {
-  return await userApi
-    .post(`/user/refresh`)
-    .then((res: any) => {
-      localStorage.setItem("Authorization", res.headers.authorization);
-    })
-    .catch((err: any) => console.log(err));
-};
-
 function MyApp({
   Component,
   pageProps,
@@ -104,41 +86,6 @@ function MyApp({
   userInfo: any;
   getNotificationList: any;
 }) {
-  const [userNo, setUserNo] = useState<string>("");
-  useEffect(() => {
-    if (localStorage.getItem("Authorization")) {
-      getRefresh();
-      setInterval(() => getRefresh(), 850000);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isLogin) return;
-    
-    if (userInfo) {
-      if (userNo !== userInfo.no) setUserNo(userInfo.no);
-    }
-  }, [isLogin, userInfo]);
-
-  useEffect(() => {
-    if (!userNo) return;
-
-    const Authorization = localStorage
-      .getItem("Authorization")
-      ?.split(" ")[1]
-      .toString();
-
-    const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-    client.connect({ Authorization }, () => {
-      client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
-        const messagedto = JSON.parse(res.body);
-        console.log(messagedto);
-        alert(messagedto.message);
-        getNotificationList();
-      });
-    });
-  }, [userNo]);
-
   return (
     <>
       <Head>

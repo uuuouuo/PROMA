@@ -21,6 +21,13 @@ import {
   updateNotificationConfirmed,
 } from "../../store/modules/notify";
 
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+import { BACKEND_URL } from "../../config";
+import { userInstance } from "../../api";
+
+const userApi = userInstance();
+
 const NavBarContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.mainColor};
   height: 60px;
@@ -138,6 +145,15 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
+const getRefresh = async () => {
+  return await userApi
+    .post(`/user/refresh`)
+    .then((res: any) => {
+      localStorage.setItem("Authorization", res.headers.authorization);
+    })
+    .catch((err: any) => console.log(err));
+};
+
 const NavBar = ({
   userInfo,
   isLogin,
@@ -169,7 +185,6 @@ const NavBar = ({
   const showNotificationBox = () => setShowNotifications((cur) => !cur);
 
   const onLogOut = () => {
-    router.push("/");
     getLogout();
   };
 
@@ -180,15 +195,37 @@ const NavBar = ({
   };
 
   useEffect(() => {
-    if (!userInfo) return;
-    setImage(userInfo.profileImage);
+    if (!router.isReady) return;
     setIsReady(true);
-  }, [userInfo]);
+  }, [router.isReady]);
 
   useEffect(() => {
-    if (!router.isReady) return;
-    getNotificationList();
-  }, [router.isReady]);
+    if (!isLogin) return;
+    if (!userInfo.no) return;
+    getRefresh();
+    setInterval(() => getRefresh(), 850000);
+    setImage(userInfo.profileImage);
+    getNotificationList().then((res: any) => {
+      const sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
+      const client = Stomp.over(sock);
+      const Authorization = localStorage
+        .getItem("Authorization")
+        ?.split(" ")[1]
+        .toString();
+
+      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+      console.log(NOTI_SUBSCRIBE_URL);
+
+      client.connect({ Authorization }, () => {
+        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
+          const messagedto = JSON.parse(res.body);
+          console.log(messagedto);
+          alert(messagedto.message);
+          getNotificationList();
+        });
+      });
+    });
+  }, [isLogin, userInfo]);
 
   useEffect(() => {
     if (!notificationList) return;
