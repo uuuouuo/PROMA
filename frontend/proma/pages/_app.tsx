@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import wrapper from "../store/configureStore";
 import styled, {
   createGlobalStyle,
@@ -104,27 +104,40 @@ function MyApp({
   userInfo: any;
   getNotificationList: any;
 }) {
+  const [userNo, setUserNo] = useState<string>("");
+  useEffect(() => {
+    if (localStorage.getItem("Authorization")) {
+      getRefresh();
+      setInterval(() => getRefresh(), 850000);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isLogin) return;
-    setInterval(() => getRefresh(), 850000);
-
-    if (isLogin) {
-      const Authorization = localStorage
-        .getItem("Authorization")
-        ?.split(" ")[1]
-        .toString();
-
-      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      client.connect({ Authorization }, () => {
-        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
-          const messagedto = JSON.parse(res.body);
-          console.log(messagedto);
-          alert(messagedto.message);
-          getNotificationList();
-        });
-      });
+    
+    if (userInfo) {
+      if (userNo !== userInfo.no) setUserNo(userInfo.no);
     }
-  }, [isLogin]);
+  }, [isLogin, userInfo]);
+
+  useEffect(() => {
+    if (!userNo) return;
+
+    const Authorization = localStorage
+      .getItem("Authorization")
+      ?.split(" ")[1]
+      .toString();
+
+    const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
+    client.connect({ Authorization }, () => {
+      client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
+        const messagedto = JSON.parse(res.body);
+        console.log(messagedto);
+        alert(messagedto.message);
+        getNotificationList();
+      });
+    });
+  }, [userNo]);
 
   return (
     <>

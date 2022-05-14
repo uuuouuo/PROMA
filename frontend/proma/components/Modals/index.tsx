@@ -52,8 +52,8 @@ export const ModalBox = styled(Modal)`
     textarea {
       height: 100px;
     }
-    select{
-        width: 106%;
+    select {
+      width: 106%;
     }
     button {
       &:hover {
@@ -99,6 +99,11 @@ export const TextButton = styled.button`
   &:hover {
     cursor: pointer;
   }
+`;
+export const WarnButton = styled(TextButton)`
+  width: fit-content;
+  color: ${(props: ThemeType) => props.theme.warnColor};
+  margin-left:10px;
 `;
 export const ButtonBox = styled.div`
   display: flex;
@@ -186,38 +191,24 @@ export const SocialLoginButton = styled.button`
   }
 `;
 export const UserProfileBox = styled(InputArea)`
-  height: 350px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  button {
-    position: absolute;
-    top: 20px;
-    right: 10px;
-    border: none;
-    color: ${(props: ThemeType) => props.theme.textColor};
-    background-color: inherit;
+  margin: 40px 0px;
+  margin-bottom: 10px;
+  padding: 0;
+  input[type="text"] {
+    margin: 30px 0px;
     font-size: 20px;
-    &:hover {
-      cursor: pointer;
-    }
+    width: 200px;
   }
-  div {
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    p,
-    input {
-      margin-top: 30px;
-      width: inherit;
-      font-size: 25px;
-    }
-    p {
-      text-align: center;
-      font-weight: 600;
-    }
+  p {
+    font-size: 22px;
+    margin: 30px 0px;
+    text-align: center;
+    font-weight: 500;
   }
 `;
 
@@ -311,54 +302,6 @@ export const JoinModal = ({
             <CancelButton onClick={showJoinModal}>Cancel</CancelButton>
             <CreateButton onClick={joinProma}>Join</CreateButton>
           </ButtonBox>
-        </BodyContainer>
-      </Box>
-    </ModalBox>
-  );
-};
-
-export const UserProfileModal = ({
-  userProfileModal,
-  showUserProfileModal,
-}: {
-  userProfileModal: boolean;
-  showUserProfileModal: any;
-}) => {
-  const [userName, setUserName] = useState<string>("sue");
-  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
-
-  return (
-    <ModalBox
-      open={userProfileModal}
-      onClose={showUserProfileModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Header>Profile</Header>
-        <BodyContainer>
-          <UserProfileBox>
-            <button onClick={() => setUpdateStatus((cur) => !cur)}>
-              {!updateStatus ? <FaPen /> : <FaCheck />}
-            </button>
-            {!updateStatus ? (
-              <div>
-                <Image src="/profileimg.png" width={180} height={180} />
-                <p>{userName}</p>
-              </div>
-            ) : (
-              <div>
-                <Image src="/profileimg.png" width={180} height={180} />
-                <input
-                  type="text"
-                  value={userName}
-                  placeholder="Type your name."
-                  onChange={(e) => setUserName(e.target.value)}
-                  autoFocus
-                />
-              </div>
-            )}
-          </UserProfileBox>
         </BodyContainer>
       </Box>
     </ModalBox>
