@@ -143,7 +143,6 @@ const MemberChatting = ({
         if (!userNo) return;
 
         memberChat(userNo).then((res: any) => {
-            console.log(res)
         setRoomNo(res.payload.response.roomNo);
         chatSubscribe(res.payload.response.roomNo);
         const messagelist = res.payload.response.messageList;
@@ -164,7 +163,7 @@ const MemberChatting = ({
         subtitle={
             <ChatInfo>
             <BsFillPeopleFill />
-            {/* <span>{messageList?.length}</span> */}
+            <span>1</span>
             </ChatInfo>
         }
         width="500px"
