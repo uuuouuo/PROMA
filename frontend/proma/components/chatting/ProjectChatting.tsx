@@ -2,14 +2,15 @@
 import styled from "styled-components";
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ThemeType } from "../../interfaces/style";
-import { projectChat } from "../../store/modules/chat";
+import { projectChat, projectChatScroll } from "../../store/modules/chat";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import { dialogClasses } from "@mui/material";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -21,6 +22,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     projectChat: (projectNo: string) => dispatch(projectChat(projectNo)),
+    projectChatScroll: (params: any) => dispatch(projectChatScroll(params)),
   };
 };
 
@@ -91,12 +93,14 @@ const Chatting = ({
   showChat,
   projectNo,
   projectChat,
+  projectChatScroll,
   userInfo,
 }: {
   state: boolean;
   showChat: any;
   projectNo: any;
   projectChat: any;
+  projectChatScroll: any;
   userInfo: any;
 }) => {
   const [messageList, setMessageList] = useState<any>([]);
@@ -114,10 +118,6 @@ const Chatting = ({
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
   };
-
-  const onReset = () => {
-    setChat('');
-  }
 
   const chatSubscribe = (roomNo: number) => {
     const Authorization = localStorage
@@ -138,6 +138,27 @@ const Chatting = ({
     });
   };
 
+  const [itemIndex, setItemIndex] = useState(0);
+  const [result, setResult] = useState();
+
+  const _infiniteScroll = useCallback(() => {
+    let scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    let scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+    let clientHeight = document.documentElement.clientHeight;
+
+    if(scrollTop + clientHeight === clientHeight) {
+      // setItemIndex(itemIndex + 100);
+      // setResult(result.concat(video_list.slice(itemIndex+100, itemIndex+200)));
+      console.log("성공")
+    }
+  }, [itemIndex, result]);
+
+  const container = document.querySelector('.chatting') as HTMLInputElement;
+  useEffect(() => {
+    window.addEventListener('scroll', _infiniteScroll, true);
+    return () => window.removeEventListener('scroll', _infiniteScroll, true);
+  }, [_infiniteScroll]);
+
   useEffect(() => {
     if (!projectNo) return;
 
@@ -145,6 +166,7 @@ const Chatting = ({
       console.log(res)
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
+      // setMesNo(res.payload.response.messageList[9].msgNo);
       const messagelist = res.payload.response.messageList;
       const arr = [...messagelist].reverse();
       setMessageList(arr);
@@ -169,7 +191,7 @@ const Chatting = ({
       width="500px"
       onRequestClose={showChat}
     >
-      <ChatContainer>
+      <ChatContainer id="chatting">
         {messageList.map((element: any, idx: any) => {
           if (element.name !== localStorage.getItem("userNo"))
             return (

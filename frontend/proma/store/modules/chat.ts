@@ -18,10 +18,18 @@ export const projectChat = createAsyncThunk(
     return await api
       .get(`/chat/room/project/${projectNo}`)
       .then((res) => {
-        localStorage.setItem(
-          "messageList",
-          JSON.stringify(res.data.response.messageList)
-        );
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+  }
+);
+
+export const projectChatScroll = createAsyncThunk(
+  "CHAT/ROOM/PROJECT/SCROLL",
+  async (params: any, thunkAPI) => {
+    return await api
+      .get(`/chat/room/project/${params.projectNo}?lastMsgNo=${params.lastMsgNo}`)
+      .then((res) => {
         return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -34,10 +42,6 @@ export const teamChat = createAsyncThunk(
     return await api
       .get(`/chat/room/team/${teamNo}`)
       .then((res) => {
-        localStorage.setItem(
-          "messageList",
-          JSON.stringify(res.data.response.messageList)
-        );
         return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -50,10 +54,6 @@ export const memberChat = createAsyncThunk(
     return await api
       .get(`/chat/room/user/${memberNo}`)
       .then((res) => {
-        localStorage.setItem(
-          "messageList",
-          JSON.stringify(res.data.response.messageList)
-        );
         return res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
