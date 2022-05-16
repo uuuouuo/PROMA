@@ -112,8 +112,6 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
     }
   }, [router.asPath]);
 
-  console.log(projectInfo)
-
   return (
     <ProjectContainer>
       <Header>

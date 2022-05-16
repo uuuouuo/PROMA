@@ -218,7 +218,6 @@ const Chatting = ({
     setMessageList([...messageList, newMessage]);
   }, [newMessage]);
 
-  console.log(messageList);
   return (
     <SlidingPaneBox
       isOpen={state}
