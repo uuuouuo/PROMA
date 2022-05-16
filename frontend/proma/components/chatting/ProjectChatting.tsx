@@ -138,16 +138,14 @@ let client = Stomp.over(sock);
 const Chatting = ({
   state,
   showChat,
-  projectNo,
   projectChat,
-  projectChatScroll,
+  projectInfo,
   userInfo,
 }: {
   state: boolean;
   showChat: any;
-  projectNo: any;
   projectChat: any;
-  projectChatScroll: any;
+  projectInfo: any;
   userInfo: any;
 }) => {
   const [messageList, setMessageList] = useState<any>([]);
@@ -155,6 +153,7 @@ const Chatting = ({
   const [chat, setChat] = useState<string>("");
   const [roomNo, setRoomNo] = useState<number>(0);
   const [membercnt, setMemberCnt] = useState<number>(0);
+  const [title, setTitle] = useState<string>(projectInfo.title);
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
@@ -208,9 +207,9 @@ const Chatting = ({
   }, [_infiniteScroll]);
 
   useEffect(() => {
-    if (!projectNo) return;
+    if (!projectInfo.projectNo) return;
 
-    projectChat(projectNo).then((res: any) => {
+    projectChat(projectInfo.projectNo).then((res: any) => {
       setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
@@ -219,7 +218,7 @@ const Chatting = ({
       const arr = [...messagelist].reverse();
       setMessageList(arr);
     });
-  }, [projectNo]);
+  }, [projectInfo.projectNo]);
 
   useEffect(() => {
     if (!newMessage) return;
@@ -229,7 +228,7 @@ const Chatting = ({
   return (
     <SlidingPaneBox
       isOpen={state}
-      title="DB"
+      title={title}
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />

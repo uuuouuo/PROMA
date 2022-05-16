@@ -98,8 +98,6 @@ const Team = ({
     }
   };
 
-  console.log(teamInfo)
-
   return (
     <TeamContainer>
       <Header>
@@ -112,7 +110,7 @@ const Team = ({
               <ChatJoinButton onClick={() => setState(true)}>
                 Chat
               </ChatJoinButton>
-              <TeamChatting state={state} showChat={showChat} teamNo={teamInfo.teamNo} teamInfo={teamInfo}/>
+              <TeamChatting state={state} showChat={showChat} teamInfo={teamInfo}/>
             </>
           ) : (
             <ChatJoinButton onClick={onJoinTeam}>Join</ChatJoinButton>

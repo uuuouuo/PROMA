@@ -64,7 +64,7 @@ const Member = ({ memberInfo, projectNo }: { memberInfo: any; projectNo: any; })
         <span>{memberInfo.nickname}</span>
       </div>
       <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
-      <MemberChatting state={state} showChat={showChat} userNo={memberInfo.userNo} />
+      <MemberChatting state={state} showChat={showChat} memberInfo={memberInfo} />
     </MemberContainer>
   );
 };
