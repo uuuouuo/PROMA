@@ -230,11 +230,6 @@ const MemberChatting = ({
             else
                 return (
                 <>
-                    <ChatBoxRight key={idx}>
-                        <ChatImg src={`${userInfo.profileImage}`}/>
-                        <ChatName>{element.nickname}</ChatName>
-                    </ChatBoxRight>
-
                     <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
                         <ChatTimeRight>{time}</ChatTimeRight>
                         <ChatContentRight>{element.content}</ChatContentRight>

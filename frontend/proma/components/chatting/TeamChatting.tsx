@@ -81,6 +81,10 @@ const ChatContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 20px;
   overflow: scroll;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 `;
 const ChatBoxLeft = styled.div`
   display: flex; 
@@ -233,11 +237,6 @@ const TeamChatting = ({
           else
             return (
               <>
-                <ChatBoxRight key={idx}>
-                  <ChatImg src={`${userInfo.profileImage}`}/>
-                  <ChatName>{element.nickname}</ChatName>
-                </ChatBoxRight>
-
                 <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
                   <ChatTimeRight>{time}</ChatTimeRight>
                   <ChatContentRight>{element.content}</ChatContentRight>
