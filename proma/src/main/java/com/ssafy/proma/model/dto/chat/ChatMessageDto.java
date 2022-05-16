@@ -67,13 +67,15 @@ public class ChatMessageDto {
     private Integer roomNo;
     private String pubNo;
     private String nickname;
+    private String profileImage;
     private String content;
     private LocalDateTime time;
 
-    public ChatMessageRes(Integer roomNo, String pubNo, String nickname, String content, LocalDateTime time) {
+    public ChatMessageRes(Integer roomNo, String pubNo, String nickname, String profileImage, String content, LocalDateTime time) {
       this.roomNo = roomNo;
       this.pubNo = pubNo;
       this.nickname = nickname;
+      this.profileImage = profileImage;
       this.content = content;
       this.time = time;
     }

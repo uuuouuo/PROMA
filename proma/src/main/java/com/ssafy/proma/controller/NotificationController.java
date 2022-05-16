@@ -1,6 +1,5 @@
 package com.ssafy.proma.controller;
 
-import com.ssafy.proma.model.dto.notification.NotificationDto;
 import com.ssafy.proma.service.notification.NotificationService;
 import com.ssafy.proma.util.SecurityUtil;
 import io.swagger.annotations.ApiOperation;
