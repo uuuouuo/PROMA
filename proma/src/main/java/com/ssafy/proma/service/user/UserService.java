@@ -64,7 +64,7 @@ public class UserService extends AbstractService implements UserDetailsService {
         String imgUrl = s3UploaderService.upload(multipartFile, dirName, userNo);
         Optional<User> userOp = userRepository.findByNo(userNo);
         User findUser = takeOp(userOp);
-        s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
+//        s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
         findUser.updateUser(nickname, imgUrl);
         UserRes userRes = new UserRes();
         userRes.setNo(findUser.getNo());
