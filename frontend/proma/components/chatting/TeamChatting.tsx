@@ -85,6 +85,14 @@ const ChatContainer = styled.div`
     width: 8px;
     height: 8px;
   }
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background: #ccc;
+    }
 `;
 const ChatBoxLeft = styled.div`
   display: flex; 

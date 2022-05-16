@@ -82,6 +82,14 @@ const ChatContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 20px;
   overflow: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 const ChatBoxLeft = styled.div`
   display: flex; 
