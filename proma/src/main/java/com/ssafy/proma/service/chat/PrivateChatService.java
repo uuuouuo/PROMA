@@ -108,4 +108,5 @@ public class PrivateChatService {
             .orElseThrow(() -> new IllegalStateException("존재하지 않는 개인 채팅방입니다."));
   }
 
+
 }
