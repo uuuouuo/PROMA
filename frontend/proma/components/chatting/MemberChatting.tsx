@@ -213,7 +213,7 @@ const MemberChatting = ({
             {messageList.map((element: any, idx: any) => {
             let arr = ""+element.time;
             let time = arr.substr(11, 5);
-            if (element.name !== userInfo.no)
+            if (element.name == userInfo.no)
                 return (
                 <>
                     <ChatBoxLeft key={idx}>
@@ -231,33 +231,13 @@ const MemberChatting = ({
                 return (
                 <>
                     <ChatBoxRight key={idx}>
-                    <img
-                        style={{
-                        width: "3%",
-                        height: "3%",
-                        borderRadius: "50%",
-                        marginRight: "1%",
-                        }}
-                        src={`${element.image}`}
-                    />
-                    <a style={{ fontWeight: "bold", alignSelf: "center" }}>
-                        {element.name}
-                    </a>{" "}
+                        <ChatImg src={`${userInfo.profileImage}`}/>
+                        <ChatName>{element.nickname}</ChatName>
                     </ChatBoxRight>
 
                     <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
-                    <a
-                        style={{
-                        background: "#6667AB",
-                        color: "white",
-                        width: "fit-content",
-                        height: "100px",
-                        padding: "1.5% 1% 1.5% 1%",
-                        borderRadius: "5px 5px 0px 5px / 5px 5px 0px 5px",
-                        }}
-                    >
-                        {element.content}
-                    </a>
+                        <ChatTimeRight>{time}</ChatTimeRight>
+                        <ChatContentRight>{element.content}</ChatContentRight>
                     </div>
                 </>
                 );
@@ -269,6 +249,7 @@ const MemberChatting = ({
             type="text"
             value={chat}
             placeholder="Chat.."
+            style={{fontSize: "15px"}}
             onChange={(e) => setChat(e.target.value)}
             onKeyPress={onSubmitChat}
             autoFocus
