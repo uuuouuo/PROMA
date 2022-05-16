@@ -11,10 +11,12 @@ import com.ssafy.proma.model.dto.chat.ProjectChatRoomDto.ProjectChatRoomRes;
 import com.ssafy.proma.model.entity.chat.ProjectChatMessage;
 import com.ssafy.proma.model.entity.chat.ProjectChatRoom;
 import com.ssafy.proma.model.entity.project.Project;
+import com.ssafy.proma.model.entity.project.UserProject;
 import com.ssafy.proma.model.entity.user.User;
 import com.ssafy.proma.repository.chat.ProjectChatMessageRepository;
 import com.ssafy.proma.repository.chat.ProjectChatRoomRepository;
 import com.ssafy.proma.repository.project.ProjectRepository;
+import com.ssafy.proma.repository.project.UserProjectRepository;
 import com.ssafy.proma.repository.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class ProjectChatService {
   private final ProjectRepository projectRepository;
   private final ProjectChatRoomRepository projectChatRoomRepository;
   private final ProjectChatMessageRepository projectChatMessageRepository;
+  private final UserProjectRepository userProjectRepository;
 
   public Map<String, Object> getProjectChatRoom(String projectNo, Integer lastMsgNo) {
 
@@ -42,6 +45,10 @@ public class ProjectChatService {
     // chatroom check
     ProjectChatRoom chatRoom = projectChatRoomRepository.findByProject(project)
             .orElseGet(() -> creatProjectChatRoom(project));
+
+    // chatroom 인원수
+    List<UserProject> projectMember = userProjectRepository.findByProject(project);
+    int memberCount = projectMember.size();
 
     // 해당 chatroom 의 messageList 가져오기
     if(lastMsgNo == null) lastMsgNo = Integer.MAX_VALUE;
@@ -57,7 +64,7 @@ public class ProjectChatService {
       });
     }
 
-    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), msgResList);
+    ProjectChatRoomRes response = new ProjectChatRoomRes(chatRoom.getNo(), memberCount, msgResList);
 
     Map<String, Object> result = new HashMap<>();
     result.put("response", response);

@@ -4,6 +4,7 @@ import com.ssafy.proma.model.dto.chat.ChatMessageDto.ChatMessageListRes;
 import com.ssafy.proma.model.entity.chat.TeamChatRoom;
 import com.ssafy.proma.model.entity.team.Team;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 public class TeamChatRoomDto {
@@ -13,14 +14,11 @@ public class TeamChatRoomDto {
   }
 
   @Getter
+  @AllArgsConstructor
   public static class TeamChatRoomRes {
     Integer roomNo;
+    Integer memberCount;
     List<ChatMessageListRes> messageList;
-
-    public TeamChatRoomRes(Integer roomNo, List<ChatMessageListRes> messageList) {
-      this.roomNo = roomNo;
-      this.messageList = messageList;
-    }
   }
 
 }
