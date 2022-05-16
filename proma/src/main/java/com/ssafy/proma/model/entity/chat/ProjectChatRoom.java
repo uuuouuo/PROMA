@@ -27,12 +27,12 @@ public class ProjectChatRoom {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "TEAM_CHAT_ROOM_NO")
+  @Column(name = "PROJECT_CHAT_ROOM_NO")
   @ApiModelProperty(value = "프로젝트 단위 그룹 채팅 메세지 번호")
   private Integer no;
 
   @ManyToOne(fetch = LAZY)
-  @JoinColumn(name="TEAM_NO")
+  @JoinColumn(name="PROJECT_NO")
   @ApiModelProperty(value = "프로젝트 번호")
   private Project project;
 
