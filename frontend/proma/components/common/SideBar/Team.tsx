@@ -98,6 +98,8 @@ const Team = ({
     }
   };
 
+  console.log(teamInfo)
+
   return (
     <TeamContainer>
       <Header>

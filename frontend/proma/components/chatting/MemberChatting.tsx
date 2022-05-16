@@ -83,6 +83,46 @@ const ChatContainer = styled.div`
     padding: 20px;
     overflow: scroll;
 `;
+const ChatBoxLeft = styled.div`
+    display: flex; 
+    margin-bottom: 2%;
+`
+const ChatBoxRight = styled(ChatBoxLeft)`
+    justify-content: right;
+`
+const ChatImg = styled.img`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 2%;
+`
+const ChatName = styled.a`
+  /* font-weight: bold; */
+    align-self: center;
+`
+const ChatContentLeft = styled.a`
+    background: white;
+    width: fit-content;
+    font-size: 15px;
+    height: 100px;
+    padding: 1.5% 1% 1.5% 1%;
+    border-radius: 5px 5px 5px 0px / 5px 5px 5px 0px;
+`
+const ChatContentRight = styled(ChatContentLeft)`
+    background: #6667AB;
+    color: white;
+    border-radius: 5px 5px 0px 5px / 5px 5px 0px 5px;
+`
+const ChatTimeLeft = styled.a`
+    margin-left: 1%;
+    font-weight: lighter;
+    font-size: 14px;
+`
+const ChatTimeRight = styled.a`
+    margin-right: 1%;
+    font-weight: lighter;
+    font-size: 14px;
+`
 
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
@@ -171,77 +211,33 @@ const MemberChatting = ({
         >
         <ChatContainer>
             {messageList.map((element: any, idx: any) => {
-            if (element.name !== localStorage.getItem("userNo"))
+            let arr = ""+element.time;
+            let time = arr.substr(11, 5);
+            if (element.name == userInfo.no)
                 return (
                 <>
-                    <div style={{ display: "flex", marginBottom: "2%" }} key={idx}>
-                    <img
-                        style={{
-                        width: "3%",
-                        height: "3%",
-                        borderRadius: "50%",
-                        marginRight: "1%",
-                        }}
-                        src={`${element.image}`}
-                    />
-                    <a style={{ fontWeight: "bold", alignSelf: "center" }}>
-                        {element.name}
-                    </a>{" "}
-                    </div>
+                    <ChatBoxLeft key={idx}>
+                        <ChatImg src={`${element.image}`}/>
+                        <ChatName>{element.nickname}</ChatName>
+                    </ChatBoxLeft>
 
                     <div style={{ marginBottom: "4%" }}>
-                    <a
-                        style={{
-                        background: "white",
-                        width: "fit-content",
-                        height: "100px",
-                        padding: "1.5% 1% 1.5% 1%",
-                        borderRadius: "5px 5px 5px 0px / 5px 5px 5px 0px",
-                        }}
-                    >
-                        {element.content}
-                    </a>
+                        <ChatContentLeft>{element.content}</ChatContentLeft>
+                        <ChatTimeLeft>{time}</ChatTimeLeft>
                     </div>
                 </>
                 );
             else
                 return (
                 <>
-                    <div
-                    style={{
-                        display: "flex",
-                        marginBottom: "2%",
-                        justifyContent: "right",
-                    }}
-                    key={idx}
-                    >
-                    <img
-                        style={{
-                        width: "3%",
-                        height: "3%",
-                        borderRadius: "50%",
-                        marginRight: "1%",
-                        }}
-                        src={`${element.image}`}
-                    />
-                    <a style={{ fontWeight: "bold", alignSelf: "center" }}>
-                        {element.name}
-                    </a>{" "}
-                    </div>
+                    <ChatBoxRight key={idx}>
+                        <ChatImg src={`${userInfo.profileImage}`}/>
+                        <ChatName>{element.nickname}</ChatName>
+                    </ChatBoxRight>
 
                     <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
-                    <a
-                        style={{
-                        background: "#6667AB",
-                        color: "white",
-                        width: "fit-content",
-                        height: "100px",
-                        padding: "1.5% 1% 1.5% 1%",
-                        borderRadius: "5px 5px 0px 5px / 5px 5px 0px 5px",
-                        }}
-                    >
-                        {element.content}
-                    </a>
+                        <ChatTimeRight>{time}</ChatTimeRight>
+                        <ChatContentRight>{element.content}</ChatContentRight>
                     </div>
                 </>
                 );
@@ -253,6 +249,7 @@ const MemberChatting = ({
             type="text"
             value={chat}
             placeholder="Chat.."
+            style={{fontSize: "15px"}}
             onChange={(e) => setChat(e.target.value)}
             onKeyPress={onSubmitChat}
             autoFocus
