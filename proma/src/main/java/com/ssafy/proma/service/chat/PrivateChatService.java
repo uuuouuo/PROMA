@@ -57,7 +57,7 @@ public class PrivateChatService {
     if(msgList.size() != 0) {
       msgList.forEach(m -> {
         ChatMessageListRes chatMsgListRes = new ChatMessageListRes(m.getNo(), m.getUser().getNo(),
-                m.getUser().getNickname(), m.getContent(), m.getTime());
+                m.getUser().getNickname(), m.getUser().getProfileImage(), m.getContent(), m.getTime());
         msgResList.add(chatMsgListRes);
       });
     }
