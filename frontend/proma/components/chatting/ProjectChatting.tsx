@@ -203,7 +203,6 @@ const Chatting = ({
     if (!projectNo) return;
 
     projectChat(projectNo).then((res: any) => {
-      console.log(res)
       setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
