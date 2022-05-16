@@ -146,6 +146,7 @@ const Chatting = ({
   const [newMessage, setNewMessage] = useState<Object>({});
   const [chat, setChat] = useState<string>("");
   const [roomNo, setRoomNo] = useState<number>(0);
+  const [membercnt, setMemberCnt] = useState<number>(0);
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
@@ -203,6 +204,7 @@ const Chatting = ({
 
     projectChat(projectNo).then((res: any) => {
       console.log(res)
+      setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
       // setMesNo(res.payload.response.messageList[9].msgNo);
@@ -225,7 +227,7 @@ const Chatting = ({
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          {/* <span>{messageList?.length}</span> */}
+          <span>{membercnt}</span>
         </ChatInfo>
       }
       width="500px"
