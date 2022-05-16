@@ -123,9 +123,10 @@ const IssueCreateModal = ({
       return;
     }
 
-    createNewIssue(newIssueInfo).then((res: any) =>
-      getIssueList({ projectNo, onlyMyIssue })
-    );
+    createNewIssue(newIssueInfo).then((res: any) => {
+      getIssueList({ projectNo, onlyMyIssue });
+      getIssues();
+    });
     showIssueCreateModal();
   };
 

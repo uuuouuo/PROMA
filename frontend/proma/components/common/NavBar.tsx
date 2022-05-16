@@ -7,6 +7,7 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import Toggle from "./Toggle";
 import { LoginModal, JoinModal } from "./Modal";
 import UserProfileModal from "../Modals/UserProfileModal";
+import { ToastContainer, toast } from "react-toastify";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -56,7 +57,6 @@ const NotiElement = styled.div`
   p {
     align-self: flex-start;
     margin: 0;
-    text-decoration: underline;
   }
   .mainText {
     font-weight: 500;
@@ -85,12 +85,13 @@ const NotiBox = styled.div`
   z-index: 2;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   overflow-y: scroll;
-  border: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
+  border: 3px solid ${(props: ThemeType) => props.theme.subBeigeColor};
   ${NotiElement} {
     width: 88%;
-    border-bottom: 1px solid ${(props: ThemeType) => props.theme.subBeigeColor};
+    border-bottom: 3px solid ${(props: ThemeType) => props.theme.subBeigeColor};
     &:last-child {
       border: none;
+      border-radius: 0 0 0 3px;
     }
   }
 `;
@@ -126,6 +127,41 @@ const ImageBox = styled.div`
   overflow: hidden;
   border: 2px solid ${(props: ThemeType) => props.theme.subPurpleColor};
   margin-bottom: 2px;
+`;
+const StyledComponent = styled(ToastContainer)`
+  &&&.Toastify__toast-container {
+    * {
+      margin: 0;
+      color: ${(props: ThemeType) => props.theme.elementTextColor};
+    }
+  }
+  .Toastify__toast {
+    border: 0.5px solid ${(props: ThemeType) => props.theme.elementTextColor};
+    min-width: 300px;
+    background-color: ${(props: ThemeType) => props.theme.bgColor};
+  }
+  .Toastify__toast-body {
+    .toastContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      p {
+        font-size: 15px;
+      }
+      button {
+        align-self: flex-end;
+        color: ${(props: ThemeType) => props.theme.elementTextColor};
+        background-color: ${(props: ThemeType) => props.theme.elementBgColor};
+        border: 1px solid ${(props: ThemeType) => props.theme.elementTextColor};
+        border-radius: 3px;
+        padding: 3px 5px;
+        font-size: 12px;
+      }
+    }
+  }
+  .Toastify__progress-bar {
+    background-color: black;
+  }
 `;
 
 const mapStateToProps = (state: RootState) => {
@@ -184,13 +220,39 @@ const NavBar = ({
   const showUserProfileModal = () => setUserProfileModal((cur) => !cur);
   const showNotificationBox = () => setShowNotifications((cur) => !cur);
 
-  const onLogOut = () => {
-    getLogout();
-  };
+  const onLogOut = () => getLogout();
 
   const confirmNotification = (notificationNo: number) => {
     updateNotificationConfirmed(notificationNo).then((res: any) =>
       getNotificationList()
+    );
+  };
+
+  const notify = (messagedto: any) => {
+    toast(
+      <div className="toastContainer">
+        <p>
+          {messagedto.notificationTime.split("T").join(" / ").split(".")[0]}
+        </p>
+        <br />
+        <p>
+          <strong>{messagedto.message.split("\n")[0]}</strong>
+        </p>
+        <p>{messagedto.message.split("\n")[1]}</p>
+        <br />
+        <button onClick={() => confirmNotification(messagedto.notificationNo)}>
+          Confirm
+        </button>
+      </div>,
+      {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      }
     );
   };
 
@@ -219,9 +281,10 @@ const NavBar = ({
       client.connect({ Authorization }, () => {
         client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
           const messagedto = JSON.parse(res.body);
-          console.log(messagedto);
-          alert(messagedto.message);
           getNotificationList();
+          console.log(messagedto);
+
+          notify(messagedto);
         });
       });
     });
@@ -280,6 +343,17 @@ const NavBar = ({
                     <FaRegBell onClick={showNotificationBox} />
                   )}
                 </MenuIconButton>
+                <StyledComponent
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={true}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                />
                 {showNotifications ? (
                   <NotiBox>
                     {notifications && notifications.length > 0 ? (

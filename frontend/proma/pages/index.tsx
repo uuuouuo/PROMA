@@ -49,25 +49,6 @@ const MainContainer = styled.div`
   }
 `;
 
-const StyledContainer = styled(ToastContainer)`
-  &&&.Toastify__toast-container {
-    * {
-      margin: 0;
-      color: ${(props: ThemeType) => props.theme.elementTextColor};
-    }
-  }
-  .Toastify__toast {
-    border: 0.5px solid ${(props: ThemeType) => props.theme.elementTextColor};
-    min-width: 300px;
-    background-color: ${(props: ThemeType) => props.theme.bgColor};
-  }
-  .Toastify__toast-body {
-  }
-  .Toastify__progress-bar {
-    background-color: black;
-  }
-`;
-
 const mapStateToProps = (state: RootState) => {
   return {
     isLogin: state.userReducer.isLogin,
@@ -78,31 +59,8 @@ const mapStateToProps = (state: RootState) => {
 const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
   const router = useRouter();
 
-  const notify = () => {
-    toast("PROMA", {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-
   return (
     <MainContainer>
-      <StyledContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <strong>PROMA</strong>
       <span>for work management</span>
       <div>
@@ -110,9 +68,6 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
           <FaHandPointLeft />
         </span>
         <p>Please go to the project space.</p>
-      </div>
-      <div>
-        <button onClick={notify}>Sample Notify</button>
       </div>
     </MainContainer>
   );
