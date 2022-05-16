@@ -82,9 +82,21 @@ const ChatContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 20px;
   overflow: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
+  .myChat {
+    margin-top: 30px;
+  }
 `;
 const ChatBoxLeft = styled.div`
   display: flex;
+  margin-top: 30px;
   margin-bottom: 2%;
 `;
 const ChatBoxRight = styled(ChatBoxLeft)`
@@ -105,7 +117,7 @@ const ChatContentLeft = styled.a`
   width: fit-content;
   font-size: 15px;
   height: 100px;
-  padding: 1.5% 1% 1.5% 1%;
+  padding: 5px 10px;
   border-radius: 5px 5px 5px 0px / 5px 5px 5px 0px;
 `;
 const ChatContentRight = styled(ChatContentLeft)`
@@ -130,16 +142,14 @@ let client = Stomp.over(sock);
 const Chatting = ({
   state,
   showChat,
-  projectNo,
   projectChat,
-  projectChatScroll,
+  projectInfo,
   userInfo,
 }: {
   state: boolean;
   showChat: any;
-  projectNo: any;
   projectChat: any;
-  projectChatScroll: any;
+  projectInfo: any;
   userInfo: any;
 }) => {
   const [messageList, setMessageList] = useState<any>([]);
@@ -147,6 +157,7 @@ const Chatting = ({
   const [chat, setChat] = useState<string>("");
   const [roomNo, setRoomNo] = useState<number>(0);
   const [membercnt, setMemberCnt] = useState<number>(0);
+  const [title, setTitle] = useState<string>(projectInfo.title);
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
@@ -157,6 +168,7 @@ const Chatting = ({
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
+    setChat("");
   };
 
   const chatSubscribe = (roomNo: number) => {
@@ -178,16 +190,21 @@ const Chatting = ({
     });
   };
 
-  const divFive = useRef<HTMLInputElement | null>(null);
+  const scrollRef = useRef<HTMLInputElement | null>(null);
 
-  const scrolLWithUseRef = () => {
-    divFive.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  const scrollWithUseRef = () => {
+    scrollRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
   };
 
   useEffect(() => {
-    if (!projectNo) return;
+    scrollWithUseRef();
+  }, [messageList]);
 
-    projectChat(projectNo).then((res: any) => {
+  useEffect(() => {
+    if (!projectInfo.projectNo) return;
+    // scrollWithUseRef();
+
+    projectChat(projectInfo.projectNo).then((res: any) => {
       setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
@@ -196,19 +213,17 @@ const Chatting = ({
       const arr = [...messagelist].reverse();
       setMessageList(arr);
     });
-    scrolLWithUseRef();
-}, [projectNo]);
+  }, [projectInfo.projectNo]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!newMessage) return;
     setMessageList([...messageList, newMessage]);
-    scrolLWithUseRef();
   }, [newMessage]);
 
   return (
     <SlidingPaneBox
       isOpen={state}
-      title="DB"
+      title={title}
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
@@ -224,7 +239,7 @@ useEffect(() => {
           let time = arr.substr(11, 5);
           if (element.pubNo !== userInfo.no)
             return (
-              <>
+              <div ref={idx === messageList.length - 1 ? scrollRef : null}>
                 <ChatBoxLeft key={idx}>
                   <ChatImg src={`${element.profileImage}`} />
                   <ChatName>{element.nickname}</ChatName>
@@ -234,24 +249,21 @@ useEffect(() => {
                   <ChatContentLeft>{element.content}</ChatContentLeft>
                   <ChatTimeLeft>{time}</ChatTimeLeft>
                 </div>
-              </>
+              </div>
             );
           else
             return (
-              <>
-                <ChatBoxRight key={idx}>
-                  <ChatImg src={`${userInfo.profileImage}`} />
-                  <ChatName>{element.nickname}</ChatName>
-                </ChatBoxRight>
-
-                <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
+              <div ref={idx === messageList.length - 1 ? scrollRef : null}>
+                <div
+                  className="myChat"
+                  style={{ marginBottom: "4%", textAlignLast: "right" }}
+                >
                   <ChatTimeRight>{time}</ChatTimeRight>
                   <ChatContentRight>{element.content}</ChatContentRight>
                 </div>
-              </>
+              </div>
             );
         })}
-        <div ref={divFive}>last</div>
       </ChatContainer>
 
       <InputChat>

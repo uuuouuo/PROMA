@@ -10,6 +10,14 @@ import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
 import { projectChat } from "../../../store/modules/chat";
 import { connect } from "react-redux";
+import { RootState } from "../../../store/modules";
+
+
+const mapStateToProps = (state: RootState) => {
+  return {
+      projectList: state.projectReducer.projectList,
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -112,8 +120,6 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
     }
   }, [router.asPath]);
 
-  console.log(projectInfo)
-
   return (
     <ProjectContainer>
       <Header>
@@ -124,7 +130,7 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
           <ChatButton onClick={() => {
             setState(true)
           }}>Chat</ChatButton>
-          <ProjectChatting state={state} showChat={showChat} projectNo={projectInfo.projectNo}/>
+          <ProjectChatting state={state} showChat={showChat} projectInfo={projectInfo}/>
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
           </ArrowButton>
@@ -157,4 +163,4 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
 };
 
 // export default Project;
-export default connect(null, mapDispatchToProps)(Project);
+export default connect(mapStateToProps, mapDispatchToProps)(Project);

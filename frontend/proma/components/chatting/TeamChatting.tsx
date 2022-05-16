@@ -81,6 +81,18 @@ const ChatContainer = styled.div`
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 20px;
   overflow: scroll;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background: #ccc;
+    }
 `;
 const ChatBoxLeft = styled.div`
   display: flex; 
@@ -129,14 +141,12 @@ let client = Stomp.over(sock);
 const TeamChatting = ({
   state,
   showChat,
-  teamNo,
   teamChat,
   userInfo,
   teamInfo,
 }: {
   state: boolean;
   showChat: any;
-  teamNo: any;
   teamChat: any;
   userInfo: any;
   teamInfo: any;
@@ -146,6 +156,7 @@ const TeamChatting = ({
   const [chat, setChat] = useState<string>("");
   const [roomNo, setRoomNo] = useState<number>(0);
   const [membercnt, setMemberCnt] = useState<number>(0);
+  const [title, setTitle] = useState<string>(teamInfo.title);
 
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
@@ -182,9 +193,9 @@ const TeamChatting = ({
   };
 
   useEffect(() => {
-    if (!teamNo) return;
+    if (!teamInfo.teamNo) return;
 
-    teamChat(teamNo).then((res: any) => {
+    teamChat(teamInfo.teamNo).then((res: any) => {
       setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
@@ -192,7 +203,7 @@ const TeamChatting = ({
       const arr = [...messagelist].reverse();
       setMessageList(arr);
     });
-  }, [teamNo]);
+  }, [teamInfo.teamNo]);
 
   useEffect(() => {
     if (!newMessage) return;
@@ -202,7 +213,7 @@ const TeamChatting = ({
   return (
     <SlidingPaneBox
       isOpen={state}
-      title="DB"
+      title={title}
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
@@ -233,11 +244,6 @@ const TeamChatting = ({
           else
             return (
               <>
-                <ChatBoxRight key={idx}>
-                  <ChatImg src={`${userInfo.profileImage}`}/>
-                  <ChatName>{element.nickname}</ChatName>
-                </ChatBoxRight>
-
                 <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
                   <ChatTimeRight>{time}</ChatTimeRight>
                   <ChatContentRight>{element.content}</ChatContentRight>

@@ -82,6 +82,14 @@ const ChatContainer = styled.div`
     background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
     padding: 20px;
     overflow: scroll;
+    &::-webkit-scrollbar {
+    width: 6px;
+    height: 0px;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background: #ccc;
+    }
 `;
 const ChatBoxLeft = styled.div`
     display: flex; 
@@ -130,20 +138,21 @@ let client = Stomp.over(sock);
 const MemberChatting = ({
     state,
     showChat,
-    userNo,
     memberChat,
     userInfo,
+    memberInfo
     }: {
     state: boolean;
     showChat: any;
-    userNo: any;
     memberChat: any;
     userInfo: any;
+    memberInfo: any;
     }) => {
     const [messageList, setMessageList] = useState<any>([]);
     const [newMessage, setNewMessage] = useState<Object>({});
     const [chat, setChat] = useState<string>("");
     const [roomNo, setRoomNo] = useState<number>(0);
+    const [title, setTitle] = useState<string>(memberInfo.nickname);
 
     const onSubmitChat = (e: any) => {
         if (e.key === "Enter") {
@@ -152,7 +161,7 @@ const MemberChatting = ({
             pubNo: userInfo.no,           // 채팅 작성자 코드
             content: e.target.value,      // 채팅 내용
         };
-        client.send(`/pub/chat/private-msg`, JSON.stringify(chat));
+            client.send(`/pub/chat/private-msg`, JSON.stringify(chat));
         }
     };
 
@@ -180,16 +189,16 @@ const MemberChatting = ({
     };
 
     useEffect(() => {
-        if (!userNo) return;
+        if (!memberInfo.userNo) return;
 
-        memberChat(userNo).then((res: any) => {
+        memberChat(memberInfo.userNo).then((res: any) => {
         setRoomNo(res.payload.response.roomNo);
         chatSubscribe(res.payload.response.roomNo);
         const messagelist = res.payload.response.messageList;
         const arr = [...messagelist].reverse();
         setMessageList(arr);
         });
-    }, [userNo]);
+    }, [memberInfo.userNo]);
 
     useEffect(() => {
         if (!newMessage) return;
@@ -199,7 +208,7 @@ const MemberChatting = ({
     return (
     <SlidingPaneBox
         isOpen={state}
-        title="DB"
+        title={title}
         subtitle={
             <ChatInfo>
             <BsFillPeopleFill />
@@ -230,11 +239,6 @@ const MemberChatting = ({
             else
                 return (
                 <>
-                    <ChatBoxRight key={idx}>
-                        <ChatImg src={`${userInfo.profileImage}`}/>
-                        <ChatName>{element.nickname}</ChatName>
-                    </ChatBoxRight>
-
                     <div style={{ marginBottom: "4%", textAlignLast: "right" }}>
                         <ChatTimeRight>{time}</ChatTimeRight>
                         <ChatContentRight>{element.content}</ChatContentRight>
