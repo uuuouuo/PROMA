@@ -129,6 +129,7 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
+    @Transactional
     public Map<String, Object> sendNotification(String userNo) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -140,12 +141,12 @@ public class NotificationServiceImpl implements NotificationService{
         }
 
         String message = userNo + "님 임시 알림 왔음";
-        notificationRepository.save(Notification.builder().user(userOp.get()).message(message).build());
+        Notification notification = Notification.builder().user(userOp.get()).message(message).build();
+        notificationRepository.save(notification);
 
         //알림 전송
-        NotificationDto notification = new NotificationDto();
-        notification.setMessage(message);
-        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+        NotificationDto notificationDto = new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime());
+        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notificationDto);
 
         resultMap.put("message", "알림 전송 성공");
         return resultMap;
