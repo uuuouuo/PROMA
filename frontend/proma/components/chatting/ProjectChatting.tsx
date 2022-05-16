@@ -84,22 +84,22 @@ const ChatContainer = styled.div`
   overflow: scroll;
 `;
 const ChatBoxLeft = styled.div`
-  display: flex; 
+  display: flex;
   margin-bottom: 2%;
-`
+`;
 const ChatBoxRight = styled(ChatBoxLeft)`
   justify-content: right;
-`
+`;
 const ChatImg = styled.img`
   width: 20px;
   height: 20px;
   border-radius: 50%;
   margin-right: 2%;
-`
+`;
 const ChatName = styled.a`
   /* font-weight: bold; */
   align-self: center;
-`
+`;
 const ChatContentLeft = styled.a`
   background: white;
   width: fit-content;
@@ -107,22 +107,22 @@ const ChatContentLeft = styled.a`
   height: 100px;
   padding: 1.5% 1% 1.5% 1%;
   border-radius: 5px 5px 5px 0px / 5px 5px 5px 0px;
-`
+`;
 const ChatContentRight = styled(ChatContentLeft)`
-  background: #6667AB;
+  background: #6667ab;
   color: white;
   border-radius: 5px 5px 0px 5px / 5px 5px 0px 5px;
-`
+`;
 const ChatTimeLeft = styled.a`
   margin-left: 1%;
   font-weight: lighter;
   font-size: 14px;
-`
+`;
 const ChatTimeRight = styled.a`
   margin-right: 1%;
   font-weight: lighter;
   font-size: 14px;
-`
+`;
 
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
@@ -151,9 +151,9 @@ const Chatting = ({
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
       let chat = {
-        roomNo,                       // 채팅장 번호
-        pubNo: userInfo.no,           // 채팅 작성자 코드
-        content: e.target.value,      // 채팅 내용
+        roomNo, // 채팅장 번호
+        pubNo: userInfo.no, // 채팅 작성자 코드
+        content: e.target.value, // 채팅 내용
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
@@ -178,26 +178,11 @@ const Chatting = ({
     });
   };
 
-  const [itemIndex, setItemIndex] = useState(0);
-  const [result, setResult] = useState();
+  const divFive = useRef<HTMLInputElement | null>(null);
 
-  const _infiniteScroll = useCallback(() => {
-    let scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
-    let scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
-    let clientHeight = document.documentElement.clientHeight;
-
-    if(scrollTop + clientHeight === clientHeight) {
-      // setItemIndex(itemIndex + 100);
-      // setResult(result.concat(video_list.slice(itemIndex+100, itemIndex+200)));
-      // console.log("성공")
-    }
-  }, [itemIndex, result]);
-
-  const container = document.querySelector('.chatting') as HTMLInputElement;
-  useEffect(() => {
-    window.addEventListener('scroll', _infiniteScroll, true);
-    return () => window.removeEventListener('scroll', _infiniteScroll, true);
-  }, [_infiniteScroll]);
+  const scrolLWithUseRef = () => {
+    divFive.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (!projectNo) return;
@@ -211,14 +196,15 @@ const Chatting = ({
       const arr = [...messagelist].reverse();
       setMessageList(arr);
     });
-  }, [projectNo]);
+    scrolLWithUseRef();
+}, [projectNo]);
 
-  useEffect(() => {
+useEffect(() => {
     if (!newMessage) return;
     setMessageList([...messageList, newMessage]);
+    scrolLWithUseRef();
   }, [newMessage]);
 
-  console.log(messageList);
   return (
     <SlidingPaneBox
       isOpen={state}
@@ -234,13 +220,13 @@ const Chatting = ({
     >
       <ChatContainer id="chatting">
         {messageList.map((element: any, idx: any) => {
-          let arr = ""+element.time;
+          let arr = "" + element.time;
           let time = arr.substr(11, 5);
           if (element.pubNo !== userInfo.no)
             return (
               <>
                 <ChatBoxLeft key={idx}>
-                  <ChatImg src={`${element.profileImage}`}/>
+                  <ChatImg src={`${element.profileImage}`} />
                   <ChatName>{element.nickname}</ChatName>
                 </ChatBoxLeft>
 
@@ -254,7 +240,7 @@ const Chatting = ({
             return (
               <>
                 <ChatBoxRight key={idx}>
-                  <ChatImg src={`${userInfo.profileImage}`}/>
+                  <ChatImg src={`${userInfo.profileImage}`} />
                   <ChatName>{element.nickname}</ChatName>
                 </ChatBoxRight>
 
@@ -265,6 +251,7 @@ const Chatting = ({
               </>
             );
         })}
+        <div ref={divFive}>last</div>
       </ChatContainer>
 
       <InputChat>
@@ -272,7 +259,7 @@ const Chatting = ({
           type="text"
           value={chat}
           placeholder="Chat.."
-          style={{fontSize: "15px"}}
+          style={{ fontSize: "15px" }}
           onChange={(e) => setChat(e.target.value)}
           onKeyPress={onSubmitChat}
           autoFocus
