@@ -59,18 +59,34 @@ public class UserService extends AbstractService implements UserDetailsService {
     }
 
     @Transactional
-    public Map<String, Object> update(MultipartFile multipartFile, String nickname, String dirName, String userNo) throws IOException {
+    public Map<String, Object> updateImage(MultipartFile multipartFile, String dirName, String userNo) throws IOException {
         Map<String, Object> resultMap = new HashMap<>();
-        String imgUrl = s3UploaderService.upload(multipartFile, dirName, userNo);
+        String imgUrl;
+        try {
+            imgUrl = s3UploaderService.upload(multipartFile, dirName, userNo);
+        } catch (NullPointerException e) {
+            imgUrl = "https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png";
+        }
         Optional<User> userOp = userRepository.findByNo(userNo);
         User findUser = takeOp(userOp);
-//        s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
-        findUser.updateUser(nickname, imgUrl);
-        UserRes userRes = new UserRes();
-        userRes.setNo(findUser.getNo());
-        userRes.setNickname(findUser.getNickname());
-        userRes.setProfileImage(findUser.getProfileImage());
-        resultMap.put("userRes", userRes);
+        if (!findUser.getProfileImage().equals("https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png")) {
+            s3UploaderService.deleteFile(findUser.getProfileImage().replace("https://promaproject.s3.ap-northeast-2.amazonaws.com/", ""));
+        }
+        findUser.updateUserImg(imgUrl);
+        resultMap.put("profileImage", imgUrl);
+        resultMap.put("message", Message.USER_UPDATE_SUCCESS_MESSAGE);
+
+        return resultMap;
+    }
+
+    @Transactional
+    public Map<String, Object> updateNickname(String nickname, String userNo) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<User> userOp = userRepository.findByNo(userNo);
+        User findUser = takeOp(userOp);
+        findUser.updateUserNickname(nickname);
+        resultMap.put("nickname", nickname);
         resultMap.put("message", Message.USER_UPDATE_SUCCESS_MESSAGE);
 
         return resultMap;

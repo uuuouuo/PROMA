@@ -53,6 +53,11 @@ public class S3UploaderService {
         log.info("File delete fail");
     }
 
+    public void deleteFile(String fileName) {
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
+        amazonS3Client.deleteObject(deleteObjectRequest);
+    }
+
     private Optional<File> convert(MultipartFile file) throws IOException {
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
         if (convertFile.createNewFile()) {
@@ -63,11 +68,6 @@ public class S3UploaderService {
         }
 
         return Optional.empty();
-    }
-
-    public void deleteFile(String fileName) throws IOException {
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
-        amazonS3Client.deleteObject(deleteObjectRequest);
     }
 
 }
