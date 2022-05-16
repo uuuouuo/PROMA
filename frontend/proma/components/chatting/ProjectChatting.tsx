@@ -78,7 +78,7 @@ const ChatInfo = styled.div`
 
 const ChatContainer = styled.div`
   width: inherit;
-  height: 90%;
+  height: 88%;
   background-color: ${(props: ThemeType) => props.theme.subPurpleColor};
   padding: 20px;
   overflow: scroll;
