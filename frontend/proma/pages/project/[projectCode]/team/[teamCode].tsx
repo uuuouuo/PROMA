@@ -185,6 +185,9 @@ const IssueBox = styled.div`
       justify-content: flex-end;
     }
   }
+  .doneIssue {
+    text-decoration: line-through;
+  }
 `;
 const WarnButtonBox = styled.div`
   display: flex;
@@ -480,7 +483,9 @@ const TeamSpace = ({
             </FlexBox>
             {isMember ? (
               <ButtonBox>
-                <button onClick={switchViewOption}>Only My Issue</button>
+                <button onClick={switchViewOption}>
+                  {onlyMyIssue ? "View every Issue" : "Only My Issue"}
+                </button>
                 <button onClick={showIssueCreateModal}>+ Add Issue</button>
                 <IssueCreateModal
                   issueCreateModal={issueCreateModal}
@@ -532,7 +537,11 @@ const TeamSpace = ({
                                     <IssueSubBox>
                                       <ImageBox>
                                         <Image
-                                          src="/profileimg.png"
+                                          src={`${
+                                            issue.assignee
+                                              ? issue.assignee.image
+                                              : "/profileImg.png"
+                                          }`}
                                           width={20}
                                           height={20}
                                         />
@@ -586,7 +595,11 @@ const TeamSpace = ({
                                   <IssueSubBox>
                                     <ImageBox>
                                       <Image
-                                        src="/profileimg.png"
+                                        src={`${
+                                          issue.assignee
+                                            ? issue.assignee.image
+                                            : "/profileImg.png"
+                                        }`}
                                         width={20}
                                         height={20}
                                       />
@@ -632,14 +645,20 @@ const TeamSpace = ({
                                       href={`/project/${projectNo}/issue/${issue.issueNo}`}
                                     >
                                       <a>
-                                        <p>{issue.title}</p>
+                                        <p className="doneIssue">
+                                          {issue.title}
+                                        </p>
                                       </a>
                                     </Link>
                                   </IssueSubBox>
                                   <IssueSubBox>
                                     <ImageBox>
                                       <Image
-                                        src="/profileimg.png"
+                                        src={`${
+                                          issue.assignee
+                                            ? issue.assignee.image
+                                            : "/profileImg.png"
+                                        }`}
                                         width={20}
                                         height={20}
                                       />
