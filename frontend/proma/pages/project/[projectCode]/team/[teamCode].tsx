@@ -326,12 +326,12 @@ const TeamSpace = ({
     );
   const onDeleteTeam = () => deleteTeam({ teamNo, projectNo });
 
-  const getIssues = () => {
+  const getIssues = (teamCode: any) => {
     const params = {
       onlyMyIssue,
       sprintNo: sprintInfo.sprintNo,
       status: "todo",
-      teamNo,
+      teamNo: teamCode,
     };
     console.log(params);
 
@@ -386,7 +386,7 @@ const TeamSpace = ({
       updateIssueStatus({
         issueNo: targetIssueNo,
         status: toStatus,
-      }).then((res: any) => getIssues());
+      }).then((res: any) => getIssues(teamNo));
     }
   };
 
@@ -400,6 +400,7 @@ const TeamSpace = ({
     setTeamNo(parseInt(teamCode));
 
     getTeamInfo(teamCode);
+    getIssues(teamCode);
   }, [router.asPath]);
 
   useEffect(() => {
@@ -420,11 +421,11 @@ const TeamSpace = ({
     if (!teamInfo) return;
     setIsMember(teamInfo.isMember);
     setTeamName(teamInfo.title);
-    getIssues();
+    getIssues(teamNo);
   }, [teamInfo]);
 
   useEffect(() => {
-    getIssues();
+    getIssues(teamNo);
   }, [onlyMyIssue]);
 
   useEffect(() => {
