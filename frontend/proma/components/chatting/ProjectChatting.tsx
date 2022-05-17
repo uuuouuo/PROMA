@@ -167,7 +167,7 @@ const Chatting = ({
         content: e.target.value, // 채팅 내용
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
-      setChat(" ");
+      setChat("");
     }
     if (e.keyCode === 32) {
       setChat("");

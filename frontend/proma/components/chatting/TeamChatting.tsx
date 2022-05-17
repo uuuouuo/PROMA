@@ -161,12 +161,12 @@ const TeamChatting = ({
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
       let chat = {
-        roomNo, // 채팅장 번호
-        pubNo: userInfo.no, // 채팅 작성자 코드
-        content: e.target.value, // 채팅 내용
+        roomNo,                       // 채팅장 번호
+        pubNo: userInfo.no,           // 채팅 작성자 코드
+        content: e.target.value,      // 채팅 내용
       };
-      client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
-      setChat(" ");
+      client.send(`/pub/chat/team-msg`, JSON.stringify(chat));
+      setChat("");
     }
     if (e.keyCode === 32) {
       setChat("");
