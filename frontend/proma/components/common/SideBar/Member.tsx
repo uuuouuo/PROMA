@@ -23,8 +23,8 @@ const MemberContainer = styled.div`
   }
 `;
 const ImageBox = styled.div`
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   overflow: hidden;
   margin-right: 5px;
