@@ -346,17 +346,14 @@ const IssueDetail = ({
       userNo: issueInfo.assignee ? issueInfo.assignee.userNo : null,
     });
     setSprint();
-    getTeamMembers(issueInfo.team.teamNo);
+    getTeamMembers(issueInfo.team.teamNo).then((res: any) => {
+      setMemberList(
+        res.payload.memberList.filter(
+          (element: any) => element.userNo !== issueInfo.assignee.userNo
+        )
+      );
+    });
   }, [issueInfo]);
-
-  useEffect(() => {
-    if (!teamMembers || !issueInfo) return;
-    setMemberList(
-      teamMembers.filter(
-        (element: any) => element?.userNo !== issueInfo.assignee.userNo
-      )
-    );
-  }, [teamMembers, userInfo]);
 
   useEffect(() => {
     if (!topics || !issueInfo.topic) return;
