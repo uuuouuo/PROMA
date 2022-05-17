@@ -202,7 +202,6 @@ const Chatting = ({
 
   useEffect(() => {
     if (!projectInfo.projectNo) return;
-    // scrollWithUseRef();
 
     projectChat(projectInfo.projectNo).then((res: any) => {
       setMemberCnt(res.payload.response.memberCount);
