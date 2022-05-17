@@ -14,6 +14,7 @@ import {
 } from "../../../../store/modules/topic";
 import { RootState } from "../../../../store/modules";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface topicType {
   title: string;
@@ -134,6 +135,7 @@ const IssueBox = styled.div`
   margin-top: 10px;
   padding: 5px 15px;
   color: black;
+  cursor: pointer;
   div {
     display: flex;
     p {
@@ -163,6 +165,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     topicInfo: state.topicReducer.topicInfo,
     issueList: state.topicReducer.issueList,
+    userInfo: state.userReducer.userInfo,
   };
 };
 
@@ -183,6 +186,7 @@ const TopicDetail = ({
   deleteTopic,
   getIssueUnderTopic,
   issueList,
+  userInfo,
 }: {
   getTopicInfo: any;
   topicInfo: any;
@@ -190,6 +194,7 @@ const TopicDetail = ({
   deleteTopic: any;
   getIssueUnderTopic: any;
   issueList: any;
+  userInfo: any;
 }) => {
   const router = useRouter();
   const [updateTopic, setUpdateTopic] = useState<boolean>(false);
@@ -235,7 +240,7 @@ const TopicDetail = ({
     setTopicNo(topicCode);
     getTopicInfo(topicCode);
     getIssueUnderTopic(topicCode);
-  }, [router.asPath]);
+  }, [router.asPath, userInfo]);
 
   useEffect(() => {
     if (!topicInfo) return;
@@ -307,18 +312,31 @@ const TopicDetail = ({
         <IssueContainer>
           {issueList && issueList.length > 0 ? (
             issueList.map((issue: any, index: number) => (
-              <IssueBox key={index}>
-                <div>
-                  <p>No. {issue.issueNo}</p>
-                  <p>{issue.title}</p>
-                </div>
-                <AssigneeBox>
-                  <ImageBox>
-                    <Image src="/profileimg.png" width={20} height={20} />
-                  </ImageBox>
-                  <p>{issue.assignee.nickname}</p>
-                </AssigneeBox>
-              </IssueBox>
+              <Link
+                href={`/project/${projectNo}/issue/${issue.issueNo}`}
+                key={index}
+              >
+                <IssueBox>
+                  <div>
+                    <p>No. {issue.issueNo}</p>
+                    <p>{issue.title}</p>
+                  </div>
+                  <AssigneeBox>
+                    <ImageBox>
+                      <Image
+                        src={`${
+                          issue.assignee
+                            ? issue.assignee.image
+                            : "/profileImg.png"
+                        }`}
+                        width={20}
+                        height={20}
+                      />
+                    </ImageBox>
+                    <p>{issue.assignee.nickname}</p>
+                  </AssigneeBox>
+                </IssueBox>
+              </Link>
             ))
           ) : (
             <span>No issues yet.</span>

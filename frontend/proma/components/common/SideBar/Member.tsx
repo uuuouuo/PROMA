@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ThemeType } from "../../../interfaces/style";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Chatting from "../../chatting/Chatting";
+import MemberChatting from "../../chatting/MemberChatting";
 
 //styled-components
 const MemberContainer = styled.div`
@@ -40,7 +40,7 @@ const ChatButton = styled.button`
   }
 `;
 
-const Member = ({ memberInfo }: { memberInfo: any }) => {
+const Member = ({ memberInfo, projectNo }: { memberInfo: any; projectNo: any; }) => {
   // 채팅창 띄우기
   const [state, setState] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
@@ -64,7 +64,7 @@ const Member = ({ memberInfo }: { memberInfo: any }) => {
         <span>{memberInfo.nickname}</span>
       </div>
       <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
-      <Chatting state={state} showChat={showChat} />
+      <MemberChatting state={state} showChat={showChat} memberInfo={memberInfo} />
     </MemberContainer>
   );
 };

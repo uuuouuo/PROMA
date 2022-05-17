@@ -15,12 +15,15 @@ export const initialState: UserState = {
 };
 
 export const getUserInfo = createAsyncThunk(
-  "USER/DATA",
-  async (_, { rejectWithValue }) => {
+  "GET/USERINFO",
+  async (_, thunkAPI) => {
     return await userApi
       .get(`/user/data`)
-      .then((res) => res.data)
-      .catch((err) => rejectWithValue(err.response.data));
+      .then((res) => {
+        thunkAPI.dispatch(getProjectList());
+        return res.data;
+      })
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -32,7 +35,6 @@ export const getLogin = createAsyncThunk(
       .get(`/user/login/github?code=${code}`)
       .then((res) => {
         thunkAPI.dispatch(getUserInfo());
-        thunkAPI.dispatch(getProjectList());
         res.data;
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
@@ -44,8 +46,45 @@ export const withdrawUser = createAsyncThunk(
   async (code: string, { rejectWithValue }) => {
     return await api
       .delete(`/user/withdrawal/github?code=${code}`)
-      .then((res) => console.log("탈퇴 성공", res))
+      .then((res) => {
+        localStorage.removeItem("code");
+        localStorage.removeItem("Authorization");
+        localStorage.removeItem("RefreshToken");
+        window.location.reload();
+        return res.data;
+      })
       .catch((err) => rejectWithValue(err.response.data));
+  }
+);
+
+export const updateUserImage = createAsyncThunk(
+  "PUT/USERIMAGE",
+  async (newUserImage: any, thunkAPI) => {
+    if (newUserImage !== "") {
+      return await api
+        .put(`/user/update/image`, newUserImage, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => res.data)
+        .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+    } else {
+      return await api
+        .put(`/user/update/image`, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => res.data)
+        .catch((err) => thunkAPI.rejectWithValue(err.response.data));
+    }
+  }
+);
+
+export const updateUserNickname = createAsyncThunk(
+  "PUT/USERNICKNAME",
+  async (newNickname: any, thunkAPI) => {
+    return await api
+      .put(`/user/update/nickname`, newNickname)
+      .then((res) => res.data)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -54,22 +93,24 @@ const memberSlice = createSlice({
   initialState,
   reducers: {
     getLogout(state: UserState) {
+      window.location.href = "/";
       state.isLogin = false;
       state.userInfo = {};
       localStorage.removeItem("code");
       localStorage.removeItem("Authorization");
       localStorage.removeItem("RefreshToken");
-      window.location.reload();
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getUserInfo.fulfilled, (state, { payload }) => {
         state.userInfo = payload.userRes;
-        localStorage.setItem("userNo", payload.userRes.no);
       })
       .addCase(getLogin.fulfilled, (state) => {
         state.isLogin = true;
+      })
+      .addCase(updateUserImage.rejected, (state) => {
+        alert("이미지는 5MB 이하만 첨부가능합니다.");
       });
   },
 });

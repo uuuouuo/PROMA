@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { AppProps } from "next/app";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import wrapper from "../store/configureStore";
 import styled, {
   createGlobalStyle,
@@ -15,8 +15,7 @@ import { connect } from "react-redux";
 import { RootState } from "../store/modules";
 import ErrorPage from "./404";
 import ErrorBoundary from "../ErrorBoundary";
-import { userInstance } from "../api";
-const userApi = userInstance();
+import { getNotificationList } from "../store/modules/notify";
 
 const GlobalStyle = createGlobalStyle`
       body {
@@ -64,29 +63,29 @@ const mapStateToProps = (state: RootState) => {
   return {
     darkModeState: state.modeReducer.darkMode,
     isLogin: state.userReducer.isLogin,
+    userInfo: state.userReducer.userInfo,
   };
 };
 
-const getRefresh = async () => {
-  return await userApi
-    .post(`/user/refresh`)
-    .then((res: any) => {
-      localStorage.setItem("Authorization", res.headers.authorization);
-    })
-    .catch((err: any) => console.log(err));
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getNotificationList: () => dispatch(getNotificationList()),
+  };
 };
 
 function MyApp({
   Component,
   pageProps,
   isLogin,
+  userInfo,
   darkModeState,
-}: AppProps & { darkModeState: boolean; isLogin: boolean }) {
-  useEffect(() => {
-    if (!isLogin) return;
-    setInterval(() => getRefresh(), 850000);
-  }, [isLogin]);
-
+  getNotificationList,
+}: AppProps & {
+  darkModeState: boolean;
+  isLogin: boolean;
+  userInfo: any;
+  getNotificationList: any;
+}) {
   return (
     <>
       <Head>
@@ -111,4 +110,6 @@ function MyApp({
   );
 }
 
-export default wrapper.withRedux(connect(mapStateToProps, null)(MyApp));
+export default wrapper.withRedux(
+  connect(mapStateToProps, mapDispatchToProps)(MyApp)
+);

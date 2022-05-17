@@ -5,11 +5,19 @@ import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import Team from "./Team";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Chatting from "../../chatting/Chatting";
+import ProjectChatting from "../../chatting/ProjectChatting";
 import TeamCreateModal from "../../Modals/TeamCreateModal";
 import { useRouter } from "next/router";
-import { chatSubscribe, projectChat } from "../../../store/modules/chat";
+import { projectChat } from "../../../store/modules/chat";
 import { connect } from "react-redux";
+import { RootState } from "../../../store/modules";
+
+
+const mapStateToProps = (state: RootState) => {
+  return {
+      projectList: state.projectReducer.projectList,
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -121,11 +129,8 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
         <div>
           <ChatButton onClick={() => {
             setState(true)
-            localStorage.setItem("projectNo", projectInfo.projectNo)
-            projectChat(projectInfo.projectNo)
-            chatSubscribe()
           }}>Chat</ChatButton>
-          <Chatting state={state} showChat={showChat} />
+          <ProjectChatting state={state} showChat={showChat} projectInfo={projectInfo}/>
           <ArrowButton onClick={() => setShowTeams((cur) => !cur)}>
             {showTeams ? <FaAngleDown /> : <FaAngleRight />}
           </ArrowButton>
@@ -158,4 +163,4 @@ const Project = ({ projectInfo, projectChat }: { projectInfo: any; projectChat: 
 };
 
 // export default Project;
-export default connect(null, mapDispatchToProps)(Project);
+export default connect(mapStateToProps, mapDispatchToProps)(Project);

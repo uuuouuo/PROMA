@@ -15,6 +15,7 @@ interface IssueType {
   assignee: {
     userNo: string;
     nickname: string;
+    image: string;
   };
 }
 
@@ -85,26 +86,28 @@ const Issue = ({
           key={issue.issueNo}
         >
           {(provided) => (
-            <IssueBox
-              ref={provided.innerRef}
-              {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
-              {...provided.draggableProps} //드래그 되는 영역
-            >
-              <TitleBox>
-                <p>No. {issue.issueNo}</p>
-                <Link href={`/project/${projectNo}/issue/${issue.issueNo}`}>
-                  <a>
-                    <p>{issue.title}</p>
-                  </a>
-                </Link>
-              </TitleBox>
-              <FlexBox>
-                <ImageBox>
-                  <Image src="/profileimg.png" width={20} height={20}></Image>
-                </ImageBox>
-                <p>{issue.assignee.nickname}</p>
-              </FlexBox>
-            </IssueBox>
+            <Link href={`/project/${projectNo}/issue/${issue.issueNo}`}>
+              <IssueBox
+                ref={provided.innerRef}
+                {...provided.dragHandleProps} //드래그를 하기 위해 마우스로 선택할 수 있는 영역
+                {...provided.draggableProps} //드래그 되는 영역
+              >
+                <TitleBox>
+                  <p>No. {issue.issueNo}</p>
+                  <p>{issue.title}</p>
+                </TitleBox>
+                <FlexBox>
+                  <ImageBox>
+                    <Image
+                      src={`${issue.assignee.image}`}
+                      width={20}
+                      height={20}
+                    />
+                  </ImageBox>
+                  <p>{issue.assignee.nickname}</p>
+                </FlexBox>
+              </IssueBox>
+            </Link>
           )}
         </Draggable>
       ) : null}

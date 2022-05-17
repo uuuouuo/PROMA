@@ -192,7 +192,7 @@ const Sprint = ({
               <Team
                 team={team}
                 key={index}
-                sprintNo={sprintNo}
+                sprintNo={sprint.sprintNo}
                 sprintIndex={sprintIndex}
                 teamIndex={index}
               />

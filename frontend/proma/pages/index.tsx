@@ -4,15 +4,12 @@ import { ThemeType } from "../interfaces/style";
 import { FaHandPointLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import { useEffect } from "react";
+import { useRouter } from "next/router";
+
 import { RootState } from "../store/modules";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { BACKEND_URL } from "../config";
-let sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-let client = Stomp.over(sock);
 
 const animation = keyframes`
     0% {
@@ -52,82 +49,18 @@ const MainContainer = styled.div`
   }
 `;
 
-const StyledContainer = styled(ToastContainer)`
-  &&&.Toastify__toast-container {
-    * {
-      margin: 0;
-      color: ${(props: ThemeType) => props.theme.elementTextColor};
-    }
-  }
-  .Toastify__toast {
-    border: 0.5px solid ${(props: ThemeType) => props.theme.elementTextColor};
-    min-width: 300px;
-    background-color: ${(props: ThemeType) => props.theme.bgColor};
-  }
-  .Toastify__toast-body {
-  }
-  .Toastify__progress-bar {
-    background-color: black;
-  }
-`;
-
 const mapStateToProps = (state: RootState) => {
   return {
     isLogin: state.userReducer.isLogin,
     userInfo: state.userReducer.userInfo,
-    chatInfo: state.chatReducer.chatInfo,
   };
 };
 
 const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
   const router = useRouter();
 
-  const notify = () => {
-    toast("PROMA", {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    if (!userInfo) return;
-
-    if (isLogin) {
-      const Authorization = localStorage
-        .getItem("Authorization")
-        ?.split(" ")[1]
-        .toString();
-
-      const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      client.connect({ Authorization }, () => {
-        client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
-          const messagedto = JSON.parse(res.body);
-          console.log(messagedto);
-          alert(messagedto.message);
-        });
-      });
-    }
-  }, [userInfo]);
-
   return (
     <MainContainer>
-      <StyledContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <strong>PROMA</strong>
       <span>for work management</span>
       <div>
@@ -135,9 +68,6 @@ const Home = ({ isLogin, userInfo }: { isLogin: boolean; userInfo: any }) => {
           <FaHandPointLeft />
         </span>
         <p>Please go to the project space.</p>
-      </div>
-      <div>
-        <button onClick={notify}>Sample Notify</button>
       </div>
     </MainContainer>
   );

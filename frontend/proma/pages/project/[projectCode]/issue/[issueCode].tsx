@@ -131,7 +131,8 @@ const IssueDetailBox = styled(SubBox)`
 `;
 const ToggleBox = styled.div`
   margin-bottom: 20px;
-  input, select {
+  input,
+  select {
     border-radius: 3px;
     border: none;
     outline: 1px solid ${(props: ThemeType) => props.theme.subPurpleColor};
@@ -146,8 +147,8 @@ const ToggleBox = styled.div`
       opacity: 1;
     }
   }
-  select{
-      width: 100%;
+  select {
+    width: 100%;
   }
   p {
     font-size: 22px;
@@ -158,11 +159,10 @@ const ToggleBox = styled.div`
   }
 `;
 const ImageBox = styled.div`
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   overflow: hidden;
-  padding-left: 20px;
 `;
 const AssigneeInfo = styled.div`
   display: flex;
@@ -175,6 +175,7 @@ const mapStateToProps = (state: RootState) => {
     sprints: state.sprintReducer.sprintList,
     teamMembers: state.teamReducer.teamMembers,
     topics: state.topicReducer.topicList,
+    userInfo: state.userReducer.userInfo,
   };
 };
 
@@ -206,6 +207,7 @@ const IssueDetail = ({
   getTopicList,
   topics,
   deleteIssue,
+  userInfo,
 }: {
   issueInfo: any;
   getIssueInfo: any;
@@ -219,6 +221,7 @@ const IssueDetail = ({
   getTopicList: any;
   topics: any;
   deleteIssue: any;
+  userInfo: any;
 }) => {
   const router = useRouter();
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -328,7 +331,7 @@ const IssueDetail = ({
       setIsReady(true)
     );
     getTopicList(projectCode);
-  }, [router.asPath]);
+  }, [router.asPath, userInfo]);
 
   useEffect(() => {
     if (!issueInfo.topic || issueInfo === {}) return;
@@ -349,22 +352,22 @@ const IssueDetail = ({
   useEffect(() => {
     if (!teamMembers) return;
     console.log(teamMembers);
-    setMemberList(
-      teamMembers.filter(
-        (element: any) => element?.userNo !== issueInfo.assignee.userNo
-      )
-    );
-  }, [teamMembers]);
+  }, [teamMembers, userInfo]);
 
   useEffect(() => {
     if (!topics || !issueInfo.topic) return;
+    setMemberList(
+      teamMembers.filter(
+        (element: any) => element?.userNo !== issueInfo.assignee.no
+      )
+    );
 
     setTopicList(
       topics.filter(
         (element: any) => element.topicNo !== issueInfo.topic.topicNo
       )
     );
-  }, [topics, issueInfo]);
+  }, [topics, issueInfo, userInfo]);
 
   return (
     <>
@@ -492,7 +495,7 @@ const IssueDetail = ({
                     onChange={onChangeIssueAssignee}
                   >
                     <option value={issueInfo.assignee.userNo}>
-                      {issueInfo.assignee.nickname}
+                      {issueInfo.assignee ? issueInfo.assignee.nickname : null}
                     </option>
                     {memberList?.map((member: any, index: number) => (
                       <option value={member.userNo} key={index}>
@@ -503,9 +506,19 @@ const IssueDetail = ({
                 ) : (
                   <AssigneeInfo>
                     <ImageBox>
-                      <Image src="/profileimg.png" width={25} height={25} />
+                      <Image
+                        src={`${
+                          issueInfo.assignee
+                            ? issueInfo.assignee.image
+                            : "/profileImg.png"
+                        }`}
+                        width={22}
+                        height={22}
+                      />
                     </ImageBox>
-                    <p>{issueInfo ? issueInfo.assignee.nickname : null}</p>
+                    <p>
+                      {issueInfo.assignee ? issueInfo.assignee.nickname : null}
+                    </p>
                   </AssigneeInfo>
                 )}
               </ToggleBox>
