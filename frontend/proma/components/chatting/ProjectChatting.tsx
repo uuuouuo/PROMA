@@ -168,10 +168,9 @@ const Chatting = ({
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
-    if (e.key === " ") {
+    if (e.keyCode === 32) {
       setChat("");
     }
-    setChat("");
   };
 
   const chatSubscribe = (roomNo: number) => {
@@ -274,7 +273,7 @@ const Chatting = ({
           value={chat}
           placeholder="Chat.."
           style={{ fontSize: "15px" }}
-          onChange={(e) => setChat(e.target.value.replace(/ /g, ''))}
+          onChange={(e) => setChat(e.target.value)}
           onKeyPress={onSubmitChat}
           autoFocus
         />
