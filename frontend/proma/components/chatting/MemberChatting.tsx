@@ -163,6 +163,9 @@ const MemberChatting = ({
         };
             client.send(`/pub/chat/private-msg`, JSON.stringify(chat));
         }
+        if (e.keyCode === 32) {
+            setChat("");
+        }
     };
 
     const onReset = () => {

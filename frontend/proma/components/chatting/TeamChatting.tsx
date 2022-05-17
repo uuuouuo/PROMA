@@ -167,7 +167,9 @@ const TeamChatting = ({
       };
       client.send(`/pub/chat/team-msg`, JSON.stringify(chat));
     }
-    setChat("");
+    if (e.keyCode === 32) {
+      setChat("");
+    }
   };
 
   const chatSubscribe = (roomNo: number) => {
