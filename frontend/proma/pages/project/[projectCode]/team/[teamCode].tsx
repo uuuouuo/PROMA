@@ -407,9 +407,8 @@ const TeamSpace = ({
     getInProgressSprint(projectNo).then((res: any) => {
       const status = res.payload;
       if (!status) {
-        // router.push(`/project/${router.query.projectCode}`);
         alert(
-          "Issue management is only available for sprints in progress. Start the sprint first."
+          "이슈 진행 상태 관리는 활성화된 스프린트에서만 가능합니다. 먼저 스프린트를 활성화해주세요."
         );
       } else {
         console.log("sprint is active");
@@ -424,15 +423,13 @@ const TeamSpace = ({
   }, [teamInfo]);
 
   useEffect(() => {
+    getIssues();
+  }, [onlyMyIssue]);
+
+  useEffect(() => {
     if (!inProgressSprintInfo) return;
     setSprintInfo(inProgressSprintInfo);
   }, [inProgressSprintInfo]);
-
-  useEffect(() => {
-    if (!sprintInfo) return;
-    console.log(sprintInfo);
-    getIssues();
-  }, [sprintInfo]);
 
   useEffect(() => {
     if (!toDoIssues) return;

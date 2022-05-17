@@ -93,7 +93,7 @@ const Team = ({
     let joinConfirm = confirm("Would you like to join the team?");
     if (joinConfirm) {
       joinTeam({ teamNo: teamInfo.teamNo }).then((res: any) =>
-        alert("Team registration is complete.")
+        alert("팀 등록이 완료되었습니다.")
       );
     }
   };

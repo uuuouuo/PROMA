@@ -61,16 +61,15 @@ export const ProjectCreateModal = ({
         ...cur,
         inviteMails: [...cur.inviteMails, memberEmail],
       }));
+      setMemberEmail("");
     } else if (
       newProjectInfo.inviteMails.indexOf(memberEmail) > -1 &&
       e.key === "Enter"
     ) {
-      alert("This email already exists in the member list.");
+      alert("이미 목록에 존재하는 이메일입니다.");
     } else {
       return;
     }
-
-    e.target.value = "";
   };
 
   const removeMember = (index: number) => {
@@ -81,11 +80,16 @@ export const ProjectCreateModal = ({
       invitedMembers: updatedList,
     }));
   };
-  
+
   const createNewProject = () => {
     console.log(newProjectInfo);
     postNewProject(newProjectInfo);
     showProjectCreateModal();
+    setNewProjectInfo({
+      title: "",
+      introduction: "",
+      inviteMails: [],
+    });
   };
 
   return (

@@ -110,16 +110,16 @@ const IssueCreateModal = ({
 
   const addNewIssue = () => {
     if (!newIssueInfo.title) {
-      alert("Please type issue title");
+      alert("이슈 제목을 작성해주세요.");
       return;
     } else if (!newIssueInfo.description) {
-      alert("Please type issue description");
+      alert("이슈 설명을 작성해주세요.");
       return;
     } else if (!newIssueInfo.topicNo) {
-      alert("Please choose topic");
+      alert("해당 토픽을 선택해주세요.");
       return;
     } else if (!newIssueInfo.userNo) {
-      alert("Please choose issue assignee");
+      alert("담당자를 선택해주세요.");
       return;
     }
 

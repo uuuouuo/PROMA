@@ -264,7 +264,7 @@ export const SprintCreateModal = ({
   const onSelectEndDate = (e: any) => {
     const value = e.target.value as string;
     if (!newSprintInfo.startDate) {
-      alert("Please choose start date first.");
+      alert("시작일을 먼저 선택해주세요.");
       e.target.value = "";
       return;
     }
@@ -272,7 +272,7 @@ export const SprintCreateModal = ({
     if (new Date(newSprintInfo.startDate) >= new Date(value)) {
       e.target.value = "";
       alert(
-        "The end date must be later than the start date. Please choose again"
+        "마감일은 시작일보다 먼저 올 수 없습니다. 다시 골라주세요."
       );
     }
 
@@ -285,15 +285,15 @@ export const SprintCreateModal = ({
 
   const createNewSprint = () => {
     if (!newSprintInfo.title) {
-      alert("Please type sprint title");
+      alert("스프린트 이름을 작성해주세요.");
       return;
     }
     if (!newSprintInfo.startDate) {
-      alert("Please choose start date");
+      alert("시작일을 정해주세요.");
       return;
     }
     if (!newSprintInfo.endDate) {
-      alert("Please choose end date");
+      alert("마감일을 정해주세요.");
       return;
     }
 
@@ -518,11 +518,11 @@ export const IssueCreateModal = ({
   const createNewIssue = () => {
     //topic, assignee 리스트 내 존재하는 value인지 확인
     if (topicList.indexOf(newIssueInfo.topic) === -1) {
-      alert("Please select an existing topic name in the list.");
+      alert("리스트에 존재하는 토픽을 선택해주세요.");
       return;
     }
     if (memberList.indexOf(newIssueInfo.assignee) === -1) {
-      alert("Please select an existing assignee name in the list.");
+      alert("리스트에 존재하는 담당자를 선택해주세요.");
       return;
     }
 

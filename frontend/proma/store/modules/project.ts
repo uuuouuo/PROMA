@@ -42,7 +42,7 @@ export const postNewProject = createAsyncThunk(
     return await api
       .post(`/project`, newProjectInfo)
       .then((res) => {
-        alert("An invitation email has been sent to the members.");
+        alert("팀원들에게 초대 메일이 발송되었습니다.");
         thunkAPI.dispatch(getProjectList());
       })
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));

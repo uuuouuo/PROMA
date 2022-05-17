@@ -162,7 +162,7 @@ const UserProfileModal = ({
 
   const onUpdateUserNickname = () => {
     if (userName === "") {
-      alert("Nickname is required");
+      alert("닉네임을 작성해주세요.");
       return;
     }
     setUpdateStatus(false);

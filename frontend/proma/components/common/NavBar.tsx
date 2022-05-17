@@ -282,9 +282,9 @@ const NavBar = ({
         client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {
           const messagedto = JSON.parse(res.body);
           getNotificationList();
-          console.log(messagedto);
+          alert(messagedto.message);
 
-          notify(messagedto);
+          //   notify(messagedto);
         });
       });
     });

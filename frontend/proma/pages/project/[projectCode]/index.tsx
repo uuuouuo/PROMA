@@ -238,7 +238,7 @@ const ProjectSpace = ({
     };
 
     if (fromTeam !== toTeam) {
-      alert("Issues can only be moved within the same team.");
+      alert("이슈 이동은 같은 팀 내에서만 가능합니다.");
       return;
     } else if (fromSprint === toSprint) {
       return;
@@ -275,7 +275,7 @@ const ProjectSpace = ({
         }
       });
     } else {
-      alert("Please login first");
+      alert("로그인이 필요합니다.");
       router.push("/");
     }
   }, [router.asPath]);
@@ -288,7 +288,7 @@ const ProjectSpace = ({
       onlyMyIssue,
     });
     getInProgressSprint(projectNo);
-  }, [projectNo]);
+  }, [projectNo, onlyMyIssue]);
 
   useEffect(() => {
     if (!projectInfo) return;

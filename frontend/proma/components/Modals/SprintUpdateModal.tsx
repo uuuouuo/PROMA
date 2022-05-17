@@ -60,7 +60,7 @@ const SprintUpdateModal = ({
     if (newSprintInfo.endDate) {
       if (new Date(newSprintInfo.endDate) <= new Date(value)) {
         alert(
-          "The start date must be faster than the end date. Please choose again."
+          "시작일은 마감일보다 빨라야합니다. 다시 선택해주세요."
         );
         setNewSprintInfo((cur) => ({ ...cur, startDate: "" }));
         return;
@@ -72,7 +72,7 @@ const SprintUpdateModal = ({
   const onSelectEndDate = (e: any) => {
     const value = e.target.value as string;
     if (!newSprintInfo.startDate) {
-      alert("Please choose start date first.");
+      alert("시작일을 먼저 선택해주세요.");
       e.target.value = "";
       return;
     }
@@ -80,7 +80,7 @@ const SprintUpdateModal = ({
     if (new Date(newSprintInfo.startDate) >= new Date(value)) {
       e.target.value = "";
       alert(
-        "The end date must be later than the start date. Please choose again."
+        "마감일은 시작일보다 빠를 수 없습니다. 다시 선택해주세요."
       );
       return;
     }
@@ -92,15 +92,15 @@ const SprintUpdateModal = ({
 
   const updateSprintInfo = () => {
     if (!newSprintInfo.title) {
-      alert("Please type sprint title");
+      alert("스프린트 제목을 작성해주세요.");
       return;
     }
     if (!newSprintInfo.startDate) {
-      alert("Please choose start date");
+      alert("시작일을 선택해주세요.");
       return;
     }
     if (!newSprintInfo.endDate) {
-      alert("Please choose end date");
+      alert("마감일을 선택해주세요.");
       return;
     }
 

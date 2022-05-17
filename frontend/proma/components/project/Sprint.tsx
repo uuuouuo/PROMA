@@ -137,7 +137,6 @@ const Sprint = ({
       sprintNo,
       projectNo,
     }).then((res: any) => {
-    //   alert(inProgress ? "Sprint is finished" : "Sprint is started");
       setInProgress((cur) => !cur);
       getIssueList({
         projectNo,
