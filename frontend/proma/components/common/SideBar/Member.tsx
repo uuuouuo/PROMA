@@ -17,6 +17,9 @@ const MemberContainer = styled.div`
   div {
     display: flex;
     align-items: center;
+    span {
+      font-size: 15px;
+    }
   }
 `;
 const ImageBox = styled.div`
@@ -40,7 +43,13 @@ const ChatButton = styled.button`
   }
 `;
 
-const Member = ({ memberInfo, projectNo }: { memberInfo: any; projectNo: any; }) => {
+const Member = ({
+  memberInfo,
+  projectNo,
+}: {
+  memberInfo: any;
+  projectNo: any;
+}) => {
   // 채팅창 띄우기
   const [state, setState] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
@@ -56,15 +65,19 @@ const Member = ({ memberInfo, projectNo }: { memberInfo: any; projectNo: any; })
       <div>
         <ImageBox>
           {image ? (
-            <Image src={`${image}`} width={25} height={25} />
+            <Image src={`${image}`} width={20} height={20} />
           ) : (
-            <Image src="/profileimg.png" width={25} height={25} />
+            <Image src="/profileimg.png" width={20} height={20} />
           )}
         </ImageBox>
         <span>{memberInfo.nickname}</span>
       </div>
       <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
-      <MemberChatting state={state} showChat={showChat} memberInfo={memberInfo} />
+      <MemberChatting
+        state={state}
+        showChat={showChat}
+        memberInfo={memberInfo}
+      />
     </MemberContainer>
   );
 };
