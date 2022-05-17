@@ -207,6 +207,7 @@ const Chatting = ({
     if (!projectInfo.projectNo) return;
 
     projectChat(projectInfo.projectNo).then((res: any) => {
+      console.log(res)
       setMemberCnt(res.payload.response.memberCount);
       setRoomNo(res.payload.response.roomNo);
       chatSubscribe(res.payload.response.roomNo);
@@ -229,7 +230,7 @@ const Chatting = ({
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          <span>{membercnt}</span>
+          <span>{membercnt-1}</span>
         </ChatInfo>
       }
       width="500px"

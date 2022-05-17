@@ -217,7 +217,7 @@ const TeamChatting = ({
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          <span>{membercnt}</span>
+          <span>{membercnt-1}</span>
         </ChatInfo>
       }
       width="500px"
