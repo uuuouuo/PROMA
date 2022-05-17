@@ -131,13 +131,11 @@ const IssueCreateModal = ({
   };
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!teamNo) return;
+    console.log(teamNo);
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
     getTopicList(projectCode);
-  }, [router.asPath]);
-
-  useEffect(() => {
     getTeamMembers(teamNo);
   }, [teamNo]);
 
