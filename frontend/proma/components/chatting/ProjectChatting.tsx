@@ -271,7 +271,7 @@ const Chatting = ({
           value={chat}
           placeholder="Chat.."
           style={{ fontSize: "15px" }}
-          onChange={(e) => setChat(e.target.value)}
+          onChange={(e) => setChat(e.target.value.replace(/ /g, ''))}
           onKeyPress={onSubmitChat}
           autoFocus
         />
