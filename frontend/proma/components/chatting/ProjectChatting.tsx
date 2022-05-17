@@ -168,6 +168,9 @@ const Chatting = ({
       };
       client.send(`/pub/chat/project-msg`, JSON.stringify(chat));
     }
+    if (e.key === " ") {
+      setChat("");
+    }
     setChat("");
   };
 
