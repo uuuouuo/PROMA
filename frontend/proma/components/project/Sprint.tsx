@@ -128,6 +128,11 @@ const Sprint = ({
       deleteSprint({
         sprintNo,
         projectNo,
+      }).then((res: any) => {
+        getIssueList({
+          projectNo,
+          onlyMyIssue,
+        });
       });
     }
   };
@@ -138,10 +143,13 @@ const Sprint = ({
       projectNo,
     }).then((res: any) => {
       setInProgress((cur) => !cur);
-      getIssueList({
-        projectNo,
-        onlyMyIssue,
-      });
+    });
+  };
+
+  const updateAfterUpdate = () => {
+    getIssueList({
+      projectNo,
+      onlyMyIssue,
     });
   };
 
@@ -172,6 +180,7 @@ const Sprint = ({
           sprintUpdateModal={sprintUpdateModal}
           showSprintUpdateModal={showSprintUpdateModal}
           sprintInfo={sprint}
+          getIssueList={updateAfterUpdate}
         />
         {sprint.sprintNo !== null ? (
           !isInProgress ? (

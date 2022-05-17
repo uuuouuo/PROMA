@@ -28,11 +28,13 @@ const SprintUpdateModal = ({
   showSprintUpdateModal,
   sprintInfo,
   updateSprint,
+  getIssueList,
 }: {
   sprintUpdateModal: boolean;
   showSprintUpdateModal: any;
   sprintInfo: any;
   updateSprint?: any;
+  getIssueList: any;
 }) => {
   const router = useRouter();
 
@@ -59,9 +61,7 @@ const SprintUpdateModal = ({
     const value = e.target.value;
     if (newSprintInfo.endDate) {
       if (new Date(newSprintInfo.endDate) <= new Date(value)) {
-        alert(
-          "시작일은 마감일보다 빨라야합니다. 다시 선택해주세요."
-        );
+        alert("시작일은 마감일보다 빨라야합니다. 다시 선택해주세요.");
         setNewSprintInfo((cur) => ({ ...cur, startDate: "" }));
         return;
       }
@@ -79,9 +79,7 @@ const SprintUpdateModal = ({
 
     if (new Date(newSprintInfo.startDate) >= new Date(value)) {
       e.target.value = "";
-      alert(
-        "마감일은 시작일보다 빠를 수 없습니다. 다시 선택해주세요."
-      );
+      alert("마감일은 시작일보다 빠를 수 없습니다. 다시 선택해주세요.");
       return;
     }
 
@@ -108,7 +106,9 @@ const SprintUpdateModal = ({
       sprintNo: sprintInfo.sprintNo,
       sprintInfo: newSprintInfo,
     };
-    updateSprint(sprintObj);
+    updateSprint(sprintObj).then((res: any) => {
+      getIssueList();
+    });
 
     showSprintUpdateModal();
   };
