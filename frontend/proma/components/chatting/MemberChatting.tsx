@@ -216,7 +216,7 @@ const MemberChatting = ({
         subtitle={
             <ChatInfo>
             <BsFillPeopleFill />
-            <span>1</span>
+            <span>2</span>
             </ChatInfo>
         }
         width="500px"
