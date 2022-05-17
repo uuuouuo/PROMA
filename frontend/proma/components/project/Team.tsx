@@ -98,6 +98,7 @@ const Team = ({
   const [issueCreateModal, setIssueCreateModal] = useState<boolean>(false);
   const showIssueCreateModal = () => setIssueCreateModal((cur) => !cur);
   const [issueList, setIssueList] = useState<any>([]);
+  const [teamCode, setTeamCode] = useState<any>("");
   const [projectNo, setProjectNo] = useState<string>("");
 
   const getIssues = () => {
@@ -126,6 +127,7 @@ const Team = ({
   useEffect(() => {
     if (!team) return;
     setIssueList(team.issues);
+    setTeamCode(team.teamNo);
   }, [team]);
 
   return (
@@ -154,7 +156,7 @@ const Team = ({
                       issueCreateModal={issueCreateModal}
                       showIssueCreateModal={showIssueCreateModal}
                       getIssues={getIssues}
-                      teamNo={team.teamNo}
+                      teamNo={teamCode}
                       sprintNo={sprintNo}
                     />
                   </>

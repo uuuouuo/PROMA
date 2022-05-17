@@ -52,7 +52,7 @@ const IssueCreateModal = ({
 }: {
   issueCreateModal: boolean;
   showIssueCreateModal: any;
-  teamNo: number;
+  teamNo: any;
   sprintNo: number;
   createNewIssue?: any;
   teamMembers?: any;
@@ -131,13 +131,13 @@ const IssueCreateModal = ({
   };
 
   useEffect(() => {
-    if (!teamNo) return;
+    if (!router.isReady) return;
     console.log(teamNo);
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
     getTopicList(projectCode);
     getTeamMembers(teamNo);
-  }, [issueCreateModal]);
+  }, [router.asPath, teamNo]);
 
   useEffect(() => {
     if (!teamMembers) return;
