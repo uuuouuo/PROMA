@@ -80,11 +80,11 @@ public class NotificationServiceImpl implements NotificationService{
 
             //알림 저장 & 전송
             User user = project.getUser();
+            Notification notification = Notification.builder().user(user).message(message).build();
 
-            notificationRepository.save(Notification.builder().user(user).message(message).build());
-            NotificationDto notification = new NotificationDto();
-            notification.setMessage(message);
-            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notification);
+            notificationRepository.save(notification);
+            NotificationDto notificationDto = new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime());
+            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notificationDto);
 
             log.debug(user.getNickname() + " 알림 전송 완료");
         }
@@ -117,16 +117,19 @@ public class NotificationServiceImpl implements NotificationService{
         Set<User> userList = issueList.stream().map(Issue::getUser).collect(Collectors.toSet());
 
         for(User user : userList) {
-            notificationRepository.save(Notification.builder().user(user).message(message).build());
-            NotificationDto notification = new NotificationDto();
-            notification.setMessage(message);
-            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notification);
+
+            Notification notification = Notification.builder().user(user).message(message).build();
+            notificationRepository.save(notification);
+
+            NotificationDto notificationDto = new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime());
+            messagingTemplate.convertAndSend("/queue/notification/" + user.getNo(), notificationDto);
 
             log.debug(user.getNickname() + " 알림 전송 완료");
         }
     }
 
     @Override
+    @Transactional
     public Map<String, Object> sendNotification(String userNo) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -138,12 +141,12 @@ public class NotificationServiceImpl implements NotificationService{
         }
 
         String message = userNo + "님 임시 알림 왔음";
-        notificationRepository.save(Notification.builder().user(userOp.get()).message(message).build());
+        Notification notification = Notification.builder().user(userOp.get()).message(message).build();
+        notificationRepository.save(notification);
 
         //알림 전송
-        NotificationDto notification = new NotificationDto();
-        notification.setMessage(message);
-        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notification);
+        NotificationDto notificationDto = new NotificationDto(notification.getNo(), notification.getMessage(), notification.isChecked(), notification.getNotificationTime());
+        messagingTemplate.convertAndSend("/queue/notification/" + userNo, notificationDto);
 
         resultMap.put("message", "알림 전송 성공");
         return resultMap;
