@@ -126,6 +126,15 @@ const IssueCreateModal = ({
     createNewIssue(newIssueInfo).then((res: any) => {
       getIssueList({ projectNo, onlyMyIssue });
       getIssues();
+      setNewIssueInfo({
+        title: "",
+        sprintNo,
+        description: "",
+        topicNo: "",
+        userNo: "",
+        teamNo,
+        status: "todo",
+      });
     });
     showIssueCreateModal();
   };
