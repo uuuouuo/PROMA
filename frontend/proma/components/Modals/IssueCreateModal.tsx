@@ -137,7 +137,7 @@ const IssueCreateModal = ({
     setProjectNo(projectCode);
     getTopicList(projectCode);
     getTeamMembers(teamNo);
-  }, [teamNo]);
+  }, [issueCreateModal]);
 
   useEffect(() => {
     if (!teamMembers) return;
