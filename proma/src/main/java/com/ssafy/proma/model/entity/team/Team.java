@@ -24,7 +24,7 @@ public class Team {
     @ApiModelProperty(value = "팀 번호")
     private Integer no;
 
-    @Column(length = 15)
+    @Column(length = 30)
     @ApiModelProperty(value = "팀 제목")
     private String name;
 
