@@ -104,6 +104,7 @@ const Team = ({
   const [issueList, setIssueList] = useState<any>([]);
   const [teamCode, setTeamCode] = useState<any>("");
   const [projectNo, setProjectNo] = useState<string>("");
+  const [sprintCode, setSprintCode] = useState<any>("");
 
   const getIssues = () => {
     let params = {};
@@ -139,6 +140,10 @@ const Team = ({
     setTeamCode(team.teamNo);
   }, [team]);
 
+  useEffect(() => {
+    setSprintCode(sprintNo);
+  }, [sprintNo]);
+
   return (
     <>
       {isReady ? (
@@ -164,7 +169,7 @@ const Team = ({
                       showIssueCreateModal={showIssueCreateModal}
                       getIssues={getIssues}
                       teamNo={teamCode}
-                      sprintNo={sprintNo}
+                      sprintNo={sprintCode}
                     />
                   </>
                 ) : null}
