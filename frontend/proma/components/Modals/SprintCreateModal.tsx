@@ -71,9 +71,7 @@ const SprintCreateModal = ({
     const value = e.target.value;
     if (newSprintInfo.endDate) {
       if (new Date(newSprintInfo.endDate) <= new Date(value)) {
-        alert(
-          "시작일은 마감일보다 빨라야합니다. 다시 선택해주세요."
-        );
+        alert("시작일은 마감일보다 빨라야합니다. 다시 선택해주세요.");
         e.target.value = "";
         return;
       }
@@ -91,9 +89,7 @@ const SprintCreateModal = ({
 
     if (new Date(newSprintInfo.startDate) >= new Date(value)) {
       e.target.value = "";
-      alert(
-        "마감일은 시작일보다 빠를 수 없습니다. 다시 선택해주세요."
-      );
+      alert("마감일은 시작일보다 빠를 수 없습니다. 다시 선택해주세요.");
     }
 
     setNewSprintInfo((cur) => ({ ...cur, endDate: value }));
@@ -116,10 +112,10 @@ const SprintCreateModal = ({
     }
 
     //post new sprint api
-    createNewSprint(newSprintInfo).then((res: any) =>
-      getIssueList({ projectNo, onlyMyIssue })
-    );
-
+    createNewSprint(newSprintInfo).then((res: any) => {
+      window.location.reload();
+      getIssueList({ projectNo, onlyMyIssue });
+    });
     showSprintCreateModal();
   };
 

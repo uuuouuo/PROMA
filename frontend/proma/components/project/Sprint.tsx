@@ -143,6 +143,10 @@ const Sprint = ({
       projectNo,
     }).then((res: any) => {
       setInProgress((cur) => !cur);
+      getIssueList({
+        projectNo,
+        onlyMyIssue,
+      });
     });
   };
 
