@@ -83,20 +83,12 @@ const Team = ({
   team,
   sprintNo,
   onlyMyIssue,
-  dndMoved,
-  updateIssueSprint,
-  setMovedIssue,
-  movedIssue,
   sprintIndex,
   teamIndex,
 }: {
   team: any;
   sprintNo: any;
   onlyMyIssue: boolean;
-  dndMoved?: any;
-  updateIssueSprint?: any;
-  setMovedIssue?: any;
-  movedIssue?: any;
   sprintIndex: number;
   teamIndex: number;
 }) => {
@@ -153,7 +145,6 @@ const Team = ({
                     <Title>{team.title}</Title>
                   </TeamName>
                 </Link>
-                {/* 밑에 조건 isMember 생기면 바꾸기 */}
                 {team.isMember ? (
                   <AddButton onClick={showIssueCreateModal}>
                     + Add Issue

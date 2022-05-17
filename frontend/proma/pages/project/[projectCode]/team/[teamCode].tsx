@@ -420,6 +420,7 @@ const TeamSpace = ({
     if (!teamInfo) return;
     setIsMember(teamInfo.isMember);
     setTeamName(teamInfo.title);
+    getIssues();
   }, [teamInfo]);
 
   useEffect(() => {

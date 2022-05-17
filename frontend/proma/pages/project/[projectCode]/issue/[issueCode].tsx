@@ -351,23 +351,22 @@ const IssueDetail = ({
 
   useEffect(() => {
     if (!teamMembers) return;
-    console.log(teamMembers);
-  }, [teamMembers, userInfo]);
-
-  useEffect(() => {
-    if (!topics || !issueInfo.topic) return;
     setMemberList(
       teamMembers.filter(
         (element: any) => element?.userNo !== issueInfo.assignee.no
       )
     );
+  }, [teamMembers, userInfo]);
+
+  useEffect(() => {
+    if (!topics || !issueInfo.topic) return;
 
     setTopicList(
       topics.filter(
         (element: any) => element.topicNo !== issueInfo.topic.topicNo
       )
     );
-  }, [topics, issueInfo, userInfo]);
+  }, [topics, issueInfo]);
 
   return (
     <>
