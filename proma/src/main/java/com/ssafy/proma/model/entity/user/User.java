@@ -52,14 +52,17 @@ public class User {
         this.no = userNo;
         this.nickname = userNickname;
         this.nodeId = userNodeId;
-        this.profileImage = null;
+        this.profileImage = "https://promaproject.s3.ap-northeast-2.amazonaws.com/image/proma.png";
         this.isDeleted = false;
         this.refresh = null;
     }
 
-    public void updateUser(String nickname, String profileImage) {
-        this.nickname = nickname;
+    public void updateUserImg(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void updateUserNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void deleteUser(){

@@ -18,4 +18,10 @@ public class UserDto {
         private String nickname;
         private String profileImage;
     }
+
+    @Data
+    public static class UpdateReq {
+
+        private String nickname;
+    }
 }

@@ -298,7 +298,7 @@ public class IssueService extends AbstractService {
     String issueTitle = issue.getTitle();
     String description = issue.getDescription();
     String status = issue.getStatus();
-    Integer sprintNo = issue.getSprint().getNo();
+    Integer sprintNo = issue.getSprint() == null ? null : issue.getSprint().getNo();
 
     User user = issue.getUser();
     String userNo = user.getNo();

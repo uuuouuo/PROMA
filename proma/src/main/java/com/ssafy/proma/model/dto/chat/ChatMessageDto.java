@@ -48,35 +48,24 @@ public class ChatMessageDto {
 
   @Getter
   @NoArgsConstructor
+  @AllArgsConstructor
   public static class ChatMessageReq {
 
     private Integer roomNo;
     private String pubNo;
     private String content;
-
-    public ChatMessageReq(Integer roomNo, String pubNo, String content) {
-      this.roomNo = roomNo;
-      this.pubNo = pubNo;
-      this.content = content;
-    }
   }
 
   @Getter
+  @AllArgsConstructor
   public static class ChatMessageRes {
 
     private Integer roomNo;
     private String pubNo;
     private String nickname;
+    private String profileImage;
     private String content;
     private LocalDateTime time;
-
-    public ChatMessageRes(Integer roomNo, String pubNo, String nickname, String content, LocalDateTime time) {
-      this.roomNo = roomNo;
-      this.pubNo = pubNo;
-      this.nickname = nickname;
-      this.content = content;
-      this.time = time;
-    }
   }
 
   @Getter
@@ -86,6 +75,7 @@ public class ChatMessageDto {
     private Integer msgNo;
     private String pubNo;
     private String nickname;
+    private String profileImage;
     private String content;
     private LocalDateTime time;
   }
