@@ -10,6 +10,7 @@ import { updateIssueSprint, setMovedIssue } from "../../store/modules/issue";
 import { connect } from "react-redux";
 import { RootState } from "../../store/modules";
 import { useRouter } from "next/router";
+import { getTeamMembers } from "../../store/modules/team";
 
 //styled-components
 interface IAreaProps extends ThemeType {
@@ -76,6 +77,7 @@ const mapDispatchToProps = (dispatch: any) => {
     setMovedIssue: (issueInfo: any) => dispatch(setMovedIssue(issueInfo)),
     updateIssueSprint: (issueInfo: any) =>
       dispatch(updateIssueSprint(issueInfo)),
+    getTeamMembers: (teamNo: any) => dispatch(getTeamMembers(teamNo)),
   };
 };
 
@@ -85,12 +87,14 @@ const Team = ({
   onlyMyIssue,
   sprintIndex,
   teamIndex,
+  getTeamMembers,
 }: {
   team: any;
   sprintNo: any;
   onlyMyIssue: boolean;
   sprintIndex: number;
   teamIndex: number;
+  getTeamMembers: any;
 }) => {
   const router = useRouter();
   //DOM 준비되었을 때 렌더링
@@ -115,6 +119,11 @@ const Team = ({
         onlyMyIssue,
       };
     }
+  };
+  const onAddNewIssue = () => {
+    getTeamMembers(teamCode).then((res: any) => {
+      showIssueCreateModal();
+    });
   };
 
   useEffect(() => {
@@ -149,9 +158,7 @@ const Team = ({
                 </Link>
                 {team.isMember ? (
                   <>
-                    <AddButton onClick={showIssueCreateModal}>
-                      + Add Issue
-                    </AddButton>
+                    <AddButton onClick={onAddNewIssue}>+ Add Issue</AddButton>
                     <IssueCreateModal
                       issueCreateModal={issueCreateModal}
                       showIssueCreateModal={showIssueCreateModal}
