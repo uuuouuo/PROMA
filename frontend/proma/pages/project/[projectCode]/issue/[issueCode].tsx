@@ -353,7 +353,7 @@ const IssueDetail = ({
     if (!teamMembers || !issueInfo) return;
     setMemberList(
       teamMembers.filter(
-        (element: any) => element?.userNo !== issueInfo.assignee.no
+        (element: any) => element?.userNo !== issueInfo.assignee.userNo
       )
     );
   }, [teamMembers, userInfo]);
