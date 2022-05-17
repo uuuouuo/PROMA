@@ -162,7 +162,7 @@ const MemberChatting = ({
             content: e.target.value,      // 채팅 내용
         };
             client.send(`/pub/chat/private-msg`, JSON.stringify(chat));
-            setChat(" ");
+            setChat("");
         }
         if (e.keyCode === 32) {
             setChat("");
