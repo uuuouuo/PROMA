@@ -146,17 +146,19 @@ const Team = ({
                   </TeamName>
                 </Link>
                 {team.isMember ? (
-                  <AddButton onClick={showIssueCreateModal}>
-                    + Add Issue
-                  </AddButton>
+                  <>
+                    <AddButton onClick={showIssueCreateModal}>
+                      + Add Issue
+                    </AddButton>
+                    <IssueCreateModal
+                      issueCreateModal={issueCreateModal}
+                      showIssueCreateModal={showIssueCreateModal}
+                      getIssues={getIssues}
+                      teamNo={team.teamNo}
+                      sprintNo={sprintNo}
+                    />
+                  </>
                 ) : null}
-                <IssueCreateModal
-                  issueCreateModal={issueCreateModal}
-                  showIssueCreateModal={showIssueCreateModal}
-                  getIssues={getIssues}
-                  teamNo={team.teamNo}
-                  sprintNo={sprintNo}
-                />
               </TopBar>
               {issueList && issueList.length > 0 ? (
                 issueList.map((issue: any, index: number) => (
