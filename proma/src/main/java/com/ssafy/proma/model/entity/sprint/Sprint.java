@@ -32,7 +32,7 @@ public class Sprint {
     @ApiModelProperty(value = "스프린트 번호")
     private Integer no;
 
-    @Column(length = 45)
+    @Column(length = 50)
     @ApiModelProperty(value = "스프린트 제목")
     private String name;
 

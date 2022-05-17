@@ -20,7 +20,7 @@ public class Project {
     @ApiModelProperty(value = "프로젝트 번호")
     private String no;
 
-    @Column(length = 20)
+    @Column(length = 30)
     @ApiModelProperty(value = "프로젝트 제목")
     private String name;
 

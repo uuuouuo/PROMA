@@ -28,7 +28,7 @@ public class Issue {
     @ApiModelProperty(value = "이슈 번호")
     private Integer no;
 
-    @Column(length = 15)
+    @Column(length = 50)
     @ApiModelProperty(value = "이슈 제목")
     private String title;
 
