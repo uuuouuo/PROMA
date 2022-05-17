@@ -4,6 +4,8 @@ import { ThemeType } from "../../../interfaces/style";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import MemberChatting from "../../chatting/MemberChatting";
+import { RootState } from "../../../store/modules";
+import { connect } from "react-redux";
 
 //styled-components
 const MemberContainer = styled.div`
@@ -43,12 +45,20 @@ const ChatButton = styled.button`
   }
 `;
 
+const mapStateToProps = (state: RootState) => {
+  return {
+    userInfo: state.userReducer.userInfo,
+  };
+};
+
 const Member = ({
   memberInfo,
   projectNo,
+  userInfo,
 }: {
   memberInfo: any;
   projectNo: any;
+  userInfo?: any;
 }) => {
   // 채팅창 띄우기
   const [state, setState] = useState<boolean>(false);
@@ -72,7 +82,9 @@ const Member = ({
         </ImageBox>
         <span>{memberInfo.nickname}</span>
       </div>
-      <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
+      {userInfo.no !== memberInfo.userNo ? (
+        <ChatButton onClick={() => setState(true)}>Chat</ChatButton>
+      ) : null}
       <MemberChatting
         state={state}
         showChat={showChat}
@@ -82,4 +94,4 @@ const Member = ({
   );
 };
 
-export default Member;
+export default connect(mapStateToProps, null)(Member);
