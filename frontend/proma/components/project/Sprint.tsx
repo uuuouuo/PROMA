@@ -133,6 +133,7 @@ const Sprint = ({
           projectNo,
           onlyMyIssue,
         });
+        window.location.reload();
       });
     }
   };
