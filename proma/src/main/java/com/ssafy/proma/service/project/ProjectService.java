@@ -70,7 +70,7 @@ public class ProjectService extends AbstractService {
     projectRepository.save(project);
     userProjectRepository.save(userProject);
 
-    mailService.mailSend(inviteMails, projectNo, user.getNickname());
+    mailService.mailSend(inviteMails, projectNo, user.getNickname(),projectDto.getTitle());
 
   }
 
