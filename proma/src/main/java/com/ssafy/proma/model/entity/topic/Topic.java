@@ -25,7 +25,7 @@ public class Topic {
     @ApiModelProperty(value = "토픽 번호")
     private Integer no;
 
-    @Column(length = 15)
+    @Column(length = 50)
     @ApiModelProperty(value = "토픽 제목")
     private String title;
 
