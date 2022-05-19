@@ -121,6 +121,9 @@ export const apiInstance = () => {
         console.log(error.response.data);
         if (error.response.status === 401) {
           window.location.reload();
+          localStorage.removeItem("Authorization");
+          localStorage.removeItem("RefreshToken");
+          localStorage.removeItem("code");
           let accessTokenExpiredCode = error.response.data.code;
           console.log(accessTokenExpiredCode);
           //access token 만료 시
