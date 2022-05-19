@@ -187,7 +187,7 @@ const Chatting = ({
       // 채팅 주소 구독
       client.subscribe(`/sub/chat/room/project/${roomNo}`, (res) => {
         const messagedto = JSON.parse(res.body);
-        console.log(messagedto);
+        // console.log(messagedto);
         setNewMessage(messagedto);
       });
     });

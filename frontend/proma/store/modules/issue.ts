@@ -47,7 +47,7 @@ export const getIssueList = createAsyncThunk(
     return await api
       .get(`/issue`, { params })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
 
         return res.data;
       })
@@ -60,7 +60,7 @@ export const getIssueInfo = createAsyncThunk(
   "GET/ISSUE",
   async (params: any, thunkAPI) => {
     return await api
-      .get(`/issue/details/${params.issueNo}`,)
+      .get(`/issue/details/${params.issueNo}`)
       .then((res) => res.data)
       .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
