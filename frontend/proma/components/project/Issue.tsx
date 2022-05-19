@@ -17,6 +17,7 @@ interface IssueType {
     nickname: string;
     image: string;
   };
+  status: string;
 }
 
 //styled-components
@@ -43,6 +44,9 @@ const TitleBox = styled(FlexBox)`
   a {
     text-decoration: none;
     color: black;
+  }
+  .doneIssue {
+    text-decoration: line-through;
   }
 `;
 const ImageBox = styled.div`
@@ -94,7 +98,9 @@ const Issue = ({
               >
                 <TitleBox>
                   <p>No. {issue.issueNo}</p>
-                  <p>{issue.title}</p>
+                  <p className={issue.status === "done" ? "doneIssue" : ""}>
+                    {issue.title}
+                  </p>
                 </TitleBox>
                 <FlexBox>
                   <ImageBox>
