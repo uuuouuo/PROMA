@@ -120,6 +120,7 @@ export const apiInstance = () => {
         console.log(error.response.status);
         console.log(error.response.data);
         if (error.response.status === 401) {
+          window.location.reload();
           let accessTokenExpiredCode = error.response.data.code;
           console.log(accessTokenExpiredCode);
           //access token 만료 시

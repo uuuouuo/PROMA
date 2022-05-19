@@ -7,7 +7,7 @@ import { persistStore } from "redux-persist";
 const makeConfiguredStore = (reducer: any) =>
   configureStore({
     reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+    // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   });
 
 const makeStore = () => {
