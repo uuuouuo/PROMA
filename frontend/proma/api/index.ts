@@ -123,7 +123,7 @@ export const apiInstance = () => {
           localStorage.removeItem("code");
           localStorage.removeItem("Authorization");
           localStorage.removeItem("RefreshToken");
-          window.location.href = "/";
+        //   window.location.href = "/";
         }
       } else if (error.request) {
         // console.log(error.request);
