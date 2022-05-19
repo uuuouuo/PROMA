@@ -25,7 +25,7 @@ const makeStore = () => {
 const wrapper = createWrapper(makeStore, {
   // debug: process.env.NODE_ENV === "development",
   // 개발할때는 true로
-  debug: true,
+  debug: false,
 });
 
 export default wrapper;
