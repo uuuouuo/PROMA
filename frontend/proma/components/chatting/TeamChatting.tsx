@@ -136,7 +136,7 @@ const ChatTimeRight = styled.a`
 `;
 
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-let client = Stomp.over(sock);
+let client = Stomp.over(sock, { debug: false });
 
 const TeamChatting = ({
   state,
@@ -180,7 +180,7 @@ const TeamChatting = ({
       .toString();
     if (!Authorization) return;
     let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
-    let client = Stomp.over(sock);
+    let client = Stomp.over(sock, { debug: false });
 
     client.connect({ Authorization }, () => {
       // 채팅 주소 구독

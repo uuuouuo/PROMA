@@ -269,7 +269,7 @@ const NavBar = ({
     setImage(userInfo.profileImage);
     getNotificationList().then((res: any) => {
       const sock = new SockJS(`${BACKEND_URL}/ws-stomp`);
-      const client = Stomp.over(sock);
+      const client = Stomp.over(sock, { debug: false });
       const Authorization = localStorage
         .getItem("Authorization")
         ?.split(" ")[1]

@@ -120,25 +120,11 @@ export const apiInstance = () => {
         // console.log(error.response.status);
         // console.log(error.response.data);
         if (error.response.status === 401) {
-          window.location.reload();
+          localStorage.removeItem("code");
           localStorage.removeItem("Authorization");
           localStorage.removeItem("RefreshToken");
-          localStorage.removeItem("code");
-          let accessTokenExpiredCode = error.response.data.code;
-          //   console.log(accessTokenExpiredCode);
-          //access token 만료 시
-          if (accessTokenExpiredCode === "C004") {
-            // console.log("엑세스 만료 에러에러");
-            // getRefresh();
-          }
-          //refresh token 만료 시
-          else if (accessTokenExpiredCode === "C006") {
-            localStorage.removeItem("code");
-            localStorage.removeItem("Authorization");
-            localStorage.removeItem("RefreshToken");
-            window.location.reload();
-            window.location.href = "/";
-          }
+          window.location.reload();
+          window.location.href = "/";
         }
       } else if (error.request) {
         // console.log(error.request);
