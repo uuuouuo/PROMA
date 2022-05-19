@@ -256,7 +256,7 @@ const IssueDetail = ({
     const list = sprints
       .filter((element: any) => element.sprintNo !== issueInfo.sprintNo)
       .filter((element: any) => element.status !== 2);
-    console.log(list);
+    // console.log(list);
     setSprintList(list ? list : []);
   };
 
@@ -281,7 +281,7 @@ const IssueDetail = ({
 
   const onSelectStatus = (e: any) => {
     const value = e.target.value;
-    console.log(value);
+    // console.log(value);
     updateIssueStatus({
       issueNo: issueInfo.issueNo,
       status: value,

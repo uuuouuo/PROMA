@@ -187,7 +187,7 @@ const getRefresh = async () => {
     .then((res: any) => {
       localStorage.setItem("Authorization", res.headers.authorization);
     })
-    .catch((err: any) => console.log(err));
+    .catch((err: any) => err);
 };
 
 const NavBar = ({
@@ -276,7 +276,7 @@ const NavBar = ({
         .toString();
 
       const NOTI_SUBSCRIBE_URL = `/queue/notification/${userInfo.no}`;
-      console.log(NOTI_SUBSCRIBE_URL);
+      //   console.log(NOTI_SUBSCRIBE_URL);
 
       client.connect({ Authorization }, () => {
         client.subscribe(NOTI_SUBSCRIBE_URL, (res: any) => {

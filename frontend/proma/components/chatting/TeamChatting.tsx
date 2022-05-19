@@ -88,29 +88,29 @@ const ChatContainer = styled.div`
   &::-webkit-scrollbar {
     width: 6px;
     height: 0px;
-    }
-    &::-webkit-scrollbar-thumb {
-        border-radius: 2px;
-        background: #ccc;
-    }
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 const ChatBoxLeft = styled.div`
-  display: flex; 
+  display: flex;
   margin-bottom: 2%;
-`
+`;
 const ChatBoxRight = styled(ChatBoxLeft)`
   justify-content: right;
-`
+`;
 const ChatImg = styled.img`
   width: 20px;
   height: 20px;
   border-radius: 50%;
   margin-right: 2%;
-`
+`;
 const ChatName = styled.a`
   /* font-weight: bold; */
   align-self: center;
-`
+`;
 const ChatContentLeft = styled.a`
   background: white;
   width: fit-content;
@@ -118,22 +118,22 @@ const ChatContentLeft = styled.a`
   height: 100px;
   padding: 1.5% 1% 1.5% 1%;
   border-radius: 5px 5px 5px 0px / 5px 5px 5px 0px;
-`
+`;
 const ChatContentRight = styled(ChatContentLeft)`
-  background: #6667AB;
+  background: #6667ab;
   color: white;
   border-radius: 5px 5px 0px 5px / 5px 5px 0px 5px;
-`
+`;
 const ChatTimeLeft = styled.a`
   margin-left: 1%;
   font-weight: lighter;
   font-size: 14px;
-`
+`;
 const ChatTimeRight = styled.a`
   margin-right: 1%;
   font-weight: lighter;
   font-size: 14px;
-`
+`;
 
 let sock = new SockJS("https://k6c107.p.ssafy.io/api/ws-stomp");
 let client = Stomp.over(sock);
@@ -161,9 +161,9 @@ const TeamChatting = ({
   const onSubmitChat = (e: any) => {
     if (e.key === "Enter") {
       let chat = {
-        roomNo,                       // 채팅장 번호
-        pubNo: userInfo.no,           // 채팅 작성자 코드
-        content: e.target.value,      // 채팅 내용
+        roomNo, // 채팅장 번호
+        pubNo: userInfo.no, // 채팅 작성자 코드
+        content: e.target.value, // 채팅 내용
       };
       client.send(`/pub/chat/team-msg`, JSON.stringify(chat));
       setChat("");
@@ -186,7 +186,7 @@ const TeamChatting = ({
       // 채팅 주소 구독
       client.subscribe(`/sub/chat/room/team/${roomNo}`, (res) => {
         const messagedto = JSON.parse(res.body);
-        console.log(messagedto);
+        // console.log(messagedto);
         setNewMessage(messagedto);
       });
     });
@@ -217,7 +217,7 @@ const TeamChatting = ({
       subtitle={
         <ChatInfo>
           <BsFillPeopleFill />
-          <span>{membercnt-1}</span>
+          <span>{membercnt - 1}</span>
         </ChatInfo>
       }
       width="500px"
@@ -225,13 +225,13 @@ const TeamChatting = ({
     >
       <ChatContainer>
         {messageList.map((element: any, idx: any) => {
-          let arr = ""+element.time;
+          let arr = "" + element.time;
           let time = arr.substr(11, 5);
           if (element.name == userInfo.no)
             return (
               <>
                 <ChatBoxLeft key={idx}>
-                  <ChatImg src={`${element.profileImage}`}/>
+                  <ChatImg src={`${element.profileImage}`} />
                   <ChatName>{element.nickname}</ChatName>
                 </ChatBoxLeft>
 
@@ -258,8 +258,8 @@ const TeamChatting = ({
           type="text"
           value={chat}
           placeholder="Chat.."
-          style={{fontSize: "15px"}}
-          onChange={(e) => setChat(e.target.value.replace(/ /g, ''))}
+          style={{ fontSize: "15px" }}
+          onChange={(e) => setChat(e.target.value.replace(/ /g, ""))}
           onKeyPress={onSubmitChat}
           autoFocus
         />

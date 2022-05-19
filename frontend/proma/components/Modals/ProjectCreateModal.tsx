@@ -82,7 +82,7 @@ export const ProjectCreateModal = ({
   };
 
   const createNewProject = () => {
-    console.log(newProjectInfo);
+    // console.log(newProjectInfo);
     postNewProject(newProjectInfo);
     showProjectCreateModal();
     setNewProjectInfo({

@@ -141,7 +141,7 @@ const IssueCreateModal = ({
 
   useEffect(() => {
     if (!router.isReady) return;
-    console.log(teamNo);
+    // console.log(teamNo);
     const projectCode = router.query.projectCode as string;
     setProjectNo(projectCode);
     getTopicList(projectCode);

@@ -45,8 +45,8 @@ export const userInstance = () => {
   instance.interceptors.response.use(
     // 응답 데이터를 가공
     (response: AxiosResponse) => {
-      console.dir(response);
-      console.log(response.data.message);
+      //   console.dir(response);
+      //   console.log(response.data.message);
 
       if (
         response.data &&
@@ -64,11 +64,11 @@ export const userInstance = () => {
     // 오류 응답 처리
     (error: AxiosError) => {
       if (error.response) {
-        console.log(error.response.status);
+        // console.log(error.response.status);
       } else if (error.request) {
-        console.log(error.request);
+        // console.log(error.request);
       } else {
-        console.log(`Error ${error.message}`);
+        // console.log(`Error ${error.message}`);
       }
       //   Promise.reject(error);
     }
@@ -117,18 +117,18 @@ export const apiInstance = () => {
     // 오류 응답 처리
     (error: AxiosError) => {
       if (error.response) {
-        console.log(error.response.status);
-        console.log(error.response.data);
+        // console.log(error.response.status);
+        // console.log(error.response.data);
         if (error.response.status === 401) {
           window.location.reload();
           localStorage.removeItem("Authorization");
           localStorage.removeItem("RefreshToken");
           localStorage.removeItem("code");
           let accessTokenExpiredCode = error.response.data.code;
-          console.log(accessTokenExpiredCode);
+          //   console.log(accessTokenExpiredCode);
           //access token 만료 시
           if (accessTokenExpiredCode === "C004") {
-            console.log("엑세스 만료 에러에러");
+            // console.log("엑세스 만료 에러에러");
             // getRefresh();
           }
           //refresh token 만료 시
@@ -141,9 +141,9 @@ export const apiInstance = () => {
           }
         }
       } else if (error.request) {
-        console.log(error.request);
+        // console.log(error.request);
       } else {
-        console.log(`Error ${error.message}`);
+        // console.log(`Error ${error.message}`);
       }
       //   Promise.reject(error);
     }

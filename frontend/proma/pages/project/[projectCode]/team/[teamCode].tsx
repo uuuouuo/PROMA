@@ -333,7 +333,7 @@ const TeamSpace = ({
       status: "todo",
       teamNo: teamCode,
     };
-    console.log(params);
+    // console.log(params);
 
     getToDoIssues(params);
     getInProgressIssues({ ...params, status: "inprogress" });
@@ -412,7 +412,7 @@ const TeamSpace = ({
           "이슈 진행 상태 관리는 활성화된 스프린트에서만 가능합니다. 먼저 스프린트를 활성화해주세요."
         );
       } else {
-        console.log("sprint is active");
+        // console.log("sprint is active");
       }
     });
   }, [projectNo]);

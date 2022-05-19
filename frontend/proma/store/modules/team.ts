@@ -44,7 +44,7 @@ export const getTeamInfo = createAsyncThunk(
 export const createNewTeam = createAsyncThunk(
   "POST/TEAM",
   async (newTeamInfo: any, thunkAPI) => {
-    console.log(newTeamInfo);
+    // console.log(newTeamInfo);
 
     return await api
       .post(`/team`, newTeamInfo)

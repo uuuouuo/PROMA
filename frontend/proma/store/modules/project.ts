@@ -56,7 +56,7 @@ export const updateProjectInfo = createAsyncThunk(
     return await api
       .put(`/project/change`, newProjectInfo)
       .then((res) => {
-        console.log("project is updated", res);
+        // console.log("project is updated", res);
 
         thunkAPI.dispatch(getProjectInfo(newProjectInfo.projectNo));
         thunkAPI.dispatch(getProjectList());

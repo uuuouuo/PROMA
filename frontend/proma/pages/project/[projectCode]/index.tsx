@@ -216,7 +216,7 @@ const ProjectSpace = ({
 
   //유저가 드래그를 끝낸 시점에 불리는 함수
   const onDragEnd = (args: any) => {
-    console.log(args);
+    // console.log(args);
     const targetIssueNo = args.draggableId.split("_")[1];
     const fromSprint = args.source.droppableId.split("_")[0];
     const fromTeam = args.source.droppableId.split("_")[1];
