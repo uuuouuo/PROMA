@@ -97,7 +97,7 @@ const IssueCreateModal = ({
     setNewIssueInfo((cur) => ({ ...cur, description: value }));
   };
   const onSelectTopic = (e: any) => {
-    console.dir(e.target);
+    // console.dir(e.target);
     const topicNo = e.target.value as number;
     setNewIssueInfo((cur) => ({ ...cur, topicNo }));
   };
