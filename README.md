@@ -250,8 +250,8 @@ nohup java -jar -Duser.timezone=Asia/Seoul [생성된 .jar 파일] &
 ## 협업
 
 > ## [📚 Notion](https://glossy-stick-781.notion.site/PROMA-6a1a738bb5474e939473b068f5a97f4a)
->
-> </br>
+
+</br>
 
 ### Git Branch 전략
 
