@@ -43,7 +43,7 @@
 
 ### Deployment
 
-![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) <img src="https://img.shields.io/badge/amazon s3-D24939?style=for-the-badge&logo=amazon-s3&logoColor=white"> <img src="https://img.shields.io/badge/nginx-%23009639?style=for-the-badge&logo=nginx&logoColor=white"> <img src="https://img.shields.io/badge/jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white">
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) <img src="https://img.shields.io/badge/amazon s3-D24939?style=for-the-badge&logo=amazon-s3&logoColor=white"> <img src="https://img.shields.io/badge/nginx-%23009639?style=for-the-badge&logo=nginx&logoColor=white"> <img src="https://img.shields.io/badge/jenkins-483D8B?style=for-the-badge&logo=jenkins&logoColor=white">
 
 ### Editor
 
