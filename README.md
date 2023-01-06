@@ -39,7 +39,7 @@
 
 ### Back-End
 
-<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=Springboot&logoColor=white"> <img src="https://img.shields.io/badge/Springsecurity-3CB371?style=for-the-badge&logo=Springsecurity&logoColor=white"> <img src="https://img.shields.io/badge/JPA-808080.svg?style=for-the-badge&logo=Hibernate&logoColor=white"> <img src="https://img.shields.io/badge/websoket-483D8B?style=for-the-badge&logo=socket.io&logoColor=white"> <img src="https://img.shields.io/badge/stomp-black?style=for-the-badge&logo=socket.io&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
+<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=Springboot&logoColor=white"> <img src="https://img.shields.io/badge/Springsecurity-3CB371?style=for-the-badge&logo=Springsecurity&logoColor=white"> <img src="https://img.shields.io/badge/JPA-808080.svg?style=for-the-badge&logo=Hibernate&logoColor=white"> <img src="https://img.shields.io/badge/websocket-483D8B?style=for-the-badge&logo=socket.io&logoColor=white"> <img src="https://img.shields.io/badge/stomp-black?style=for-the-badge&logo=socket.io&logoColor=white"> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 ### Deployment
 
